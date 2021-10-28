@@ -40,7 +40,7 @@ export const PATCHES: Patch[] =
     "rate_2": 0,
     "created_at": "2015-10-09 19:33:57.401758",
     "updated_at": "2015-10-12 02:39:59.418839",
-    "average_rating": ""
+    "average_rating": "5"
   },
   {
     "id": 521,
@@ -27570,4 +27570,49 @@ export const PATCHES: Patch[] =
     "updated_at": "2015-10-09 19:36:16.559646",
     "average_rating": ""
   },
+  {
+    "id": 1129,
+    "title": "Bowser",
+    "description": "Rubbishy guitar",
+    "sub_fifth": 100,
+    "overtone": 33,
+    "ultra_saw": 0,
+    "saw": 0,
+    "pulse_width": 0,
+    "square": 0,
+    "metalizer": 100,
+    "triangle": 100,
+    "cutoff": 33,
+    "mode": 0,
+    "resonance": 31,
+    "env_amt": 50,
+    "brute_factor": 54,
+    "kbd_tracking": 50,
+    "modmatrix": [
+      {
+        "source": "mod-lfo",
+        "target": "mod-filter"
+      }
+    ],
+    "octave": 3,
+    "volume": 100,
+    "glide": 0,
+    "mod_wheel": 1,
+    "amount": 32,
+    "wave": 0,
+    "rate": 100,
+    "sync": 0,
+    "env_amt_2": 0,
+    "vca": 0,
+    "attack": 17,
+    "decay": 30,
+    "sustain": 53,
+    "release": 94,
+    "pattern": 7,
+    "play": 2,
+    "rate_2": 36,
+    "created_at": "2015-10-09 19:36:16.800349",
+    "updated_at": "2015-10-12 02:40:26.053363",
+    "average_rating": "6"
+  }
 ]

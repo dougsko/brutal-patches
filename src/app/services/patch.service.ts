@@ -15,7 +15,15 @@ export class PatchService {
     const patches = of(PATCHES);
     return patches;
   }
-  
+
+  getPatch(id: number): Observable<Patch> {
+    const patch = PATCHES.find(patch => patch.id === id)!;
+    if(patch.modmatrix == []) {
+      patch.modmatrix
+    }
+    return of(patch);
+  }
+
 }
 
 

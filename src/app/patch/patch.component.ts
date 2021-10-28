@@ -9,6 +9,7 @@ import { PatchService } from '../services/patch.service';
 })
 export class PatchComponent implements OnInit {
   patches: Patch[] = [];
+  selectedPatch?: Patch;
 
   constructor(private patchService: PatchService) { }
 
@@ -21,5 +22,5 @@ export class PatchComponent implements OnInit {
       this.patches = patches;
     });
   }
-
+  
 }
