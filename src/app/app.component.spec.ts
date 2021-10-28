@@ -23,13 +23,13 @@ describe('AppComponent', () => {
   it(`should have as title 'brutal-patches'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('brutal-patches');
+    expect(app.title).toEqual('Brutal Patches');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('brutal-patches app is running!');
+    expect(compiled.querySelector('.content span')?.textContent).toContain('Brutal Patches app is running!');
   });
 });
