@@ -28,9 +28,11 @@ export class KnobComponent implements OnInit {
 
   marks: any =
   {
-      colorRemaining: '#333',
-      colorProgress: '#2db2e4',
-      type: 'circle',
+      //colorRemaining: '#333',
+      //colorProgress: '#333',//'#2db2e4',
+      colorRemaining: { color: 'grey', border: 'grey' },
+      colorProgress: { color: '#00a4e1', border: '#00a4e1' },
+      type: 'line',
       offset: '75%',
       thickness: 2,
       size: '2%',
@@ -39,30 +41,17 @@ export class KnobComponent implements OnInit {
       minorInterval: 2
   };
 
-  labels: any =
-  {
-      offset: '88%',
-      //step: 5,
-      //visible: true,
-      //formatFunction: (label: number) => {
-      //    if (label == 0)
-       //       return 'Min';
-        //  if (label == 100)
-         //     return 'Max';
-        //  return label;
-      //}
-  };
-
   progressBar: any =
   {
-      size: '70%',
-      offset: '0%'
+      size: '30%',
+      offset: '70%',
+      background: { fill: '#eee', stroke: '#eee' }
   };
 
   pointer: any =
   {
-      type: 'line', thickness: 4, style: { fill: '#00a4e1', stroke: '#00a4e1' },
-      size: '70%', offset: '0%'
+      type: 'line', thickness: 3, style: { fill: '#fd9901', stroke: '#fd9901' },
+      size: '30%', offset: '70%'
   };
 
 

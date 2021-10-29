@@ -58,14 +58,6 @@
                 <div class="title"><span>Oscillator</span></div>
                 <div class="column first">
                   <knob (newValueEvent)="updateValue('sub_fifth', $event)" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true" lFlow="true" value="{{patch.sub_fifth}}"></knob>
-                  <!--
-                    <div class="knob-outer" id="sub-fifth"><div class="knob">
-                      <input type="text" id="sub_fifth" class="dial" value="{{patch.sub_fifth}}" [(ngModel)]="patch.sub_fifth">
-                    </div></div>
-                    <div class="s-flow"></div>
-                    <p class="label">Sub &gt; Fifth</p>
-                    <div class="l-flow"></div>
-                  -->
                     <div class="knob-outer" id="overtone"><div class="knob">
                       <input [(ngModel)]="patch.overtone" type="text" id="overtone" class="dial" value="{{patch.overtone}}">
                       <!-- <%= f.text_field :overtone  , { class: "dial", value: "#{@patch.overtone}" }%>-->
