@@ -1,0 +1,34 @@
+<!--
+<div class="knob-outer" id="{{outerId}}">
+    <div class="knob">
+        <input type="text" id="{{name}}" class="dial" value="{{value}}">
+    </div>
+</div>
+<div *ngIf="sFlow" class="s-flow"></div>
+<p class="label">{{label}}</p>
+<div *ngIf="lFlow" class="l-flow"></div>
+-->
+<div class="knob-outer" id="{{outerId}}">
+    <div class="knob">
+
+        <jqxKnob 
+        (onChange)="turnKnob($event)" 
+        [value]="value" 
+        [min]="0" 
+        [max]="100" 
+        [startAngle]="120" 
+        [endAngle]="420"  
+        [rotation]="'clockwise'" 
+        [style]="style" 
+        [marks]="marks" 
+        [progressBar]="progressBar" 
+        [pointer]="pointer"
+        [height]=100 
+        [width]=100>
+        </jqxKnob>
+
+    </div>
+</div>
+<div *ngIf="sFlow" class="s-flow"></div>
+<p class="label">{{label}}</p>
+<div *ngIf="lFlow" class="l-flow"></div>

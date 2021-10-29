@@ -194,7 +194,7 @@ $(document).ready(function () {
         "cursor": 5
     });
 
-    /*
+    
     //initializing the toggle switches
     $(".toggle").each(function () {
         var obj = $(this);
@@ -237,7 +237,7 @@ $(document).ready(function () {
             }
         });
     });
-    */
+    
 
 });
 

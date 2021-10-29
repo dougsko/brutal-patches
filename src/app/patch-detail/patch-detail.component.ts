@@ -29,4 +29,13 @@ export class PatchDetailComponent implements OnInit {
     });
   }
 
+  updateValue(key: string, value: number) {
+    if (this.patch) {
+      //this.patch[key.toLowerCase()] = value;
+      if (key == "sub_fifth") {
+        this.patch.sub_fifth = value;
+      }
+    }
+  }
+
 }
