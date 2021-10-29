@@ -33,6 +33,8 @@ export class PatchDetailComponent implements OnInit {
     if (this.patch) {
       if (key == "sub_fifth") {
         this.patch.sub_fifth = value;
+      } else if (key === "overtone") {
+        this.patch.overtone = value;
       }
     }
   }

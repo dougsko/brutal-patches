@@ -1,13 +1,3 @@
-<!--
-<div class="knob-outer" id="{{outerId}}">
-    <div class="knob">
-        <input type="text" id="{{name}}" class="dial" value="{{value}}">
-    </div>
-</div>
-<div *ngIf="sFlow" class="s-flow"></div>
-<p class="label">{{label}}</p>
-<div *ngIf="lFlow" class="l-flow"></div>
--->
 <div class="knob-outer" id="{{outerId}}">
     <div class="knob">
 
@@ -29,6 +19,6 @@
 
     </div>
 </div>
-<div *ngIf="sFlow" class="s-flow"></div>
-<p class="label">{{label}}</p>
-<div *ngIf="lFlow" class="l-flow"></div>
+<div *ngIf="sFlow === 'true'" class="s-flow"></div>
+<p [ngClass]="{'lower': lower === 'true'}" class="label">{{label}}</p>
+<div *ngIf="lFlow === 'true'" class="l-flow"></div>

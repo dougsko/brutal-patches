@@ -11,6 +11,7 @@ export class KnobComponent implements OnInit {
   @Input() value!: string;
   @Input() sFlow!: string;
   @Input() lFlow!: string;
+  @Input() lower!: string;
   @Output() newValueEvent = new EventEmitter<number>();
 
   outerId: string;
