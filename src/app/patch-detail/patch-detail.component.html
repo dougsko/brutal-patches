@@ -68,7 +68,7 @@
                 </div>
                 <div class="column">
                   <knob (newValueEvent)="updateInfo($event)" name="pulse_width" label="Pulse Width" sFlow="true" lFlow="true" value="{{patch.pulse_width}}"></knob>
-                  <knob (newValueEvent)="updateValue('square', $event)" name="square" label="Square" lower="true" value="{{patch.square}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="square" label="Square" lower="true" value="{{patch.square}}"></knob>
                 </div>
                 <div class="column">
                   <knob (newValueEvent)="updateInfo($event)" name="metalizer" label="Metalizer" sFlow="true" lFlow="true" value="{{patch.metalizer}}"></knob>
