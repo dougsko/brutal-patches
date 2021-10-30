@@ -15,6 +15,7 @@ export class KnobComponent implements OnInit {
   @Output() newValueEvent = new EventEmitter<number>();
 
   outerId: string;
+  id: string;
 
   style: any =
   {
@@ -60,9 +61,11 @@ export class KnobComponent implements OnInit {
 
   constructor() {
     this.outerId = "";
+    this.id = "";
    }
 
   ngOnInit(): void {
+    this.id = this.name;
     this.outerId = this.name.replace(/_/, "-");
   }
 

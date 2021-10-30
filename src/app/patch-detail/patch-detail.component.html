@@ -43,6 +43,7 @@
   <div><span>id: </span>{{patch.id}}</div>
   <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
   <div><span>overtone: </span>{{patch.overtone}}</div>
+  <div><span>triangle: </span>{{patch.triangle}}</div>
   <div>
     <label for="patch-title">Patch title: </label>
     <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
@@ -59,49 +60,19 @@
                 <div class="title"><span>Oscillator</span></div>
                 <div class="column first">
                   <knob (newValueEvent)="updateValue('sub_fifth', $event)" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true" lFlow="true" value="{{patch.sub_fifth}}"></knob>
-                  <knob (newValueEvent)="updateValue('overtone', $event)" name="overtone" label="Overtone" sFlow="false" lFlow="false" lower="true" value="{{patch.overtone}}"></knob>
+                  <knob (newValueEvent)="updateValue('overtone', $event)" name="overtone" label="Overtone" lower="true" value="{{patch.overtone}}"></knob>
                 </div>
                 <div class="column">
-                    <div class="knob-outer" id="ultra-saw"><div class="knob">
-                      <input type="text" id="ultra_saw" class="dial" value="{{patch.ultra_saw}}">
-                      <!-- <%= f.text_field :ultra_saw  , { class: "dial", value: "#{@patch.ultra_saw}" }%> -->
-                    </div></div>
-                    <div class="s-flow"></div>
-                    <p class="label">Ultrasaw</p>
-                    <div class="l-flow"></div>
-                    <div class="knob-outer" id="saw"><div class="knob">
-                      <input type="text" id="saw" class="dial" value="{{patch.saw}}">
-                      <!-- <%= f.text_field :saw  , { class: "dial", value: "#{@patch.saw}" }%> -->
-                    </div></div>
-                    <p class="label lower">Saw</p>
+                  <knob (newValueEvent)="updateValue('ultra_saw', $event)" name="ultra_saw" label="Ultrasaw" sFlow="true" lFlow="true" value="{{patch.ultra_saw}}"></knob>
+                  <knob (newValueEvent)="updateValue('saw', $event)" name="saw" label="Saw" lower="true" value="{{patch.saw}}"></knob>
                 </div>
                 <div class="column">
-                    <div class="knob-outer" id="pulse-width"><div class="knob">
-                      <input type="text" id="pulse_width" class="dial" value="{{patch.pulse_width}}">
-                      <!-- <%= f.text_field :pulse_width  , { class: "dial", value: "#{@patch.pulse_width}" }%> -->
-                    </div></div>
-                    <div class="s-flow"></div>
-                    <p class="label">Pulse Width</p>
-                    <div class="l-flow"></div>
-                    <div class="knob-outer" id="square"><div class="knob">
-                      <input type="text" id="square" class="dial" value="{{patch.square}}">
-                      <!-- <%= f.text_field :square  , { class: "dial", value: "#{@patch.square}" }%> -->
-                    </div></div>
-                    <p class="label lower">Square</p>
+                  <knob (newValueEvent)="updateValue('pulse_width', $event)" name="pulse_width" label="Pulse Width" sFlow="true" lFlow="true" value="{{patch.pulse_width}}"></knob>
+                  <knob (newValueEvent)="updateValue('square', $event)" name="square" label="Square" lower="true" value="{{patch.square}}"></knob>
                 </div>
                 <div class="column">
-                    <div class="knob-outer" id="metalizer"><div class="knob">
-                      <input type="text" id="metalizer" class="dial" value="{{patch.metalizer}}">
-                      <!-- <%= f.text_field :metalizer  , { class: "dial", value: "#{@patch.metalizer}" }%> -->
-                    </div></div>
-                    <div class="s-flow"></div>
-                    <p class="label">Metalizer</p>
-                    <div class="l-flow"></div>
-                    <div class="knob-outer" id="triangle"><div class="knob">
-                      <input type="text" id="triangle" class="dial" value="{{patch.triangle}}">
-                      <!-- <%= f.text_field :triangle  , { class: "dial", value: "#{@patch.triangle}" }%> -->
-                    </div></div>
-                    <p class="label lower">Triangle</p>
+                  <knob (newValueEvent)="updateValue('metalizer', $event)" name="metalizer" label="Metalizer" sFlow="true" lFlow="true" value="{{patch.metalizer}}"></knob>
+                  <knob (newValueEvent)="updateValue('triangle', $event)" name="triangle" label="Triangle" lower="true" value="{{patch.triangle}}"></knob>
                 </div>
             </div>
             <!-- / Oscillator Section -->

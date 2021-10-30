@@ -37,6 +37,7 @@ export interface Patch {
     created_at: string;
     updated_at: string;
     average_rating: string;
+    [key: string]: any;
 }
 
 export interface ModMatrixEntry {

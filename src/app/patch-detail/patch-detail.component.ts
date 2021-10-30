@@ -31,11 +31,7 @@ export class PatchDetailComponent implements OnInit {
 
   updateValue(key: string, value: number) {
     if (this.patch) {
-      if (key == "sub_fifth") {
-        this.patch.sub_fifth = value;
-      } else if (key === "overtone") {
-        this.patch.overtone = value;
-      }
+      this.patch[key] = value;
     }
   }
 
