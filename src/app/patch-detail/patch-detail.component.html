@@ -317,12 +317,6 @@
         </div><!-- /Row-->
     </div>
     <!-- /Patch-->
-    <div id="meta-info">
-        <h2  id="title-text" class="editable" contenteditable="true">{{patch.title}}</h2>
-        <p id="description-text" class="editable" contenteditable="true">Description</p>
-        <p id="tag-text" class="editable" contenteditable="true">Comma separated tags</p>
-        <input [(ngModel)]="patch.title" type="hidden" id="title-input" value="{{patch.title}}">
-        <input type="hidden" id="description-input" value="{{patch.description}}">
-    </div>
+    <patch-info (patchInfoEvent)="updateValue('title', $event)" title="{{patch.title}}" description="{{patch.description}}" tags={{patch.tags}}></patch-info>
 
   </div>

@@ -29,7 +29,7 @@ export class PatchDetailComponent implements OnInit {
     });
   }
 
-  updateValue(key: string, value: number) {
+  updateValue(key: string, value: number|string) {
     if (this.patch) {
       this.patch[key] = value;
     }
