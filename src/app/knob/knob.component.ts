@@ -13,7 +13,7 @@ export class KnobComponent implements OnInit {
   @Input() lFlow!: string;
   @Input() lower!: string;
   @Input() max!: string;
-  @Output() newValueEvent = new EventEmitter<number>();
+  @Output() newValueEvent = new EventEmitter<any>();
 
   outerId: string;
   id: string;
@@ -68,7 +68,7 @@ export class KnobComponent implements OnInit {
 
   turnKnob(event: any) {
     this.value = event.args.value;
-    this.newValueEvent.emit(parseInt(this.value));
+    this.newValueEvent.emit({field: this.name, value: this.value});
   }
 
 }

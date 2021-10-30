@@ -59,20 +59,20 @@
             <div id="oscillator" class="section">
                 <div class="title"><span>Oscillator</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('sub_fifth', $event)" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true" lFlow="true" value="{{patch.sub_fifth}}"></knob>
-                  <knob (newValueEvent)="updateValue('overtone', $event)" name="overtone" label="Overtone" lower="true" value="{{patch.overtone}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true" lFlow="true" value="{{patch.sub_fifth}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="overtone" label="Overtone" lower="true" value="{{patch.overtone}}"></knob>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('ultra_saw', $event)" name="ultra_saw" label="Ultrasaw" sFlow="true" lFlow="true" value="{{patch.ultra_saw}}"></knob>
-                  <knob (newValueEvent)="updateValue('saw', $event)" name="saw" label="Saw" lower="true" value="{{patch.saw}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="ultra_saw" label="Ultrasaw" sFlow="true" lFlow="true" value="{{patch.ultra_saw}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="saw" label="Saw" lower="true" value="{{patch.saw}}"></knob>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('pulse_width', $event)" name="pulse_width" label="Pulse Width" sFlow="true" lFlow="true" value="{{patch.pulse_width}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="pulse_width" label="Pulse Width" sFlow="true" lFlow="true" value="{{patch.pulse_width}}"></knob>
                   <knob (newValueEvent)="updateValue('square', $event)" name="square" label="Square" lower="true" value="{{patch.square}}"></knob>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('metalizer', $event)" name="metalizer" label="Metalizer" sFlow="true" lFlow="true" value="{{patch.metalizer}}"></knob>
-                  <knob (newValueEvent)="updateValue('triangle', $event)" name="triangle" label="Triangle" lower="true" value="{{patch.triangle}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="metalizer" label="Metalizer" sFlow="true" lFlow="true" value="{{patch.metalizer}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="triangle" label="Triangle" lower="true" value="{{patch.triangle}}"></knob>
                 </div>
             </div>
             <!-- / Oscillator Section -->
@@ -80,7 +80,7 @@
             <div id="filter" class="section">
                 <div class="title"><span>Filter</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('cutoff', $event)" name="cutoff" label="Cutoff" value="{{patch.cutoff}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="cutoff" label="Cutoff" value="{{patch.cutoff}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="mode">
@@ -98,12 +98,12 @@
                     </div>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('resonance', $event)" name="resonance" label="Resonance" value="{{patch.resonance}}"></knob>
-                  <knob (newValueEvent)="updateValue('env_amt', $event)" name="env_amt" label="ENV Amt" lower="true" value="{{patch.env_amt}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="resonance" label="Resonance" value="{{patch.resonance}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="env_amt" label="ENV Amt" lower="true" value="{{patch.env_amt}}"></knob>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('brute_factor', $event)" name="brute_factor" label="Brute Factor" value="{{patch.brute_factor}}"></knob>
-                  <knob (newValueEvent)="updateValue('kbd_tracking', $event)" name="kbd_tracking" label="KBD Tracking" lower="true" value="{{patch.kbd_tracking}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="brute_factor" label="Brute Factor" value="{{patch.brute_factor}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="kbd_tracking" label="KBD Tracking" lower="true" value="{{patch.kbd_tracking}}"></knob>
                 </div>
             </div>
             <!-- /Filter Section -->
@@ -160,7 +160,7 @@
             <!-- Volume-->
             <div id="volume-region">
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('volume', $event)" name="volume" label="Master Volume" value="{{patch.volume}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="volume" label="Master Volume" value="{{patch.volume}}"></knob>
                 </div>
             </div>
             <!-- /Volume-->
@@ -170,7 +170,7 @@
             <div id="controls" class="section">
                 <div class="title"><span>Controls</span></div>
                 <div class="column single">
-                  <knob (newValueEvent)="updateValue('glide', $event)" name="glide" label="Glide" lower="true" value="{{patch.glide}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="glide" label="Glide" lower="true" value="{{patch.glide}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="mod-wheel">
@@ -191,7 +191,7 @@
             <div id="lfo" class="section">
                 <div class="title"><span>LFO</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('amount', $event)" name="amount" label="Amount" value="{{patch.amount}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="amount" label="Amount" value="{{patch.amount}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="wave">
@@ -208,7 +208,7 @@
                     </div>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('rate', $event)" name="amount" label="Rate" value="{{patch.rate}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="rate" label="Rate" value="{{patch.rate}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="sync">
@@ -230,7 +230,7 @@
             <div id="envelope" class="section">
                 <div class="title"><span>Envelope</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('env_amt_2', $event)" name="env_amt_2" label="Env Amt" value="{{patch.env_amt_2}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="env_amt_2" label="Env Amt" value="{{patch.env_amt_2}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="vca">
@@ -292,7 +292,7 @@
             <div id="sequencer" class="section">
                 <div class="title"><span>Sequencer</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('pattern', $event)" max="7" name="pattern" label="Pattern" value="{{patch.pattern}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" max="7" name="pattern" label="Pattern" value="{{patch.pattern}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="play">
@@ -310,13 +310,13 @@
                     </div>
                 </div>
                 <div class="column">
-                  <knob (newValueEvent)="updateValue('rate', $event)" name="rate" label="Rate" value="{{patch.rate}}"></knob>
+                  <knob (newValueEvent)="updateInfo($event)" name="rate_2" label="Rate" value="{{patch.rate_2}}"></knob>
                 </div>
             </div>
             <!-- /LFO-->
         </div><!-- /Row-->
     </div>
     <!-- /Patch-->
-    <patch-info title="{{patch.title}}" description="{{patch.description}}" tags={{patch.tags}}></patch-info>
+    <patch-info (patchInfoEvent)="updateInfo($event)" title="{{patch.title}}" description="{{patch.description}}" tags={{patch.tags}}></patch-info>
 
   </div>

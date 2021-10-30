@@ -35,4 +35,10 @@ export class PatchDetailComponent implements OnInit {
     }
   }
 
+  updateInfo(metaInfo: any) {
+    if (this.patch) {
+      this.patch[metaInfo.field] = metaInfo.value;
+    }
+  }
+
 }

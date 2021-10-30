@@ -1,3 +1,4 @@
+import { ValueTransformer } from '@angular/compiler/src/util';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
@@ -9,7 +10,7 @@ export class PatchInfoComponent implements OnInit {
   @Input() title!: string;
   @Input() description!: string;
   @Input() tags!: string;
-  @Output() patchInfoEvent = new EventEmitter<string>();
+  @Output() patchInfoEvent = new EventEmitter<any>();
 
   constructor() {
    }
@@ -17,9 +18,8 @@ export class PatchInfoComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateValue(value: string) {
-    console.log("FOOOO")
-    this.patchInfoEvent.emit(value);
+  updateValue(fieldName: string, text: string) {
+    this.patchInfoEvent.emit({field: fieldName, value: text});
   }
 
 }
