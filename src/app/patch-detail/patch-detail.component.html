@@ -292,7 +292,7 @@
             <div id="sequencer" class="section">
                 <div class="title"><span>Sequencer</span></div>
                 <div class="column first">
-                  <knob (newValueEvent)="updateValue('pattern', $event)" max="8" name="pattern" label="Pattern" value="{{patch.pattern}}"></knob>
+                  <knob (newValueEvent)="updateValue('pattern', $event)" max="7" name="pattern" label="Pattern" value="{{patch.pattern}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
                             <div class="toggle-outer" id="play">
@@ -317,6 +317,6 @@
         </div><!-- /Row-->
     </div>
     <!-- /Patch-->
-    <patch-info (patchInfoEvent)="updateValue('title', $event)" title="{{patch.title}}" description="{{patch.description}}" tags={{patch.tags}}></patch-info>
+    <patch-info title="{{patch.title}}" description="{{patch.description}}" tags={{patch.tags}}></patch-info>
 
   </div>
