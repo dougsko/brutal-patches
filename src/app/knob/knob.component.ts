@@ -12,24 +12,26 @@ export class KnobComponent implements OnInit {
   @Input() sFlow!: string;
   @Input() lFlow!: string;
   @Input() lower!: string;
+  @Input() max!: string;
   @Output() newValueEvent = new EventEmitter<number>();
 
   outerId: string;
   id: string;
+  max_data: number;
 
   style: any =
-  {
-      stroke: '#dfe3e9', 
-      strokeWidth: 3, 
-      fill: { 
-        color: '#fefefe', 
-        gradientType: 'linear', 
-        gradientStops: [[0, 1], [50, 0.9], [100, 1]] 
+    {
+      stroke: '#dfe3e9',
+      strokeWidth: 3,
+      fill: {
+        color: '#fefefe',
+        gradientType: 'linear',
+        gradientStops: [[0, 1], [50, 0.9], [100, 1]]
       }
-  };
+    };
 
   marks: any =
-  {
+    {
       //colorRemaining: '#333',
       //colorProgress: '#333',//'#2db2e4',
       colorRemaining: { color: 'grey', border: 'grey' },
@@ -41,20 +43,20 @@ export class KnobComponent implements OnInit {
       majorSize: '2%',
       majorInterval: 10,
       minorInterval: 2
-  };
+    };
 
   progressBar: any =
-  {
+    {
       size: '30%',
       offset: '70%',
       background: { fill: '#eee', stroke: '#eee' }
-  };
+    };
 
   pointer: any =
-  {
+    {
       type: 'line', thickness: 3, style: { fill: '#fd9901', stroke: '#fd9901' },
       size: '30%', offset: '70%'
-  };
+    };
 
 
 
@@ -62,11 +64,16 @@ export class KnobComponent implements OnInit {
   constructor() {
     this.outerId = "";
     this.id = "";
-   }
+    this.max_data = 100;
+  }
 
   ngOnInit(): void {
     this.id = this.name;
     this.outerId = this.name.replace(/_/, "-");
+    if(this.max) {
+      this.max_data = parseInt(this.max);
+    }
+    
   }
 
   turnKnob(event: any) {
@@ -74,6 +81,6 @@ export class KnobComponent implements OnInit {
     this.newValueEvent.emit(parseInt(this.value));
   }
 
-  
+
 
 }
