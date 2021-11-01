@@ -10,6 +10,7 @@ import { PatchComponent } from './patch/patch.component';
 import { PatchDetailComponent } from './patch-detail/patch-detail.component';
 import { KnobComponent } from './knob/knob.component';
 import { PatchInfoComponent } from './patch-info/patch-info.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { PatchInfoComponent } from './patch-info/patch-info.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    jqxKnobModule
+    jqxKnobModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
