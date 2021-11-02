@@ -10,7 +10,8 @@ import { PatchComponent } from './patch/patch.component';
 import { PatchDetailComponent } from './patch-detail/patch-detail.component';
 import { KnobComponent } from './knob/knob.component';
 import { PatchInfoComponent } from './patch-info/patch-info.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,13 @@ import { HttpClientModule } from '@angular/common/http';
     jqxKnobModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

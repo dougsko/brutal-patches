@@ -14,7 +14,7 @@ export class PatchService {
     public async getPatch(id: string): Promise<Patch> {
         const patch: Patch = this.patches.find(patch => patch.id === parseInt(id));
         if(!patch) {
-            throw new HttpException("Patch does not exist", HttpStatus.NO_CONTENT)
+            throw new HttpException("Patch does not exist", HttpStatus.NOT_FOUND)
         }
         return patch;
     }
