@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators'
 import { Patch } from '../interfaces/patch';
-import { PATCHES } from '../mock-patches';
 
 
 @Injectable({
@@ -14,25 +14,22 @@ export class PatchService {
     private http: HttpClient
   ) { }
 
-  /*
-  getPatches(): Observable<Patch[]> {
-    const patches = of(PATCHES);
-    return patches;
-  }
-  */
-
   getPatches(): Observable<any> {
-    return this.http.get('/api/patches');
+    return this.http.get('/api/patches').pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
   }
 
-  getPatch(id: number): Observable<Patch> {
-    const patch = PATCHES.find(patch => patch.id === id)!;
-    if(patch.modmatrix == []) {
-      patch.modmatrix
-    }
-    return of(patch);
+  getPatch(id: number): Observable<any|Patch> {
+    return this.http.get(`/api/patches/${id}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
   }
-
 }
+
 
 

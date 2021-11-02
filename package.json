@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "start:all": "npm --prefix server-src run start:dev & npm run start"
   },
   "private": true,
   "dependencies": {
