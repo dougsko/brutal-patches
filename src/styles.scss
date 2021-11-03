@@ -186,15 +186,25 @@ table {
    width:25px;
    margin:0 auto 6px;
 }
+
 .toggle{
    height:25px;
    width:25px;
    position:relative;
    margin-top:14px;
 }
+
+.jqx-slider {
+   height:25px;
+   width:25px;
+   position:relative;
+   margin-top:14px;
+}
+
 .toggle .ui-slider-range{
    height:50px;
 }
+
 .toggle .ui-slider-handle{
    outline:none;
    left:50%;
@@ -211,6 +221,56 @@ table {
    -webkit-transition: .25s ease-in-out;
    transition: .25s ease-in-out;
 }
+
+.jqx-slider-track {
+   outline:none;
+   background:none;
+   border:none;
+   border-color: #aaa;
+}
+
+.jqx-slider-track-slider .jqx-fill-state-focus {
+   outline:none;
+   background:none;
+   border:none;
+   border-color: #aaa;
+}
+
+.jqx-fill-state-focus {
+   outline:none;
+   background:none;
+   border-color: #aaa;
+}
+
+.jqx-fill-state-hover {
+   outline:none;
+   background:none;
+   border-color: #aaa;
+}
+
+.jqx-fill-state-pressed {
+   outline:none;
+   background:none;
+   border-color: #aaa;
+}
+
+.jqx-slider-slider {
+   outline:none;
+   left:50%;
+   margin-left:-10px;
+   margin-bottom:-10px;
+   position:absolute;
+   height:20px;
+   width:20px;
+   display:block;
+   background:#FFF;
+   border-radius:20px;
+   box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.2);
+   -moz-transition: .25s ease-in-out;
+   -webkit-transition: .25s ease-in-out;
+   transition: .25s ease-in-out;
+}
+
 /*Sliders*/
 .slider-outer{
    position:relative;
@@ -232,16 +292,17 @@ table {
    top:-3px;
    left:-13px;
 }
-.slider{
+.slider {
    height:120px;
    width:43px;
    position:relative;
    margin-top:18px;
 }
-.slider .ui-slider-range{
+
+.slider .ui-slider-range {
    height:50px;
 }
-.slider .ui-slider-handle{
+.slider .ui-slider-handle {
    outline:none;
    left:50%;
    margin-left:-19px;
@@ -266,6 +327,8 @@ table {
 .ui-slider-disabled .ui-slider-handle{
    cursor: default;
 }
+
+
 /*Mod Matrix */
 #mod-matrix{
    position: relative;
@@ -693,3 +756,6 @@ footer a{
 .grey {
     color: #aaa;
 }
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

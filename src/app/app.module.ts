@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { jqxKnobModule } from 'jqwidgets-ng/jqxknob';
+import{ jqxSliderModule } from 'jqwidgets-ng/jqxslider';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,6 +13,8 @@ import { KnobComponent } from './knob/knob.component';
 import { PatchInfoComponent } from './patch-info/patch-info.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
+import { SliderComponent } from './slider/slider.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -19,14 +22,17 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
     PatchComponent,
     PatchDetailComponent,
     KnobComponent,
-    PatchInfoComponent
+    PatchInfoComponent,
+    SliderComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     jqxKnobModule,
-    HttpClientModule
+    jqxSliderModule,
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [
     {
