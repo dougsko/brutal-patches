@@ -10,11 +10,15 @@ export class SliderComponent implements OnInit {
   @Input() min!: string;
   @Input() max!: string;
   @Input() value!: string;
+  @Input() lower!: string;
   @Output() newValueEvent = new EventEmitter<any>();
+
+  label!: string;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.label = this.name.charAt(0).toUpperCase() + this.name.slice(1);
   }
 
   moveSlider(event: any) {
