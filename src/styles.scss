@@ -292,17 +292,28 @@ table {
    top:-3px;
    left:-13px;
 }
+
 .slider {
+   height:120px;
+   width:43px;
+   position:relative;
+   margin-top:5px;
+}
+
+/*
+.slider .jqx-slider {
    height:120px;
    width:43px;
    position:relative;
    margin-top:18px;
 }
+*/
 
 .slider .ui-slider-range {
    height:50px;
 }
-.slider .ui-slider-handle {
+
+.slider .jqx-slider-slider {
    outline:none;
    left:50%;
    margin-left:-19px;
@@ -315,6 +326,17 @@ table {
    border-radius:3px;
    box-shadow: inset 0 0 0 1px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.2);
 }
+
+.slider .jqx-slider-slider:after {
+   content:" ";
+   width:37px;
+   height:3px;
+   display:block;
+   background:#fd9901;
+   position:relative;
+   top:13px;
+}
+
 .slider .ui-slider-handle:after{
    content:" ";
    width:37px;
