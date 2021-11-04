@@ -16,6 +16,7 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
 import { ToggleComponent } from './toggle/toggle.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SliderComponent } from './slider/slider.component';
+import { OctaveComponent } from './octave/octave.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SliderComponent } from './slider/slider.component';
     PatchInfoComponent,
     ToggleComponent,
     SliderComponent,
+    OctaveComponent
   ],
   imports: [
     BrowserModule,

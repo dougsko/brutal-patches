@@ -167,6 +167,7 @@ $(document).ready(function () {
     */
 
     //initializing all knobs
+    /*
     $(".dial").knob({
         "min": 0,
         "max": 100,
@@ -193,6 +194,7 @@ $(document).ready(function () {
         "height": 69,
         "cursor": 5
     });
+    */
 
     
     //initializing the toggle switches

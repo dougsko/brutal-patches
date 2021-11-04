@@ -36,7 +36,7 @@
         });
     </script>
 
-<!--
+    <!--
     <h2>{{patch.title | uppercase}}</h2>
     <div><span>id: </span>{{patch.id}}</div>
     <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
@@ -92,7 +92,8 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true" value="{{patch.mode}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true"
+                                value="{{patch.mode}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p>HP</p>
@@ -169,26 +170,7 @@
             </div>
             <input type="hidden" id="modmatrix-input">
             <!-- /Mod Matrix-->
-            <div id="octave" class="section">
-                <div class="title"><span>Octave</span></div>
-                <ul id="octave-indicators" class="group">
-                    <li class="label" id="neg2">-2<div class="led"></div>
-                    </li>
-                    <li class="label" id="neg1">-1<div class="led"></div>
-                    </li>
-                    <li class="label" id="zero">0<div class="led"></div>
-                    </li>
-                    <li class="label" id="pos1">1<div class="led"></div>
-                    </li>
-                    <li class="label" id="pos2">2<div class="led"></div>
-                    </li>
-                </ul>
-                <input type="hidden" id="octave-input" value="{{patch.octave}}">
-                <ul id="octave-controls" class="group">
-                    <li class="prev">Previous</li>
-                    <li class="next">Next</li>
-                </ul>
-            </div>
+            <octave></octave>
             <!-- /Octave -->
             <!-- Volume-->
             <div id="volume-region">
@@ -209,7 +191,8 @@
                         value="{{patch.glide}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="mod_wheel" min="0" max="1" lower="true" value="{{patch.mod_wheel}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="mod_wheel" min="0" max="1" lower="true"
+                                value="{{patch.mod_wheel}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">LFO Amt</p>
@@ -227,7 +210,8 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="wave" min="0" max="2" lower="true" value="{{patch.wave}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="wave" min="0" max="2" lower="true"
+                                value="{{patch.wave}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p>Sq</p>
@@ -240,7 +224,8 @@
                     <knob (newValueEvent)="updateInfo($event)" name="rate" label="Rate" value="{{patch.rate}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="sync" min="0" max="1" lower="true" value="{{patch.sync}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="sync" min="0" max="1" lower="true"
+                                value="{{patch.sync}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">Seq</p>
@@ -259,7 +244,8 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="vca" min="0" max="1" lower="true" value="{{patch.vca}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="vca" min="0" max="1" lower="true"
+                                value="{{patch.vca}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">Env</p>
@@ -268,16 +254,20 @@
                     </div>
                 </div>
                 <div class="column first-slide">
-                    <slider (newValueEvent)="updateInfo($event)" name="attack" min="0" max="100" lower="true" value="{{patch.attack}}"></slider>
+                    <slider (newValueEvent)="updateInfo($event)" name="attack" min="0" max="100" lower="true"
+                        value="{{patch.attack}}"></slider>
                 </div>
                 <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="decay" min="0" max="100" lower="true" value="{{patch.decay}}"></slider>
+                    <slider (newValueEvent)="updateInfo($event)" name="decay" min="0" max="100" lower="true"
+                        value="{{patch.decay}}"></slider>
                 </div>
                 <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="sustain" min="0" max="100" lower="true" value="{{patch.sustain}}"></slider>
+                    <slider (newValueEvent)="updateInfo($event)" name="sustain" min="0" max="100" lower="true"
+                        value="{{patch.sustain}}"></slider>
                 </div>
                 <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="release" min="0" max="100" lower="true" value="{{patch.release}}"></slider>
+                    <slider (newValueEvent)="updateInfo($event)" name="release" min="0" max="100" lower="true"
+                        value="{{patch.release}}"></slider>
                 </div>
             </div>
             <!-- /Envelope-->
@@ -289,7 +279,8 @@
                         value="{{patch.pattern}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="play" min="0" max="2" lower="true" value="{{patch.play}}"></toggle>
+                            <toggle (newValueEvent)="updateInfo($event)" name="play" min="0" max="2" lower="true"
+                                value="{{patch.play}}"></toggle>
                         </div>
                         <div class="col labels">
                             <p>Play</p>
