@@ -21,7 +21,8 @@ export class ToggleComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.label = this.name.charAt(0).toUpperCase() + this.name.slice(1);
+    // this.label = this.name.charAt(0).toUpperCase() + this.name.slice(1);
+    this.label = this.formatName(this.name);
 
     if (this.value) {
       this.value_data = parseInt(this.value);
@@ -35,6 +36,17 @@ export class ToggleComponent implements OnInit {
       this.max_data = parseInt(this.max);
     }
 
+  }
+
+  formatName(name: string): string {
+    if(name === "vca") {
+      return name.toUpperCase();
+    }
+    let words: string[] = [];
+    for(let word of name.split("_")) {
+      words.push(word.charAt(0).toUpperCase() + word.slice(1));
+    }
+    return words.join(" ");
   }
 
   moveSlider(event: any) {

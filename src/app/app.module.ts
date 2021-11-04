@@ -15,6 +15,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 import { ToggleComponent } from './toggle/toggle.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SliderComponent } from './slider/slider.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     KnobComponent,
     PatchInfoComponent,
     ToggleComponent,
+    SliderComponent,
   ],
   imports: [
     BrowserModule,
