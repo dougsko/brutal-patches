@@ -37,7 +37,7 @@
     </script>
 
     <h2>{{patch.title | uppercase}}</h2>
-    <slider (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true"></slider>
+    <toggle (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true"></toggle>
     <div><span>id: </span>{{patch.id}}</div>
     <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
     <div><span>overtone: </span>{{patch.overtone}}</div>
@@ -90,12 +90,7 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="mode">
-                                <div class="toggle" data-max="2"></div>
-                                <input type="hidden" id="mode" class="toggle-input" value="{{patch.mode}}">
-                                <!-- <%= f.hidden_field :mode, { class: "toggle-input", value: "#{@patch.mode}" } %> -->
-                            </div>
-                            <p class="label lower">Mode</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p>HP</p>
@@ -212,11 +207,7 @@
                         value="{{patch.glide}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="mod-wheel">
-                                <div class="toggle" data-max="1"></div>
-                                <input type="hidden" id="cutoff" class="toggle-input" value="{{patch.mod_wheel}}">
-                            </div>
-                            <p class="label lower">Mod Wheel</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="mod_wheel" min="0" max="1" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">LFO Amt</p>
@@ -234,12 +225,7 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="wave">
-                                <div class="toggle toggle ui-slider ui-corner-all ui-slider-vertical ui-widget ui-widget-content"
-                                    data-max="2"></div>
-                                <input type="hidden" name="wave" id="wave" class="toggle-input" value="{{patch.wave}}">
-                            </div>
-                            <p class="label lower">Wave</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="wave" min="0" max="2" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p>Sq</p>
@@ -252,12 +238,7 @@
                     <knob (newValueEvent)="updateInfo($event)" name="rate" label="Rate" value="{{patch.rate}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="sync">
-                                <div class="toggle" data-max="1"></div>
-                                <input type="hidden" id="sync" class="toggle-input" value="{{patch.sync}}">
-                                <!-- <%= f.hidden_field :sync  , { class: "toggle-input", value: "#{@patch.sync}" }%> -->
-                            </div>
-                            <p class="label lower">Sync</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="sync" min="0" max="1" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">Seq</p>
@@ -276,12 +257,7 @@
                     </knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="vca">
-                                <div class="toggle" data-max="1"></div>
-                                <input type="hidden" id="vca" class="toggle-input" value="{{patch.vca}}">
-                                <!-- <%= f.hidden_field :vca  , { class: "toggle-input", value: "#{@patch.vca}" }%> -->
-                            </div>
-                            <p class="label lower">VCA</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="vca" min="0" max="1" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p class="tall">Env</p>
@@ -339,12 +315,7 @@
                         value="{{patch.pattern}}"></knob>
                     <div class="toggle-wrap group">
                         <div class="col first">
-                            <div class="toggle-outer" id="play">
-                                <div class="toggle" data-max="2"></div>
-                                <input type="hidden" id="play" class="toggle-input" value="{{patch.play}}">
-                                <!-- <%= f.hidden_field :play  , { class: "toggle-input", value: "#{@patch.play}" }%> -->
-                            </div>
-                            <p class="label lower">Play</p>
+                            <toggle (newValueEvent)="updateInfo($event)" name="play" min="0" max="2" lower="true"></toggle>
                         </div>
                         <div class="col labels">
                             <p>Play</p>

@@ -13,7 +13,7 @@ import { KnobComponent } from './knob/knob.component';
 import { PatchInfoComponent } from './patch-info/patch-info.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
-import { SliderComponent } from './slider/slider.component';
+import { ToggleComponent } from './toggle/toggle.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -23,7 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PatchDetailComponent,
     KnobComponent,
     PatchInfoComponent,
-    SliderComponent
+    ToggleComponent,
   ],
   imports: [
     BrowserModule,

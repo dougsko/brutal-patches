@@ -1,0 +1,9 @@
+<div class="toggle-outer" id="mode">
+    <!-- <div class="toggle  ui-slider " data-max="2"> -->
+        <jqxSlider (onChange)="moveSlider($event)" class="toggle" [height]="77" [width]="32" [min]="min_data"
+            [max]="max_data" [value]="value_data" [orientation]="'vertical'" [showTicks]="false"
+            [showTickLabels]="false" [showButtons]="false" [tooltip]="false" [mode]="'fixed'">
+        </jqxSlider>
+    <!-- </div> -->
+</div>
+<p [ngClass]="{'lower': lower === 'true'}" class="label">{{label}}</p>

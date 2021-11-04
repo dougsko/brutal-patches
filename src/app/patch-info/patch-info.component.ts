@@ -1,4 +1,3 @@
-import { ValueTransformer } from '@angular/compiler/src/util';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
