@@ -196,6 +196,7 @@ $(document).ready(function () {
 
     
     //initializing the toggle switches
+    /*
     $(".toggle").each(function () {
         var obj = $(this);
         var sId = "#" + obj.data('id');
@@ -215,10 +216,12 @@ $(document).ready(function () {
             }
         });
     });
+    */
     
 
 
     //initializing the sliders
+    /*
     $(".slider").each(function () {
         var obj = jQuery(this);
         var sId = "#" + obj.data('id');
@@ -237,6 +240,7 @@ $(document).ready(function () {
             }
         });
     });
+    */
     
 
 });

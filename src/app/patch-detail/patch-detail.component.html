@@ -36,6 +36,7 @@
         });
     </script>
 
+<!--
     <h2>{{patch.title | uppercase}}</h2>
     <div><span>id: </span>{{patch.id}}</div>
     <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
@@ -47,6 +48,7 @@
         <label for="patch-title">Patch title: </label>
         <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
     </div>
+-->
 
     <div id="patch" class="group">
         <div class="row top group">
@@ -178,7 +180,7 @@
                     </li>
                     <li class="label" id="pos1">1<div class="led"></div>
                     </li>
-                    <li class="label" id="pos2">-2<div class="led"></div>
+                    <li class="label" id="pos2">2<div class="led"></div>
                     </li>
                 </ul>
                 <input type="hidden" id="octave-input" value="{{patch.octave}}">
