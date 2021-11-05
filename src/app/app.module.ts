@@ -13,16 +13,16 @@ import { FilterComponent } from './components/filter/filter.component';
 import { LfoComponent } from './components/lfo/lfo.component';
 import { ModMatrixComponent } from './components/mod-matrix/mod-matrix.component';
 import { OscillatorComponent } from './components/oscillator/oscillator.component';
+import { PatchInfoComponent } from './components/patch-info/patch-info.component';
+import { SequencerComponent } from './components/sequencer/sequencer.component';
 import { VolumeComponent } from './components/volume/volume.component';
 import { KnobComponent } from './knob/knob.component';
 import { OctaveComponent } from './octave/octave.component';
 import { PatchDetailComponent } from './patch-detail/patch-detail.component';
-import { PatchInfoComponent } from './patch-info/patch-info.component';
 import { PatchComponent } from './patch/patch.component';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 import { SliderComponent } from './slider/slider.component';
 import { ToggleComponent } from './toggle/toggle.component';
-import { SequencerComponent } from './components/sequencer/sequencer.component';
 
 
 

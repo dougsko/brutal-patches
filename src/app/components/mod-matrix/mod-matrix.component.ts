@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { jsPlumb } from 'jsplumb';
 
 @Component({
   selector: 'mod-matrix',
@@ -6,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./mod-matrix.component.scss']
 })
 export class ModMatrixComponent implements OnInit {
+  jsPlumbInstance = jsPlumb.getInstance();
 
   constructor() { }
 
