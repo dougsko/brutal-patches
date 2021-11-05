@@ -1,0 +1,20 @@
+<div id="oscillator" class="section">
+    <div class="title"><span>Oscillator</span></div>
+    <div class="column first">
+        <knob [patch]="patch" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true" lFlow="true"></knob>
+        <knob [patch]="patch" name="overtone" label="Overtone" lower="true"></knob>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="ultra_saw" label="Ultrasaw" sFlow="true" lFlow="true"></knob>
+        <knob [patch]="patch" name="saw" label="Saw" lower="true">
+        </knob>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="pulse_width" label="Pulse Width" sFlow="true" lFlow="true"></knob>
+        <knob [patch]="patch" name="square" label="Square" lower="true"></knob>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="metalizer" label="Metalizer" sFlow="true" lFlow="true"></knob>
+        <knob [patch]="patch" name="triangle" label="Triangle" lower="true"></knob>
+    </div>
+</div>

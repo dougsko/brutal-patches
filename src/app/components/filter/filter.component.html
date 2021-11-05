@@ -1,0 +1,25 @@
+<div id="filter" class="section">
+    <div class="title"><span>Filter</span></div>
+    <div class="column first">
+        <knob [patch]="patch" name="cutoff" label="Cutoff">
+        </knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="mode" min="0" max="2" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p>HP</p>
+                <p>BP</p>
+                <p>LP</p>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="resonance" label="Resonance"></knob>
+        <knob [patch]="patch" name="env_amt" label="ENV Amt" lower="true"></knob>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="brute_factor" label="Brute Factor"></knob>
+        <knob [patch]="patch" name="kbd_tracking" label="KBD Tracking" lower="true"></knob>
+    </div>
+</div>

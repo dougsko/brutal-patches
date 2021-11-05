@@ -1,6 +1,6 @@
 <div class="toggle-outer" id="mode">
-        <jqxSlider (onChange)="moveSlider($event)" class="toggle" [height]="77" [width]="32" [min]="min_data"
-            [max]="max_data" [value]="value_data" [orientation]="'vertical'" [showTicks]="false"
+        <jqxSlider (onChange)="moveToggle($event)" class="toggle" [height]="77" [width]="32" [min]="0"
+            [max]="max_data" [value]="patch[name]" [orientation]="'vertical'" [showTicks]="false"
             [showTickLabels]="false" [showButtons]="false" [tooltip]="false" [mode]="'fixed'">
         </jqxSlider>
 </div>

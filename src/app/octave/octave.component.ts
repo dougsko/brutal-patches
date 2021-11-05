@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Patch } from '../interfaces/patch';
 
 @Component({
   selector: 'octave',
@@ -6,20 +7,33 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./octave.component.scss']
 })
 export class OctaveComponent implements OnInit {
-  @Input() value!: string;
-  @Output() newValueEvent = new EventEmitter<any>();
+  @Input() patch!: Patch;
+  @Output() newValueEvent = new EventEmitter<Patch>();
 
-  name!: string;
+  name: string;
+  value!: number;
 
-  constructor() { }
+  constructor() {
+    this.name = "octave";
+   }
 
   ngOnInit(): void {
-    this.name = "octave";
+    this.value = this.patch[this.name];
+    console.log(this.value);
   }
 
-  changeOctave(event: any) {
-    this.value = event.args.value;
-    this.newValueEvent.emit({field: this.name, value: this.value});
+  changeOctave(direction: string) {
+    if (direction === "up") {
+      if (this.value < 5) {
+        this.value += 1
+      }
+    } else if (direction === "down") {
+      if (this.value > 1) {
+        this.value -= 1
+      }
+    }
+    this.patch[this.name] = this.value;
+    this.newValueEvent.emit(this.patch);
   }
 
 }

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Patch } from 'server-src/src/interfaces/patch';
 
 @Component({
   selector: 'knob',
@@ -8,16 +9,17 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class KnobComponent implements OnInit {
   @Input() name!: string;
   @Input() label!: string;
-  @Input() value!: string;
+  @Input() patch!: Patch;
   @Input() sFlow!: string;
   @Input() lFlow!: string;
   @Input() lower!: string;
   @Input() max!: string;
-  @Output() newValueEvent = new EventEmitter<any>();
+  @Output() newValueEvent = new EventEmitter<Patch>();
 
   outerId: string;
   id: string;
-  max_data: number;
+  maxData: number;
+  value!: number;
 
   style: any = {
     stroke: '#dfe3e9',
@@ -55,20 +57,24 @@ export class KnobComponent implements OnInit {
   constructor() {
     this.outerId = "";
     this.id = "";
-    this.max_data = 100;
+    this.maxData = 100;
   }
 
   ngOnInit(): void {
     this.id = this.name;
+    if(this.patch) {
+      this.value = this.patch[this.name];
+    }
     this.outerId = this.name.replace(/_/, "-");
     if (this.max) {
-      this.max_data = parseInt(this.max);
+      this.maxData = parseInt(this.max);
     }
   }
 
   turnKnob(event: any) {
     this.value = event.args.value;
-    this.newValueEvent.emit({field: this.name, value: this.value});
+    this.patch[this.name] = this.value;
+    this.newValueEvent.emit(this.patch)
   }
 
 }

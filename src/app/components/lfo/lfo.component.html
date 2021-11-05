@@ -1,0 +1,28 @@
+<div id="lfo" class="section">
+    <div class="title"><span>LFO</span></div>
+    <div class="column first">
+        <knob [patch]="patch" name="amount" label="Amount"></knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="wave" max="2" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p>Sq</p>
+                <p>Saw</p>
+                <p>Tri</p>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="rate" label="Rate"></knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="sync" max="1" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p class="tall">Seq</p>
+                <p>Free</p>
+            </div>
+        </div>
+    </div>
+</div>

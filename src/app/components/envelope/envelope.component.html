@@ -1,0 +1,27 @@
+<div id="envelope" class="section">
+    <div class="title"><span>Envelope</span></div>
+    <div class="column first">
+        <knob [patch]="patch" name="env_amt_2" label="Env Amt"></knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="vca" max="1" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p class="tall">Env</p>
+                <p>Gate</p>
+            </div>
+        </div>
+    </div>
+    <div class="column first-slide">
+        <slider [patch]="patch" name="attack" lower="true"></slider>
+    </div>
+    <div class="column">
+        <slider [patch]="patch" name="decay" lower="true"></slider>
+    </div>
+    <div class="column">
+        <slider [patch]="patch" name="sustain" lower="true"></slider>
+    </div>
+    <div class="column">
+        <slider [patch]="patch" name="release" lower="true"></slider>
+    </div>
+</div>

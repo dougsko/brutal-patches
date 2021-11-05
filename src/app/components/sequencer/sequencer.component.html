@@ -1,0 +1,19 @@
+<div id="sequencer" class="section">
+    <div class="title"><span>Sequencer</span></div>
+    <div class="column first">
+        <knob [patch]="patch" max="7" name="pattern" label="Pattern"></knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="play" min="0" max="2" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p>Play</p>
+                <p>Off</p>
+                <p>Record</p>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <knob [patch]="patch" name="rate_2" label="Rate"></knob>
+    </div>
+</div>

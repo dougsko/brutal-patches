@@ -1,20 +1,20 @@
 <div id="octave" class="section">
     <div class="title"><span>Octave</span></div>
     <ul id="octave-indicators" class="group">
-        <li class="label" id="neg2">-2<div class="led"></div>
+        <li [ngClass]="{'active': value === 1}" class="label" id="neg2">-2<div class="led"></div>
         </li>
-        <li class="label" id="neg1">-1<div class="led"></div>
+        <li [ngClass]="{'active': value === 2}" class="label" id="neg1">-1<div class="led"></div>
         </li>
-        <li class="label" id="zero">0<div class="led"></div>
+        <li [ngClass]="{'active': value === 3}" class="label" id="zero">0<div class="led"></div>
         </li>
-        <li class="label" id="pos1">1<div class="led"></div>
+        <li [ngClass]="{'active': value === 4}" class="label" id="pos1">1<div class="led"></div>
         </li>
-        <li class="label" id="pos2">2<div class="led"></div>
+        <li [ngClass]="{'active': value === 5}" class="label" id="pos2">2<div class="led"></div>
         </li>
     </ul>
-    <input type="hidden" id="octave-input" value="3">
+    <input [(ngModel)]="value" type="hidden" id="octave-input">
     <ul id="octave-controls" class="group">
-        <li class="prev">Previous</li>
-        <li class="next">Next</li>
+        <li (click)="changeOctave('down')" class="prev">Previous</li>
+        <li (click)="changeOctave('up')" class="next">Next</li>
     </ul>
 </div>

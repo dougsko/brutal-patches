@@ -1,0 +1,15 @@
+<div id="controls" class="section">
+    <div class="title"><span>Controls</span></div>
+    <div class="column single">
+        <knob [patch]="patch" name="glide" label="Glide" lower="true"></knob>
+        <div class="toggle-wrap group">
+            <div class="col first">
+                <toggle [patch]="patch" name="mod_wheel" min="0" max="1" lower="true"></toggle>
+            </div>
+            <div class="col labels">
+                <p class="tall">LFO Amt</p>
+                <p>Cutoff</p>
+            </div>
+        </div>
+    </div>
+</div>

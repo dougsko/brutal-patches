@@ -24,281 +24,40 @@
                     jsPlumb.connect({ source: modSource, target: modTarget, detachable: false });
                 }
             });
-
-            // Set the octave
-            moveIndicator(patch.octave);
-            $("#octave-controls .prev, #octave-controls .next").unbind("click").addClass('disabled');
-            //stop them things from sliding
-            $(".toggle, .slider").slider("option", "disabled", true);
-            //Hide the save button
-            $('#patch-reset').css('display', 'block');
-            $('#patch-save, #intro-copy').hide();
         });
     </script>
-
     <!--
-    <h2>{{patch.title | uppercase}}</h2>
-    <div><span>id: </span>{{patch.id}}</div>
-    <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
-    <div><span>overtone: </span>{{patch.overtone}}</div>
-    <div><span>triangle: </span>{{patch.triangle}}</div>
-    <div><span>pattern: </span>{{patch.pattern}}</div>
-    <div><span>wave: </span>{{patch.wave}}</div>
-    <div>
-        <label for="patch-title">Patch title: </label>
-        <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
-    </div>
--->
-
-    <div id="patch" class="group">
-        <div class="row top group">
-            <h1>MICROBRUTE <br /><span class="grey">Patches</span></h1>
-        </div><!-- /Row-->
-        <div class="row top">
-            <div id="oscillator" class="section">
-                <div class="title"><span>Oscillator</span></div>
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" name="sub_fifth" label="Sub &gt; Fifth" sFlow="true"
-                        lFlow="true" value="{{patch.sub_fifth}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="overtone" label="Overtone" lower="true"
-                        value="{{patch.overtone}}"></knob>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="ultra_saw" label="Ultrasaw" sFlow="true"
-                        lFlow="true" value="{{patch.ultra_saw}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="saw" label="Saw" lower="true"
-                        value="{{patch.saw}}">
-                    </knob>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="pulse_width" label="Pulse Width" sFlow="true"
-                        lFlow="true" value="{{patch.pulse_width}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="square" label="Square" lower="true"
-                        value="{{patch.square}}"></knob>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="metalizer" label="Metalizer" sFlow="true"
-                        lFlow="true" value="{{patch.metalizer}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="triangle" label="Triangle" lower="true"
-                        value="{{patch.triangle}}"></knob>
-                </div>
-            </div>
-            <!-- / Oscillator Section -->
-            <!--Filter Section -->
-            <div id="filter" class="section">
-                <div class="title"><span>Filter</span></div>
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" name="cutoff" label="Cutoff" value="{{patch.cutoff}}">
-                    </knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="mode" min="0" max="2" lower="true"
-                                value="{{patch.mode}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p>HP</p>
-                            <p>BP</p>
-                            <p>LP</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="resonance" label="Resonance"
-                        value="{{patch.resonance}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="env_amt" label="ENV Amt" lower="true"
-                        value="{{patch.env_amt}}"></knob>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="brute_factor" label="Brute Factor"
-                        value="{{patch.brute_factor}}"></knob>
-                    <knob (newValueEvent)="updateInfo($event)" name="kbd_tracking" label="KBD Tracking" lower="true"
-                        value="{{patch.kbd_tracking}}"></knob>
-                </div>
-            </div>
-            <!-- /Filter Section -->
-            <!-- Mod Matrix-->
-            <div id="mod-matrix" class="section">
-                <div class="title"><span>Mod Matrix</span></div>
-                <div id="cv-out" class="cv">
-                    <p>CV Out</p>
-                </div>
-                <div id="cv-in" class="cv">
-                    <p>CV In</p>
-                </div>
-                <div id="patch-bay">
-                    <div class="column first">
-                        <div class="mod-outer">
-                            <p class="label lower">ENV</p>
-                        </div>
-                        <div class="mod-outer">
-                            <p class="label lower">LFO</p>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="mod-outer">
-                            <p class="label lower">Metal</p>
-                        </div>
-                        <div class="mod-outer">
-                            <p class="label lower">Pitch</p>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="mod-outer">
-                            <p class="label lower">Saw</p>
-                        </div>
-                        <div class="mod-outer">
-                            <p class="label lower">Filter</p>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <div class="mod-outer">
-                            <p class="label lower">Sub</p>
-                        </div>
-                        <div class="mod-outer">
-                            <p class="label lower">PWM</p>
-                        </div>
-                    </div>
-                    <div class="mod" id="mod-env"></div>
-                    <div class="mod" id="mod-lfo"></div>
-                    <div class="mod" id="mod-metal"></div>
-                    <div class="mod" id="mod-pitch"></div>
-                    <div class="mod" id="mod-saw"></div>
-                    <div class="mod" id="mod-filter"></div>
-                    <div class="mod" id="mod-sub"></div>
-                    <div class="mod" id="mod-pwm"></div>
-                </div>
-            </div>
-            <input type="hidden" id="modmatrix-input">
-            <!-- /Mod Matrix-->
-            <octave value="3"></octave>
-            <!-- /Octave -->
-            <!-- Volume-->
-            <div id="volume-region">
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" name="volume" label="Master Volume"
-                        value="{{patch.volume}}">
-                    </knob>
-                </div>
-            </div>
-            <!-- /Volume-->
-        </div><!-- /Row-->
-        <div class="row">
-            <!-- Controls-->
-            <div id="controls" class="section">
-                <div class="title"><span>Controls</span></div>
-                <div class="column single">
-                    <knob (newValueEvent)="updateInfo($event)" name="glide" label="Glide" lower="true"
-                        value="{{patch.glide}}"></knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="mod_wheel" min="0" max="1" lower="true"
-                                value="{{patch.mod_wheel}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p class="tall">LFO Amt</p>
-                            <p>Cutoff</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- /Controls-->
-            <!-- LFO-->
-            <div id="lfo" class="section">
-                <div class="title"><span>LFO</span></div>
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" name="amount" label="Amount" value="{{patch.amount}}">
-                    </knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="wave" min="0" max="2" lower="true"
-                                value="{{patch.wave}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p>Sq</p>
-                            <p>Saw</p>
-                            <p>Tri</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="rate" label="Rate" value="{{patch.rate}}"></knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="sync" min="0" max="1" lower="true"
-                                value="{{patch.sync}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p class="tall">Seq</p>
-                            <p>Free</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- /LFO-->
-            <!-- Envelope-->
-            <div id="envelope" class="section">
-                <div class="title"><span>Envelope</span></div>
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" name="env_amt_2" label="Env Amt"
-                        value="{{patch.env_amt_2}}">
-                    </knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="vca" min="0" max="1" lower="true"
-                                value="{{patch.vca}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p class="tall">Env</p>
-                            <p>Gate</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="column first-slide">
-                    <slider (newValueEvent)="updateInfo($event)" name="attack" min="0" max="100" lower="true"
-                        value="{{patch.attack}}"></slider>
-                </div>
-                <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="decay" min="0" max="100" lower="true"
-                        value="{{patch.decay}}"></slider>
-                </div>
-                <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="sustain" min="0" max="100" lower="true"
-                        value="{{patch.sustain}}"></slider>
-                </div>
-                <div class="column">
-                    <slider (newValueEvent)="updateInfo($event)" name="release" min="0" max="100" lower="true"
-                        value="{{patch.release}}"></slider>
-                </div>
-            </div>
-            <!-- /Envelope-->
-            <!-- LFO-->
-            <div id="sequencer" class="section">
-                <div class="title"><span>Sequencer</span></div>
-                <div class="column first">
-                    <knob (newValueEvent)="updateInfo($event)" max="7" name="pattern" label="Pattern"
-                        value="{{patch.pattern}}"></knob>
-                    <div class="toggle-wrap group">
-                        <div class="col first">
-                            <toggle (newValueEvent)="updateInfo($event)" name="play" min="0" max="2" lower="true"
-                                value="{{patch.play}}"></toggle>
-                        </div>
-                        <div class="col labels">
-                            <p>Play</p>
-                            <p>Off</p>
-                            <p>Record</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="column">
-                    <knob (newValueEvent)="updateInfo($event)" name="rate_2" label="Rate" value="{{patch.rate_2}}">
-                    </knob>
-                </div>
-            </div>
-            <!-- /LFO-->
-        </div><!-- /Row-->
-    </div>
-    <!-- /Patch-->
-    <patch-info (patchInfoEvent)="updateInfo($event)" title="{{patch.title}}" description="{{patch.description}}"
-        tags={{patch.tags}}></patch-info>
-
+<h2>{{patch.title | uppercase}}</h2>
+<div><span>id: </span>{{patch.id}}</div>
+<div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
+<div><span>cutoff: </span>{{patch.cutoff}}</div>
+<div><span>mode: </span>{{patch.mode}}</div>
+<div><span>octave: </span>{{patch.octave}}</div>
+<div><span>glide: </span>{{patch.glide}}</div>
+<div><span>attack: </span>{{patch.attack}}</div>
+<div><span>amount: </span>{{patch.amount}}</div>
+<div><span>pattern: </span>{{patch.pattern}}</div>
+<div>
+    <label for="patch-title">Patch title: </label>
+    <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
 </div>
+-->
+<div id="patch" class="group">
+    <div class="row top group">
+        <h1>MICROBRUTE <br /><span class="grey">Patches</span></h1>
+    </div>
+    <div class="row top">
+        <oscillator [patch]="patch"></oscillator>
+        <filter [patch]="patch"></filter>
+        <mod-matrix></mod-matrix>
+        <octave [patch]="patch"></octave>
+        <volume [patch]="patch"></volume>
+    </div>
+    <div class="row">
+        <controls [patch]="patch"></controls>
+        <lfo [patch]="patch"></lfo>
+        <envelope [patch]="patch"></envelope>
+        <sequencer [patch]="patch"></sequencer>
+    </div>
+</div>
+<patch-info [patch]="patch" ></patch-info>

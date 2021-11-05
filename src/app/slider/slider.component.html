@@ -1,11 +1,11 @@
 <div class="slider-wrap">
     <div class="slider-outer" id="attack">
         <div class="slider">
-            <jqxSlider (onChange)="moveSlider($event)" class="slider-input" [height]="177" [width]="50" [min]="min_data"
-                [max]="max_data" [value]="value_data" [step]="1" [orientation]="'vertical'" [showTicks]="false"
+            <jqxSlider (onChange)="moveSlider($event)" class="slider-input" [height]="177" [width]="50" [min]="0"
+                [max]="100" [value]="patch[name]" [step]="1" [orientation]="'vertical'" [showTicks]="false"
                 [showTickLabels]="false" [showButtons]="false" [tooltip]="false" [mode]="'fixed'">
             </jqxSlider>
         </div>
     </div>
-    <p [ngClass]="{'lower': lower === 'true'}" class="label">{{label}}</p>
+    <p class="lower label">{{label}}</p>
 </div>

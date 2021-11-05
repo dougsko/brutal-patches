@@ -1,5 +1,5 @@
 <div id="meta-info">
-    <input (ngModelChange)="updateValue('title', title)" size="50" style="border: none;" id="title-text" [(ngModel)]="title" placeholder="{{title}}">
-   <p><textarea (ngModelChange)="updateValue('description', description)" rows="3" cols="100" style="border: none;" id="description-text" [(ngModel)]="description" placeholder="{{description}}"></textarea></p>
-    <p><input (ngModelChange)="updateValue('tags', tags)" style="border: none;" id="tag-text" [(ngModel)]="tags" placeholder="{{tags}}"></p>
+    <input size="50" style="border: none;" id="title-text" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
+   <p><textarea rows="3" cols="100" style="border: none;" id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea></p>
+    <p><input style="border: none;" id="tag-text" [(ngModel)]="patch.tags" placeholder="{{patch.tags}}"></p>
 </div>

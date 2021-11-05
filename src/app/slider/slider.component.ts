@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Patch } from 'server-src/src/interfaces/patch';
 
 @Component({
   selector: 'slider',
@@ -7,35 +8,16 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class SliderComponent implements OnInit {
   @Input() name!: string;
-  @Input() min!: string;
-  @Input() max!: string;
-  @Input() value!: string;
-  @Input() lower!: string;
-  @Output() newValueEvent = new EventEmitter<any>();
+  @Input() patch!: Patch;
+  @Output() newValueEvent = new EventEmitter<Patch>();
 
   label!: string;
-  value_data!: number;
-  min_data!: number;
-  max_data!: number;
 
   constructor() { }
 
   ngOnInit(): void {
-    // this.label = this.name.charAt(0).toUpperCase() + this.name.slice(1);
     this.label = this.formatName(this.name);
-
-    if (this.value) {
-      this.value_data = parseInt(this.value);
-    }
-
-    if(this.min) {
-      this.min_data = parseInt(this.min);
-    }
-  
-    if(this.max) {
-      this.max_data = parseInt(this.max);
-    }
-
+    
   }
 
   formatName(name: string): string {
@@ -50,8 +32,8 @@ export class SliderComponent implements OnInit {
   }
 
   moveSlider(event: any) {
-    this.value = event.args.value;
-    this.newValueEvent.emit({field: this.name, value: this.value});
+    this.patch[this.name] = event.args.value;
+    this.newValueEvent.emit(this.patch);
   }
 
 }

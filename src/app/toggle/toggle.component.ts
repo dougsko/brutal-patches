@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Patch } from '../interfaces/patch';
 
 @Component({
   selector: 'toggle',
@@ -7,35 +8,22 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class ToggleComponent implements OnInit {
   @Input() name!: string;
-  @Input() min!: string;
   @Input() max!: string;
-  @Input() value!: string;
+  @Input() patch!: Patch;
   @Input() lower!: string;
-  @Output() newValueEvent = new EventEmitter<any>();
+  @Output() newValueEvent = new EventEmitter<Patch>();
 
   label!: string;
-  value_data!: number;
+  //value!: number;
   min_data!: number;
   max_data!: number;
 
   constructor() { }
 
   ngOnInit(): void {
-    // this.label = this.name.charAt(0).toUpperCase() + this.name.slice(1);
     this.label = this.formatName(this.name);
 
-    if (this.value) {
-      this.value_data = parseInt(this.value);
-    }
-
-    if(this.min) {
-      this.min_data = parseInt(this.min);
-    }
-  
-    if(this.max) {
-      this.max_data = parseInt(this.max);
-    }
-
+    this.max_data = parseInt(this.max);
   }
 
   formatName(name: string): string {
@@ -49,9 +37,10 @@ export class ToggleComponent implements OnInit {
     return words.join(" ");
   }
 
-  moveSlider(event: any) {
-    this.value = event.args.value;
-    this.newValueEvent.emit({field: this.name, value: this.value});
+  moveToggle(event: any) {
+    //this.value = event.args.value;
+    this.patch[this.name] = event.args.value; //this.value;
+    this.newValueEvent.emit(this.patch);
   }
 
 }

@@ -40,6 +40,7 @@ $(document).ready(function () {
     //Submit button stuff
     var request;
     //Octave Config
+    /*
     var currentOctave = 3;
     moveIndicator(currentOctave);
     $('#octave-controls .next').click(function(){
@@ -54,6 +55,7 @@ $(document).ready(function () {
         }
         moveIndicator(currentOctave);
     });
+    */
 
     // bind to the submit event of our form
     $("#patch-config").submit(function (event) {
