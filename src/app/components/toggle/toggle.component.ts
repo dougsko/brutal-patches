@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Patch } from '../interfaces/patch';
+import { Patch } from '../../interfaces/patch';
 
 @Component({
   selector: 'toggle',

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Patch } from '../interfaces/patch';
+import { Patch } from '../../interfaces/patch';
 
 @Component({
   selector: 'octave',
@@ -19,7 +19,6 @@ export class OctaveComponent implements OnInit {
 
   ngOnInit(): void {
     this.value = this.patch[this.name];
-    console.log(this.value);
   }
 
   changeOctave(direction: string) {
