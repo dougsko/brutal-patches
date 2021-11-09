@@ -41,7 +41,6 @@
               "node_modules/jquery-slider/src/js/tmpl.js",
               "node_modules/jquery-slider/dist/jquery.slider.min.js",
               "node_modules/jsplumb/dist/js/jsplumb.js",
-              "src/assets/brute.js"
             ]
           },
           "configurations": {
