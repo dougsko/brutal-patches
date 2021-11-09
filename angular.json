@@ -36,7 +36,6 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "jquery-ui.js",
               "node_modules/jquery-knob/dist/jquery.knob.min.js",
               "node_modules/jquery-slider/src/js/tmpl.js",
               "node_modules/jquery-slider/dist/jquery.slider.min.js",
