@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ConnectParams, Defaults, EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
+import { Defaults, EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
@@ -14,8 +14,6 @@ export class ModMatrixComponent implements OnInit, OnDestroy {
   jsPlumbInstance!: jsPlumbInstance;
   modInput!: string;
 
-  
-  
   constructor() { }
 
   ngOnInit(): void {
@@ -31,16 +29,21 @@ export class ModMatrixComponent implements OnInit, OnDestroy {
 
     this.jsPlumbInstance.bind("click", (conn) => {
       this.jsPlumbInstance.deleteConnection(conn);
-    })
+    });
 
-    let mod1 = this.jsPlumbInstance.addEndpoint("mod-env", this.endpointOptions)
-    let mod2 = this.jsPlumbInstance.addEndpoint("mod-lfo", this.endpointOptions)
-    let mod3 = this.jsPlumbInstance.addEndpoint("mod-metal", this.endpointOptions)
-    let mod4 = this.jsPlumbInstance.addEndpoint("mod-pitch", this.endpointOptions)
-    let mod5 = this.jsPlumbInstance.addEndpoint("mod-saw", this.endpointOptions)
-    let mod6 = this.jsPlumbInstance.addEndpoint("mod-filter", this.endpointOptions)
-    let mod7 = this.jsPlumbInstance.addEndpoint("mod-sub", this.endpointOptions)
-    let mod8 = this.jsPlumbInstance.addEndpoint("mod-pwm", this.endpointOptions);
+    this.jsPlumbInstance.bind("connection", (conn) => {
+      this.doConnections();
+      this.newValueEvent.emit(this.patch);
+    });
+
+    this.jsPlumbInstance.addEndpoint("mod-env", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-lfo", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-metal", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-pitch", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-saw", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-filter", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-sub", this.endpointOptions)
+    this.jsPlumbInstance.addEndpoint("mod-pwm", this.endpointOptions);
 
     let connectionList = this.patch.modmatrix;
     for (let key in connectionList) {
@@ -48,27 +51,30 @@ export class ModMatrixComponent implements OnInit, OnDestroy {
       connections[key] = {};
       connections[key]['source'] = selectedConnection.source;
       connections[key]['target'] = selectedConnection.target;
-      let connectParam: ConnectParams = {
-        source: selectedConnection.source, 
-        target: selectedConnection.target
-      };
-      this.jsPlumbInstance.connect(connectParam);
+      this.jsPlumbInstance.connect({source: selectedConnection.source, target: selectedConnection.target});
     }
     this.modInput = JSON.stringify(connections);
-    console.log(this.modInput);
-
-
   }
 
   ngOnDestroy(): void {
     this.jsPlumbInstance.cleanupListeners();
   }
 
-  updateInfo(metaInfo: any) {
-    if (this.patch) {
-      this.patch[metaInfo.field] = metaInfo.value;
+  doConnections(initial?: any) {
+    let connectionList: any  = this.patch.modmatrix;
+    if(!initial) {
+      connectionList = this.jsPlumbInstance.getAllConnections();
     }
-    this.newValueEvent.emit(this.patch);
+    let connections: any = [];
+    for(var key in connectionList) {
+        var selectedConnection = connectionList[key];
+        connections[key]={};
+        connections[key]['source'] = selectedConnection.sourceId;
+        connections[key]['target'] = selectedConnection.targetId;
+    }
+    let modString = JSON.stringify(connections);
+    this.modInput = modString;
+    this.patch.modmatrix = connections;
   }
 
 }
