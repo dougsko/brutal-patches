@@ -23,10 +23,7 @@ export class PatchInfoComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.patch.tags = ["foo", "bar"];
-    /* if(!this.patch.tags) {
-      this.patch.tags = [];
-    } */
+    
   }
 
   updateInfo(metaInfo: any) {
@@ -36,12 +33,16 @@ export class PatchInfoComponent implements OnInit {
   }
 
   add(event: MatChipInputEvent): void {
+    if(!this.patch.tags) {
+      this.patch.tags = [];
+    }
+    
     const value = (event.value || '').trim();
     // Add our tag
-    if (value && this.patch.tags){
+    if (value){
       this.patch.tags.push(value);
     }
-    console.log(this.patch)
+    console.log(this.patch.tags)
 
     // Clear the input value
     event.chipInput!.clear();
