@@ -2,4 +2,23 @@
     <input size="50" style="border: none;" id="title-text" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
    <p><textarea rows="3" cols="100" style="border: none;" id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea></p>
     <p><input style="border: none;" id="tag-text" [(ngModel)]="patch.tags" placeholder="{{patch.tags}}"></p>
+
+    <mat-form-field class="tag-list" appearance="fill">
+      <mat-label>Favorite Fruits</mat-label>
+      <mat-chip-list #chipList aria-label="Fruit selection">
+        <mat-chip *ngFor="let tag of patch.tags" [selectable]="selectable"
+                 [removable]="removable" (removed)="remove(tag)">
+          {{tag}}
+          <button matChipRemove *ngIf="removable">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input placeholder="New fruit..."
+               [matChipInputFor]="chipList"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+               [matChipInputAddOnBlur]="addOnBlur"
+               (matChipInputTokenEnd)="add($event)">
+      </mat-chip-list>
+    </mat-form-field>
+    
 </div>

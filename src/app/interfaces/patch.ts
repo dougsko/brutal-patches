@@ -37,7 +37,7 @@ export interface Patch {
     created_at: string;
     updated_at: string;
     average_rating: string;
-    tags?: string;
+    tags?: string[];
     [key: string]: any;
 }
 
