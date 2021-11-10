@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Patch } from '../../interfaces/patch';
 
 @Component({
@@ -8,7 +8,6 @@ import { Patch } from '../../interfaces/patch';
 })
 export class OctaveComponent implements OnInit {
   @Input() patch!: Patch;
-  @Output() newValueEvent = new EventEmitter<Patch>();
 
   name: string;
   value!: number;
@@ -32,7 +31,6 @@ export class OctaveComponent implements OnInit {
       }
     }
     this.patch[this.name] = this.value;
-    this.newValueEvent.emit(this.patch);
   }
 
 }

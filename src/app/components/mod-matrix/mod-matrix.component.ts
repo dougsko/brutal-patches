@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Defaults, EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
 import { Patch } from 'src/app/interfaces/patch';
 
@@ -9,7 +9,6 @@ import { Patch } from 'src/app/interfaces/patch';
 })
 export class ModMatrixComponent implements OnInit, OnDestroy {
   @Input() patch!: Patch;
-  @Output() newValueEvent = new EventEmitter<Patch>();
   endpointOptions: EndpointOptions = { isSource: true, isTarget: true, paintStyle: { fill: "transparent" }, maxConnections: 3 };
   jsPlumbInstance!: jsPlumbInstance;
   modInput!: string;
@@ -33,7 +32,6 @@ export class ModMatrixComponent implements OnInit, OnDestroy {
 
     this.jsPlumbInstance.bind("connection", (conn) => {
       this.doConnections();
-      this.newValueEvent.emit(this.patch);
     });
 
     this.jsPlumbInstance.addEndpoint("mod-env", this.endpointOptions)

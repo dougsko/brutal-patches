@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Patch } from 'server-src/src/interfaces/patch';
 
 @Component({
@@ -14,7 +14,6 @@ export class KnobComponent implements OnInit {
   @Input() lFlow!: string;
   @Input() lower!: string;
   @Input() max!: string;
-  @Output() newValueEvent = new EventEmitter<Patch>();
 
   outerId: string;
   id: string;
@@ -74,7 +73,6 @@ export class KnobComponent implements OnInit {
   turnKnob(event: any) {
     this.value = event.args.value;
     this.patch[this.name] = this.value;
-    this.newValueEvent.emit(this.patch)
   }
 
 }

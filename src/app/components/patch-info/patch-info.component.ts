@@ -1,5 +1,5 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Patch } from '../../interfaces/patch';
 
@@ -13,8 +13,6 @@ export class PatchInfoComponent implements OnInit {
   @Input() title!: string;
   @Input() description!: string;
   @Input() tags!: string;
-  @Output() patchInfoEvent = new EventEmitter<any>();
-  @Output() newValueEvent = new EventEmitter<Patch>();
 
   selectable = true;
   removable = true;
@@ -28,24 +26,20 @@ export class PatchInfoComponent implements OnInit {
     this.patch.tags = ["foo", "bar"];
   }
 
-  updateValue(fieldName: string, text: string) {
-    this.patchInfoEvent.emit({field: fieldName, value: text});
-  }
-
   updateInfo(metaInfo: any) {
     if (this.patch) {
       this.patch[metaInfo.field] = metaInfo.value;
     }
-    this.newValueEvent.emit(this.patch);
   }
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
     // Add our fruit
     if (value) {
       this.patch.tags!.push(value);
     }
+    console.log(this.patch.tags)
+
 
     // Clear the input value
     event.chipInput!.clear();
