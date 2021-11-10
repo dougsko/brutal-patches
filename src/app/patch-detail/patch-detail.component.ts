@@ -1,9 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Patch } from '../interfaces/patch';
 import { PatchService } from '../services/patch.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'patch-detail',
@@ -33,13 +33,6 @@ export class PatchDetailComponent implements OnInit, OnDestroy {
     this.patchSub = this.patchService.getPatch(id).subscribe( patch => {
       this.patch = patch
     });
-  }
-
-  updateInfo(metaInfo: any) {
-    // console.log(metaInfo)
-    if (this.patch) {
-      this.patch[metaInfo.field] = metaInfo.value;
-    }
   }
 
 }
