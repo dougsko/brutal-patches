@@ -10,9 +10,6 @@ import { Patch } from '../../interfaces/patch';
 })
 export class PatchInfoComponent implements OnInit {
   @Input() patch!: Patch;
-  @Input() title!: string;
-  @Input() description!: string;
-  @Input() tags!: string;
 
   selectable = true;
   removable = true;
