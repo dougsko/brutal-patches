@@ -26,6 +26,7 @@ import { SliderComponent } from './components/slider/slider.component';
 import { ToggleComponent } from './components/toggle/toggle.component';
 import { VolumeComponent } from './components/volume/volume.component';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
+import { PatchComponent } from './components/patch/patch.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
     ControlsComponent,
     LfoComponent,
     EnvelopeComponent,
-    SequencerComponent
+    SequencerComponent,
+    PatchComponent
   ],
   imports: [
     BrowserModule,

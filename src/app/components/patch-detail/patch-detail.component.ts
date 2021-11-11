@@ -1,38 +1,21 @@
-import { Location } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Patch } from 'server-src/dist/interfaces/patch';
-import { PatchService } from '../../services/patch.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'patch-detail',
   templateUrl: './patch-detail.component.html',
   styleUrls: ['./patch-detail.component.scss']
 })
-export class PatchDetailComponent implements OnInit, OnDestroy {
-  patch!: Patch;
-  private patchSub!: Subscription;
+export class PatchDetailComponent implements OnInit {
+  @Input() patch!: Patch;
 
-  constructor(
-    private route: ActivatedRoute,
-    private patchService: PatchService,
-    private location: Location
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.getPatch();
   }
 
-  ngOnDestroy(): void {
-    this.patchSub.unsubscribe();
+  savePatch(): void {
+    console.log("saving patch");
+    console.log(this.patch);
   }
-
-  getPatch(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.patchSub = this.patchService.getPatch(id).subscribe( patch => {
-      this.patch = patch
-    });
-  }
-
 }

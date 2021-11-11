@@ -39,14 +39,13 @@ export class PatchInfoComponent implements OnInit {
     if (value){
       this.patch.tags.push(value);
     }
-    console.log(this.patch.tags)
 
     // Clear the input value
     event.chipInput!.clear();
   }
 
-  remove(fruit: string): void {
-    const index = this.patch.tags!.indexOf(fruit);
+  remove(tag: string): void {
+    const index = this.patch.tags!.indexOf(tag);
 
     if (index >= 0) {
       this.patch.tags!.splice(index, 1);

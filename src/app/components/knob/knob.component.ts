@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Patch } from 'server-src/src/interfaces/patch';
+import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'knob',
