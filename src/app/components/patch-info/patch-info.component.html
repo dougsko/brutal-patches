@@ -7,7 +7,7 @@
       <!-- <mat-label>Tags</mat-label> -->
       <mat-chip-list #chipList>
         <mat-chip *ngFor="let tag of patch.tags" [selectable]="selectable"
-                 [removable]="removable" (removed)="remove(tag)">
+                 [removable]="removable" (removed)="remove(tag)" class="tag">
           {{tag}}
           <button matChipRemove *ngIf="removable">
             <mat-icon>cancel</mat-icon>

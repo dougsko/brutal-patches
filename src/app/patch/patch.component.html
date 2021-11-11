@@ -1,6 +1,8 @@
-<h2>Patches</h2>
-<ul>
-    <li *ngFor="let patch of patches">
-        <a routerLink="/patches/{{patch.id}}">{{patch.title}}</a>
-    </li>
-</ul>
+<div class="row section">
+    <h2>Patches</h2>
+    <ul>
+        <li *ngFor="let patch of patches">
+            <a routerLink="/patches/{{patch.id}}">{{patch.title}}</a>
+        </li>
+    </ul>
+</div>

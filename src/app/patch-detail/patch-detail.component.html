@@ -27,7 +27,7 @@
         });
     </script> -->
     
-<h2>{{patch.title | uppercase}}</h2>
+<!-- <h2>{{patch.title | uppercase}}</h2>
 <div><span>id: </span>{{patch.id}}</div>
 <div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
 <div><span>cutoff: </span>{{patch.cutoff}}</div>
@@ -42,12 +42,12 @@
 <div>
     <label for="patch-title">Patch title: </label>
     <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
-</div>
+</div> -->
 
 <div id="patch" class="group">
-    <div class="row top group">
+    <!-- <div class="row top group">
         <h1>MICROBRUTE <br /><span class="grey">Patches</span></h1>
-    </div>
+    </div> -->
     <div class="row top">
         <oscillator [patch]="patch"></oscillator>
         <filter [patch]="patch"></filter>

@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Patch } from '../interfaces/patch';
+import { Patch } from 'server-src/dist/interfaces/patch';
 import { PatchService } from '../services/patch.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { PatchService } from '../services/patch.service';
   styleUrls: ['./patch-detail.component.scss']
 })
 export class PatchDetailComponent implements OnInit, OnDestroy {
-  @Input() patch?: Patch;
+  patch!: Patch;
   private patchSub!: Subscription;
 
   constructor(
