@@ -1,7 +1,7 @@
-import { HttpClient, HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators'
+import { catchError } from 'rxjs/operators';
 import { Patch } from '../interfaces/patch';
 
 
@@ -28,6 +28,12 @@ export class PatchService {
         return throwError(err);
       })
     );
+  }
+
+  savePatch(patch: Patch): Observable<any> {
+    console.log("Saving patch: ")
+    console.log(patch);
+    return of("ok");
   }
 }
 

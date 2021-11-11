@@ -1,66 +1,19 @@
 <div *ngIf="patch">
-
-    <!-- <script type="text/javascript">
-        $(document).ready(function () {
-            //Get all the previous connections
-            var prevConnections = patch.modmatrix != nil ? patch.modmatrix.html_safe : '[]';
-            //and add them to the mod matrix
-            jsPlumb.ready(function () {
-                //remove all the old endpoints
-                jsPlumb.deleteEveryEndpoint();
-                //unbind the click to detach
-                jsPlumb.unbind("click");
-                jsPlumb.Defaults.Endpoint = "Dot";
-                jsPlumb.Defaults.EndpointStyle = { fillStyle: "transparent" };
-                jsPlumb.Defaults.Anchor = [.48, .15, 0, 0];
-                jsPlumb.Defaults.PaintStyle = { lineWidth: 3, strokeStyle: "#ffa500" };
-                jsPlumb.Defaults.endpointPaintStyle = { fillStyle: "blue", outlineColor: "black", outlineWidth: 1 };
-
-                for (var key in prevConnections) {
-                    var selectedConnection = prevConnections[key];
-                    var modSource = selectedConnection.source;
-                    var modTarget = selectedConnection.target;
-                    //make connection
-                    jsPlumb.connect({ source: modSource, target: modTarget, detachable: false });
-                }
-            });
-        });
-    </script> -->
-    
-<!-- <h2>{{patch.title | uppercase}}</h2>
-<div><span>id: </span>{{patch.id}}</div>
-<div><span>sub_fifth: </span>{{patch.sub_fifth}}</div>
-<div><span>cutoff: </span>{{patch.cutoff}}</div>
-<div><span>mode: </span>{{patch.mode}}</div>
-<div><span>octave: </span>{{patch.octave}}</div>
-<div><span>glide: </span>{{patch.glide}}</div>
-<div><span>attack: </span>{{patch.attack}}</div>
-<div><span>amount: </span>{{patch.amount}}</div>
-<div><span>pattern: </span>{{patch.pattern}}</div>
-<div><span>mod-matrix: </span>{{patch.modmatrix}}</div>
-<div><span>tags: </span>{{patch.tags}}</div>
-<div>
-    <label for="patch-title">Patch title: </label>
-    <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
-</div> -->
-
-<div id="patch" class="group">
-    <!-- <div class="row top group">
-        <h1>MICROBRUTE <br /><span class="grey">Patches</span></h1>
-    </div> -->
-    <div class="row top">
-        <oscillator [patch]="patch"></oscillator>
-        <filter [patch]="patch"></filter>
-        <mod-matrix [patch]="patch"></mod-matrix>
-        <octave [patch]="patch"></octave>
-        <volume [patch]="patch"></volume>
+    <div id="patch" class="group">
+        <div class="row top">
+            <oscillator [patch]="patch"></oscillator>
+            <filter [patch]="patch"></filter>
+            <mod-matrix [patch]="patch"></mod-matrix>
+            <octave [patch]="patch"></octave>
+            <volume [patch]="patch"></volume>
+        </div>
+        <div class="row">
+            <controls [patch]="patch"></controls>
+            <lfo [patch]="patch"></lfo>
+            <envelope [patch]="patch"></envelope>
+            <sequencer [patch]="patch"></sequencer>
+        </div>
     </div>
-    <div class="row">
-        <controls [patch]="patch"></controls>
-        <lfo [patch]="patch"></lfo>
-        <envelope [patch]="patch"></envelope>
-        <sequencer [patch]="patch"></sequencer>
-    </div>
+    <patch-info [patch]="patch"></patch-info>
+    <button (click)="savePatch()" class="button">Save</button>
 </div>
-<patch-info [patch]="patch"></patch-info>
-
