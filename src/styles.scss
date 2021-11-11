@@ -659,8 +659,18 @@ h2{
 }
 .tag {
     color: #fd9901;
+    font-family: monospace;
     float: right;
 }
+
+.mat-chip-list-wrapper .mat-standard-chip {
+   border-style: solid;
+   border-width: thin;
+   border-color: #aaa;
+   fill: #aaa
+}
+
+
 a.title-text {
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
