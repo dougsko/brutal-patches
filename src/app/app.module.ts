@@ -18,19 +18,19 @@ import { LfoComponent } from './components/lfo/lfo.component';
 import { ModMatrixComponent } from './components/mod-matrix/mod-matrix.component';
 import { OctaveComponent } from './components/octave/octave.component';
 import { OscillatorComponent } from './components/oscillator/oscillator.component';
+import { PatchDetailComponent } from './components/patch-detail/patch-detail.component';
 import { PatchInfoComponent } from './components/patch-info/patch-info.component';
+import { PatchListComponent } from './components/patch-list/patch-list.component';
 import { SequencerComponent } from './components/sequencer/sequencer.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { ToggleComponent } from './components/toggle/toggle.component';
 import { VolumeComponent } from './components/volume/volume.component';
-import { PatchDetailComponent } from './patch-detail/patch-detail.component';
-import { PatchComponent } from './patch/patch.component';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PatchComponent,
+    PatchListComponent,
     PatchDetailComponent,
     KnobComponent,
     PatchInfoComponent,
