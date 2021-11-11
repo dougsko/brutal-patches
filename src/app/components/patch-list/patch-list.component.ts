@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Patch } from '../interfaces/patch';
-import { PatchService } from '../services/patch.service';
+import { Patch } from '../../interfaces/patch';
+import { PatchService } from '../../services/patch.service';
 
 @Component({
-  selector: 'patch',
-  templateUrl: './patch.component.html',
-  styleUrls: ['./patch.component.scss']
+  selector: 'patch-list',
+  templateUrl: './patch-list.component.html',
+  styleUrls: ['./patch-list.component.scss']
 })
-export class PatchComponent implements OnInit, OnDestroy {
+export class PatchListComponent implements OnInit, OnDestroy {
   patches: Patch[] = [];
   selectedPatch?: Patch;
   private patchSub!: Subscription;

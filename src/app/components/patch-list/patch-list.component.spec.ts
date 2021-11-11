@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PatchListComponent } from './patch-list.component';
 
-import { PatchComponent } from './patch.component';
 
 describe('PatchComponent', () => {
-  let component: PatchComponent;
-  let fixture: ComponentFixture<PatchComponent>;
+  let component: PatchListComponent;
+  let fixture: ComponentFixture<PatchListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PatchComponent ]
+      declarations: [ PatchListComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PatchComponent);
+    fixture = TestBed.createComponent(PatchListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
