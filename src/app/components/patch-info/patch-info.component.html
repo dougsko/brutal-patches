@@ -8,7 +8,7 @@
                  [removable]="removable" (removed)="remove(tag)" class="tag">
           {{tag}}
           <button matChipRemove *ngIf="removable">
-            <mat-icon class="grey">cancel</mat-icon>
+            <mat-icon class="grey">highlight_off</mat-icon>
           </button>
         </mat-chip>
         <input placeholder="New tag..."
