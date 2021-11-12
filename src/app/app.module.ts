@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { jqxKnobModule } from 'jqwidgets-ng/jqxknob';
@@ -21,12 +22,13 @@ import { OscillatorComponent } from './components/oscillator/oscillator.componen
 import { PatchDetailComponent } from './components/patch-detail/patch-detail.component';
 import { PatchInfoComponent } from './components/patch-info/patch-info.component';
 import { PatchListComponent } from './components/patch-list/patch-list.component';
+import { PatchComponent } from './components/patch/patch.component';
 import { SequencerComponent } from './components/sequencer/sequencer.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { ToggleComponent } from './components/toggle/toggle.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VolumeComponent } from './components/volume/volume.component';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
-import { PatchComponent } from './components/patch/patch.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,8 @@ import { PatchComponent } from './components/patch/patch.component';
     LfoComponent,
     EnvelopeComponent,
     SequencerComponent,
-    PatchComponent
+    PatchComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,
@@ -58,7 +61,8 @@ import { PatchComponent } from './components/patch/patch.component';
     BrowserAnimationsModule,
     MatChipsModule,
     MatFormFieldModule,
-    MatIconModule
+    MatIconModule,
+    MatToolbarModule
   ],
   providers: [
     {
