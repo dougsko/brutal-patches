@@ -41,7 +41,6 @@ export class PatchComponent implements OnInit {
   }
   
   savePatch(): void {
-    console.log("SJKDHSFKJHFKJDHF")
     this.saveSub = this.patchService.savePatch(this.patch).subscribe( res => {
       console.log(res);
     });
