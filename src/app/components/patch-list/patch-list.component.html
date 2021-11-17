@@ -3,7 +3,7 @@
 
     <ul>
         <li *ngFor="let patch of visiblePatches">
-            <a routerLink="/patches/{{patch.id}}">{{patch.title}}</a>
+            <a routerLink="/patches/{{patch.id}}">{{patch.id}}. {{patch.title}}</a>
         </li>
     </ul>
     <mat-paginator [length]="totalPatches" pageSize=25 (page)="getPaginatorData($event)"
