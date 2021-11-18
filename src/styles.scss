@@ -586,25 +586,6 @@ input[type="submit"], #patch-reset {
 #octave-controls li.disabled{
    cursor: default;
 }
-/*#zero .led{
-   background:#29642B;
-}
-#zero.active .led{
-   background:#84FF12
-}
-#neg1 .led, #pos1 .led{
-   background:#7C7634;
-}
-#neg1.active .led, #pos1.active .led{
-   background:#FFB800;
-}
-#neg2 .led, #pos2 .led{
-   background:#7C2020;
-}
-#neg2.active .led, #pos2.active .led{
-   background:#FF0000;
-}
-*/
 /*Page styles*/
 body{
     font-family: 'Noto Sans', sans-serif;
@@ -647,63 +628,6 @@ h2{
     display: block;
    /* width: 524px;
     */
-}
-.editable {
-    outline:none;
-}
-#meta-info {
-    max-width: 940px;
-    margin: 40px auto 24px;
-}
-#title-text {
-    -webkit-font-smoothing: antialiased;
-    text-transform: uppercase;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 36px;
-    color: #fd9901;
-    line-height: 30px;
-    margin-bottom: 24px;
-}
-#description-text {
-    color: #aaa;
-    line-height:24px;
-}
-#tag-text {
-    color: #fd9901;
-    line-height:24px;
-}
-.tag {
-    color: #fd9901;
-    font-family: monospace;
-    float: right;
-}
-
-.mat-chip-list-wrapper .mat-standard-chip {
-   border-style: solid;
-   border-width: thin;
-   border-color: #aaa;
-   fill: #aaa
-}
-
-
-a.title-text {
-    -webkit-font-smoothing: antialiased;
-    text-transform: uppercase;
-    text-decoration: none;
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 18;
-    color: #fd9901;
-    line-height: 30px;
-    margin-bottom: 24px;
-}
-td.description-text {
-    color: #aaa;
-    line-height: 24px;
-    padding-left:10px;
-}
-#description-text {
-    color:#aaa;
-    line-height:24px;
 }
 .rating-text {
     float: right;
