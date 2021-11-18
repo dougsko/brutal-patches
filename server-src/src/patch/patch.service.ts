@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Patch } from 'src/interfaces/patch';
+import { Patch } from '../interfaces/patch';
 import { PATCHES } from '../mock-patches';
 
 @Injectable()
@@ -18,4 +18,15 @@ export class PatchService {
         }
         return patch;
     }
+
+    public async getPatchTotal(): Promise<number> {
+        return this.patches.length;
+    }
+
+    public async getLatestPatches(first: number, last: number): Promise<any> {
+        return this.patches
+            .sort((a, b) => a.created_at.localeCompare(b.created_at))
+            .slice(first, last);
+    }
 }
+

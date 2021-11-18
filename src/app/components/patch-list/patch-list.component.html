@@ -1,8 +1,12 @@
-<div class="row section">
-    <div class="title"><span>Patches</span></div>
+<div class="center row section">
+    <div class="title"><span>Latest Patches</span></div>
+
     <ul>
-        <li *ngFor="let patch of patches">
-            <a routerLink="/patches/{{patch.id}}">{{patch.title}}</a>
+        <li *ngFor="let patch of visiblePatches">
+            <a routerLink="/patches/{{patch.id}}">{{patch.id}}. {{patch.title}}</a>
         </li>
     </ul>
+    <mat-paginator [length]="totalPatches" pageSize=25 (page)="getPaginatorData($event)"
+        showFirstLastButtons="true">
+    </mat-paginator>
 </div>

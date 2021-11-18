@@ -22,8 +22,25 @@ export class PatchService {
     );
   }
 
+  getLatestPatches(first: number, last: number): Observable<any> {
+    console.log("Getting new patches")
+    return this.http.get(`api/patches/${first}/${last}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
+
   getPatch(id: number): Observable<any|Patch> {
     return this.http.get(`/api/patches/${id}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
+
+  getPatchTotal(): Observable<any> {
+    return this.http.get(`/api/patches/total`).pipe(
       catchError(err => {
         return throwError(err);
       })
