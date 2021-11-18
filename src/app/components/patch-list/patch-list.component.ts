@@ -57,76 +57,63 @@ export class PatchListComponent implements OnInit, OnDestroy {
   }
 
   public getPaginatorData(event: PageEvent): PageEvent {
-    /* this.lowValue = event.pageIndex % 4 * event.pageSize;
-    this.highValue = this.lowValue + event.pageSize;
-    if(this.highValue % 4 == 0) {
-      this.getLatestPatches(this.highValue+1, this.highValue+101);
-    }
-    this.visiblePatches = this.patches.slice(this.lowValue, this.highValue); */
-
-    
-
-    /* this.lowShow = event.pageIndex % 4 * event.pageSize;
-    this.highShow = this.lowShow + event.pageSize;
-    this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
-    if (this.lowShow % 4 == 0) {
-      this.lowGet = this.highGet;
-      if (this.highGet + 100 > this.totalPatches) {
-        this.highGet = this.totalPatches;
-      } else {
-        this.highGet = this.lowGet + 100;
-      }
-      this.getLatestPatches(this.lowGet, this.highGet);
-    } */
-
     if (event.previousPageIndex && event.pageIndex - event.previousPageIndex < 0) {
       if (event.previousPageIndex - event.pageIndex > 1) {
-        console.log("big jump back")
+        // console.log("big jump back")
         this.lowShow = 0;
         this.highShow = 25;
         this.lowGet = 0;
         this.highGet = 100;
-        if(this.lowGet != 0 && this.highGet != 100) {
-          this.getLatestPatches(this.lowGet, this.highGet);
-        }
+        this.getLatestPatches(this.lowGet, this.highGet);
       } else {
-        console.log("small jump back");
+        // console.log("small jump back");
         this.lowShow -= 25;
         this.highShow = this.lowShow + 25;
         if (this.lowShow < 0) {
           this.highGet = this.lowGet;
           this.lowGet = this.highGet - 100;
-          this.lowShow = 0;
-          this.highShow = 25;
+          this.lowShow = 75;
+          this.highShow = 100;
+          if(this.lowGet < 0) {
+            this.lowGet = 0;
+            this.highGet = 100;
+            this.lowShow = 0;
+            this.highShow = 25;
+          }
           this.getLatestPatches(this.lowGet, this.highGet);
         }
       }
-
-    } else {
-
-      this.lowShow += 25;
-      if (this.lowShow < 0) {
-        this.lowShow = 0;
-      }
-      this.highShow = this.lowShow + 25;
-
-      if (this.lowShow == 100) {
-        this.lowGet = this.highGet;
-        this.highGet = this.lowGet + 100;
-        this.lowShow = 0;
-        this.highShow = 25;
-        if (this.highGet > this.totalPatches) {
-          this.highGet = this.totalPatches;
-          this.highShow = this.highGet - this.lowGet;
-        }
-
+    } else if (event.pageIndex - event.previousPageIndex! > 0) {
+      if (event.pageIndex - event.previousPageIndex! > 1) {
+        // console.log("big jump forward");
+        this.lowShow = 75;
+        this.highShow = 100;
+        this.highGet = this.totalPatches;
+        this.lowGet = this.highGet - 100;
         this.getLatestPatches(this.lowGet, this.highGet);
+      } else {
+        // console.log("small jump forward");
+        this.lowShow += 25;
+        this.highShow = this.lowShow + 25;
+
+        if (this.highShow > 100) {
+          this.lowGet = this.highGet;
+          this.highGet = this.lowGet + 100;
+          this.lowShow = 0;
+          this.highShow = 25;
+          if (this.highGet > this.totalPatches) {
+            this.highGet = this.totalPatches;
+            this.highShow = this.highGet - this.lowGet;
+          }
+
+          this.getLatestPatches(this.lowGet, this.highGet);
+        }
       }
-    }
+    } 
     this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
-    console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
+    /* console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
     console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
-    console.log(event);
+    console.log(event); */
 
     return event;
   }
