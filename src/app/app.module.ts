@@ -30,6 +30,9 @@ import { ToggleComponent } from './components/toggle/toggle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VolumeComponent } from './components/volume/volume.component';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,10 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
     EnvelopeComponent,
     SequencerComponent,
     PatchComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    LoginComponent,
+    RegisterComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
