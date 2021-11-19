@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Patch } from '../interfaces/patch';
+import { Patch } from 'src/interfaces/patch.interface';
 import { PATCHES } from '../mock-patches';
 
 @Injectable()

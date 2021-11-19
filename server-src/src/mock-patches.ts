@@ -1,4 +1,4 @@
-import { Patch } from "./interfaces/patch";
+import { Patch } from "./interfaces/patch.interface";
 
 export const PATCHES: Patch[] =
 [

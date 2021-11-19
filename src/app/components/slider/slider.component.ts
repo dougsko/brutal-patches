@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Patch } from 'server-src/src/interfaces/patch';
+import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'slider',
@@ -17,7 +17,6 @@ export class SliderComponent implements OnInit {
 
   ngOnInit(): void {
     this.label = this.formatName(this.name);
-    
   }
 
   formatName(name: string): string {
