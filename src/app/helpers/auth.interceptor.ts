@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { TokenStorageService } from '../services/token-storage.service';
 
 
-// const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
-const TOKEN_HEADER_KEY = 'x-access-token'; // for express
+const TOKEN_HEADER_KEY = 'Authorization';       // for Spring Boot back-end
+// const TOKEN_HEADER_KEY = 'x-access-token'; // for express
 
 
 @Injectable()

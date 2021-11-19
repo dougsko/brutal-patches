@@ -40,13 +40,13 @@ export class LoginComponent implements OnInit {
     this.authSub = this.authService.login(username, password).subscribe(
       data => {
         console.log(data);
-        this.tokenStorage.saveToken(data.accessToken);
+        this.tokenStorage.saveToken(data.access_token);
         this.tokenStorage.saveUser(data);
 
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.roles = this.tokenStorage.getUser().roles;
-        //this.reloadPage();
+        this.reloadPage();
       },
       err => {
         this.errorMessage = err.error.message;
