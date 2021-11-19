@@ -7,11 +7,6 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
-    /* @Post("/signup")
-    async login(): Promise<any> {
-        return await this.authService.validateUser("foo", "bar");
-    } */
-
     @UseGuards(LocalAuthGuard)
     @Post('/login')
     async login(@Request() req) {
@@ -19,7 +14,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('profile')
+    @Get('/profile')
     getProfile(@Request() req) {
         return req.user;
     }
