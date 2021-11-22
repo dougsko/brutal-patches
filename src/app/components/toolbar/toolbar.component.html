@@ -4,9 +4,8 @@
                 <h1>MICROBRUTE <br /><span class="grey">Patches</span></h1>
             </a>
             <span class="toolbar-spacer"></span>
-            <!-- <a routerLink="/patches" class="grey"><mat-icon class="grey">home</mat-icon></a> -->
-            <!-- <a routerLink="/patches" class="grey">Login</a> -->
             <a *ngIf="isLoggedIn" routerLink="/profile" class="grey nav-item">Profile</a>
+            <a *ngIf="isLoggedIn" href="javascript:void(0);" (click)="logout()" class="grey nav-item">Logout</a>
             <a *ngIf="!isLoggedIn" routerLink="/login" class="grey nav-item">Login</a> 
             <a *ngIf="!isLoggedIn" routerLink="/register" class="grey nav-item">Sign Up</a>
     </mat-toolbar-row>

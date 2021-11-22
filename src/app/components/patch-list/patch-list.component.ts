@@ -29,8 +29,8 @@ export class PatchListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPatchTotal();
     this.getLatestPatches(0, 100);
-    console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
-    console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
+    // console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
+    // console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
   }
 
   ngOnDestroy(): void {
