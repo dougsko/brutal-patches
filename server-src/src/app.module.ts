@@ -16,7 +16,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '6000s' },
     }),
   ],
   controllers: [AppController, PatchController, AuthController],
