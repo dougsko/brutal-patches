@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { EventBusService } from 'src/app/services/event-bus.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
@@ -7,7 +9,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, OnDestroy {
   private roles: string[] = [];
   isLoggedIn = false;
   // isLoggedIn! : Observable<boolean>;
@@ -15,8 +17,9 @@ export class ToolbarComponent implements OnInit {
   showModeratorBoard = false;
   username?: string;
   currentUser!: any;
+  eventBusSub?: Subscription;
 
-  constructor(private authService: AuthService, private tokenStorageService: TokenStorageService) { }
+  constructor(private eventBusService: EventBusService, private authService: AuthService, private tokenStorageService: TokenStorageService) { }
 
   ngOnInit(): void {
     if (this.tokenStorageService.getToken()) {
@@ -32,10 +35,21 @@ export class ToolbarComponent implements OnInit {
 
       this.username = user.username;
     }
+
+    this.eventBusSub = this.eventBusService.on('logout', () => {
+      this.logout();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.eventBusSub)
+      this.eventBusSub.unsubscribe();
   }
 
   logout(): void {
     this.tokenStorageService.signOut();
+    this.isLoggedIn = false;
+    this.roles = [];
     window.location.reload();
   }
 
