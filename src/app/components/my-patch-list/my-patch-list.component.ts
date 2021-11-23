@@ -1,15 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
-import { Patch } from '../../interfaces/patch';
-import { PatchService } from '../../services/patch.service';
+import { Patch } from 'src/app/interfaces/patch';
+import { PatchService } from 'src/app/services/patch.service';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
-  selector: 'patch-list',
-  templateUrl: './patch-list.component.html',
-  styleUrls: ['./patch-list.component.scss']
+  selector: 'my-patch-list',
+  templateUrl: './my-patch-list.component.html',
+  styleUrls: ['./my-patch-list.component.scss']
 })
-export class PatchListComponent implements OnInit, OnDestroy {
+export class MyPatchListComponent implements OnInit {
   patches: Patch[] = [];
   visiblePatches: Patch[] = [];
   selectedPatch?: Patch;
@@ -25,16 +26,16 @@ export class PatchListComponent implements OnInit, OnDestroy {
   myPatchTotal: number = 0;
   isLoggedIn = false;
 
-  constructor(private patchService: PatchService) {
+  constructor(private patchService: PatchService, private tokenStorage: TokenStorageService) {
    }
 
   ngOnInit(): void {
     this.getPatchTotal();
     this.getLatestPatches(0, 100);
-    /* if (this.tokenStorage.getToken()) {
+    if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.getMyPatchTotal();
-    } */
+    }
     // console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
     // console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
   }
@@ -64,7 +65,7 @@ export class PatchListComponent implements OnInit, OnDestroy {
 
   getMyPatchTotal(): void {
     this.patchSub = this.patchService.getMyPatchTotal().subscribe( total => {
-      this.getMyPatchTotal = total;
+      this.myPatchTotal = total;
     })
   }
 

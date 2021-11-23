@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { PatchService } from 'src/patch/patch.service';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) { }
+    constructor(private patchService: PatchService, private readonly authService: AuthService) { }
 
     @UseGuards(LocalAuthGuard)
     @Post('/login')
@@ -17,5 +18,12 @@ export class AuthController {
     @Get('/profile')
     getProfile(@Request() req) {
         return req.user;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/total')
+    getTotal(@Request() req) {
+        console.log(req.user);
+        return this.patchService.getUserPatchTotal(req.user.id);
     }
 }

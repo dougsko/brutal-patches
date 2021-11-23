@@ -52,6 +52,14 @@ export class PatchService {
     console.log(patch);
     return of("ok");
   }
+
+  getMyPatchTotal(): Observable<any> {
+    return this.http.get(`/api/auth/total`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
 }
 
 

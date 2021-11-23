@@ -1,9 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Patch } from 'src/interfaces/patch.interface';
+import { User } from 'src/interfaces/user.interface';
+import { UsersService } from 'src/users/users.service';
 import { PATCHES } from '../mock-patches';
 
 @Injectable()
 export class PatchService {
+    constructor(private userService: UsersService){}
 
     patches: Patch[] = PATCHES;
 
@@ -23,14 +26,38 @@ export class PatchService {
         return this.patches.length;
     }
 
-    public async getLatestPatches(first: number, last: number): Promise<any> {
+    public async getLatestPatches(first: number, last: number): Promise<Patch[]> {
         return this.patches
             .sort((a, b) => a.created_at.localeCompare(b.created_at))
             .slice(first, last);
     }
 
-    public async getPatchesByIds(first: number, last: number, patchIds: number[]): Promise<any> {
-        return this.patches.find( patch => patchIds.includes(patch.id));
+    public async getPatchesByUser(first: number, last: number, userId: number): Promise<Patch[]> {
+        let userPatches: Patch[] = [];
+        let myUser: User;
+        return this.userService.findOneById(userId).then( user => {
+            myUser = user;
+            this.patches.forEach(patch => {
+                if (myUser.patches.includes(patch.id)) {
+                    userPatches.push(patch);
+                }
+            });
+            return userPatches.slice(first, last);
+        });
+    }
+
+    public async getUserPatchTotal(userId: number): Promise<number> {
+        let userPatches: Patch[] = [];
+        let myUser: User;
+        return this.userService.findOneById(userId).then( user => {
+            myUser = user;
+            this.patches.forEach(patch => {
+                if (myUser.patches.includes(patch.id)) {
+                    userPatches.push(patch);
+                }
+            });
+            return userPatches.length;
+        });
     }
 }
 
