@@ -10,7 +10,8 @@ export class UsersService {
       userId: 1,
       username: 'john',
       password: 'changeme',
-      roles: ['admin']
+      roles: ['admin'],
+      patches: [567, 623, 707, 710]
     },
     {
       userId: 2,

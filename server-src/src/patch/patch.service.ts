@@ -28,5 +28,9 @@ export class PatchService {
             .sort((a, b) => a.created_at.localeCompare(b.created_at))
             .slice(first, last);
     }
+
+    public async getPatchesByIds(first: number, last: number, patchIds: number[]): Promise<any> {
+        return this.patches.find( patch => patchIds.includes(patch.id));
+    }
 }
 
