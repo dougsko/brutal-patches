@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { Patch } from 'src/interfaces/patch';
+import { Patch } from 'src/interfaces/patch.interface';
 import { PatchService } from './patch.service';
 
 @Controller('api/patches')
