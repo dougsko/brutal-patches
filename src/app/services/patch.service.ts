@@ -52,6 +52,23 @@ export class PatchService {
     console.log(patch);
     return of("ok");
   }
+
+  getMyPatchTotal(): Observable<any> {
+    return this.http.get(`/api/patches/mine/total`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
+
+  getMyPatches(first: number, last: number): Observable<any> {
+    // console.log("Getting new patches")
+    return this.http.get(`/api/patches/mine/${first}/${last}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
 }
 
 

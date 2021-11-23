@@ -35,6 +35,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VolumeComponent } from './components/volume/volume.component';
 import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
+import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
     ToolbarComponent,
     LoginComponent,
     RegisterComponent,
-    ProfileComponent
+    ProfileComponent,
+    MyPatchListComponent,
   ],
   imports: [
     BrowserModule,

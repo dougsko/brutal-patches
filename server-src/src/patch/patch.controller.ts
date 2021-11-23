@@ -1,4 +1,5 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Patch } from 'src/interfaces/patch.interface';
 import { PatchService } from './patch.service';
 
@@ -27,6 +28,18 @@ export class PatchController {
     @Get("/total")
     async getTotal(): Promise<number> {
         return await this.patchService.getPatchTotal();
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/mine/total')
+    getMyTotal(@Request() req): Promise<number> {
+        return this.patchService.getUserPatchTotal(req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/mine/:first/:last')
+    getMyPatches(@Request() req, @Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
+        return this.patchService.getPatchesByUser(req.user.id, first, last);
     }
 
 }
