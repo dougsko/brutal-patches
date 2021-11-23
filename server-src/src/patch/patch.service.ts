@@ -32,7 +32,7 @@ export class PatchService {
             .slice(first, last);
     }
 
-    public async getPatchesByUser(first: number, last: number, userId: number): Promise<Patch[]> {
+    public async getPatchesByUser(userId: number, first: number, last: number,): Promise<Patch[]> {
         let userPatches: Patch[] = [];
         let myUser: User;
         return this.userService.findOneById(userId).then( user => {

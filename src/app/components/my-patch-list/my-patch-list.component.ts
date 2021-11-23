@@ -31,7 +31,7 @@ export class MyPatchListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPatchTotal();
-    this.getLatestPatches(0, 100);
+    this.getMyPatches(0, 100);
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.getMyPatchTotal();
@@ -57,6 +57,13 @@ export class MyPatchListComponent implements OnInit {
     });
   }
 
+  getMyPatches(first: number, last: number): void {
+    this.patchSub = this.patchService.getMyPatches(first, last).subscribe( patches => {
+      this.patches = patches;
+      this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
+    });
+  }
+
   getPatchTotal(): void {
     this.patchSub = this.patchService.getPatchTotal().subscribe( total => {
       this.totalPatches = total;
@@ -77,7 +84,7 @@ export class MyPatchListComponent implements OnInit {
         this.highShow = 25;
         this.lowGet = 0;
         this.highGet = 100;
-        this.getLatestPatches(this.lowGet, this.highGet);
+        this.getMyPatches(this.lowGet, this.highGet);
       } else {
         // console.log("small jump back");
         this.lowShow -= 25;
@@ -93,7 +100,7 @@ export class MyPatchListComponent implements OnInit {
             this.lowShow = 0;
             this.highShow = 25;
           }
-          this.getLatestPatches(this.lowGet, this.highGet);
+          this.getMyPatches(this.lowGet, this.highGet);
         }
       }
     } else if (event.pageIndex - event.previousPageIndex! > 0) {
@@ -103,7 +110,7 @@ export class MyPatchListComponent implements OnInit {
         this.highShow = 100;
         this.highGet = this.totalPatches;
         this.lowGet = this.highGet - 100;
-        this.getLatestPatches(this.lowGet, this.highGet);
+        this.getMyPatches(this.lowGet, this.highGet);
       } else {
         // console.log("small jump forward");
         this.lowShow += 25;
@@ -115,11 +122,11 @@ export class MyPatchListComponent implements OnInit {
           this.lowShow = 0;
           this.highShow = 25;
           if (this.highGet > this.totalPatches) {
-            this.highGet = this.totalPatches;
+            this.highGet = this.myPatchTotal;
             this.highShow = this.highGet - this.lowGet;
           }
 
-          this.getLatestPatches(this.lowGet, this.highGet);
+          this.getMyPatches(this.lowGet, this.highGet);
         }
       }
     } 
