@@ -54,7 +54,7 @@ export class PatchService {
   }
 
   getMyPatchTotal(): Observable<any> {
-    return this.http.get(`/api/auth/total`).pipe(
+    return this.http.get(`/api/auth/patches/total`).pipe(
       catchError(err => {
         return throwError(err);
       })

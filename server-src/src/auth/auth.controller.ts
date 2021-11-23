@@ -21,7 +21,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/total')
+    @Get('/patches/total')
     getTotal(@Request() req) {
         console.log(req.user);
         return this.patchService.getUserPatchTotal(req.user.id);
