@@ -1,14 +1,20 @@
-import { INestApplication } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import { Express } from 'express';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import 'dotenv/config';
+import { fastifyHelmet } from 'fastify-helmet';
 import { AppModule } from './app.module';
-export async function createApp(
-  expressApp: Express,
-): Promise<INestApplication> {
-  const app = await NestFactory.create(
+
+const port = process.env.PORT;
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new ExpressAdapter(expressApp),
+    new FastifyAdapter()
   );
-  return app;
+  await app.register(fastifyHelmet);
+  await app.listen(port);
+  Logger.log(`Server started running on http://localhost:${port}`, 'Bootstrap');
 }
+
+bootstrap();
