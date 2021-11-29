@@ -27,6 +27,10 @@
     "@nestjs/passport": "^8.0.1",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-fastify": "^8.1.2",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1034.0",
+    "aws-serverless-express": "^3.4.0",
+    "aws-serverless-fastify": "^1.0.28",
     "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
     "fastify-helmet": "^5.3.2",
@@ -36,7 +40,8 @@
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "serverless-dynamodb-local": "^0.2.40"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
