@@ -1,0 +1,12 @@
+UsersTableIAM:
+    Effect: Allow
+    Action:
+        - dynamodb:PutItem
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+        - 'xray:PutTraceSegments'
+        - 'xray:PutTelemetryRecords'
+    Resource:
+        - ${self:custom.UsersTable.arn}
