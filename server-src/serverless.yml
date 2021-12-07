@@ -13,8 +13,22 @@ plugins:
 #       enabled: true
 
 provider:
-  name: aws
-  runtime: nodejs12.x
+    name: aws
+    tracing:
+        apiGateway: true
+        lambda: true
+    runtime: nodejs12.x
+    memorySize: 256
+    stage: ${opt:stage, 'dev'}
+    region: us-east-1
+    lambdaHashingVersion: 20201221
+    environment:
+        USERS_TABLE_NAME: ${self:custom.UsersTable.name}
+    iamRoleStatements:
+        - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
+    apiGateway:
+      shouldStartNameWithService: true
+      description: aws-nestjs-dynamodb
 
 package:
   individually: true
@@ -26,3 +40,8 @@ functions:
       - http:
           method: any
           path: /{any+}
+
+custom:
+    UsersTable:
+        name: !Ref UsersTable
+        arn: !GetAtt UsersTable.Arn
