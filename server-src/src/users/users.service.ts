@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/interfaces/user.interface';
+import { UserRepository } from 'src/repositories/user.repository';
+import { CreateUserDto } from './dto/createUser.dto';
 
 // This should be a real class/interface representing a user entity
 
 @Injectable()
 export class UsersService {
+  constructor(private userRepository: UserRepository) {}
+
   private readonly users: User[] = [
     {
       id: 1,
@@ -37,5 +41,15 @@ export class UsersService {
       }
     });
     return myUser;
+  }
+
+  async createUser(createUserDto: CreateUserDto) {
+    const createdOffer = await this.userRepository.createUser(createUserDto);
+    return createdOffer;
+  }
+
+  async getUserById(id) {
+    const User = await this.userRepository.getUserById(id);
+    return User;
   }
 }
