@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import * as AWS from 'aws-sdk';
 import { User } from 'src/interfaces/user.interface';
-import { UserRepository } from 'src/repositories/user.repository';
+import { v4 as uuid } from 'uuid';
 import { CreateUserDto } from './dto/createUser.dto';
 
 // This should be a real class/interface representing a user entity
 
 @Injectable()
 export class UsersService {
-  constructor(private userRepository: UserRepository) {}
+  constructor() {}
 
   private readonly users: User[] = [
     {
@@ -44,12 +45,54 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const createdOffer = await this.userRepository.createUser(createUserDto);
-    return createdOffer;
+    /* const createdOffer = await this.userRepository.createUser(createUserDto);
+    return createdOffer; */
+
+    const newUser = {
+      id: uuid(),
+      username: createUserDto.username,
+      email: createUserDto.email
+  };
+
+  try {
+      await new AWS.DynamoDB.DocumentClient()
+          .put({
+              TableName: process.env.USERS_TABLE_NAME,
+              Item: newUser,
+          })
+          .promise();
+  } catch (error) {
+      throw new InternalServerErrorException(error);
+  }
+
+  return { ok: true, data: newUser };
+
+
+
   }
 
   async getUserById(id) {
-    const User = await this.userRepository.getUserById(id);
-    return User;
+    /* const User = await this.userRepository.getUserById(id);
+    return User; */
+
+    let user;
+    try {
+      const result = await new AWS.DynamoDB.DocumentClient()
+        .get({
+          TableName: process.env.USERS_TABLE_NAME,
+          Key: { id },
+        })
+        .promise();
+
+      user = result.Item;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+
+    return { ok: true, data: user };
   }
 }

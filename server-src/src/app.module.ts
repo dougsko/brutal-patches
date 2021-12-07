@@ -8,7 +8,6 @@ import { AuthService } from './auth/auth.service';
 import { jwtConstants } from './auth/constants';
 import { PatchController } from './patch/patch.controller';
 import { PatchService } from './patch/patch.service';
-import { UserRepository } from './repositories/user.repository';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -21,6 +20,6 @@ import { UsersModule } from './users/users.module';
     }),
   ],
   controllers: [AppController, PatchController, AuthController],
-  providers: [AppService, PatchService, AuthService, UserRepository]
+  providers: [AppService, PatchService, AuthService]
 })
 export class AppModule {}
