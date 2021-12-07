@@ -13,18 +13,6 @@ export class PatchController {
         return patches;
     }
 
-    @Get(":id")
-    async findOne(@Param("id") id: string): Promise<Patch> {
-        const patch = await this.patchService.getPatch(id);
-        return patch;
-    }
-
-    @Get(":first/:last")
-    async findLatestPatches(@Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
-        const patches = await this.patchService.getLatestPatches(first, last);
-        return patches;
-    }
-
     @Get("/total")
     async getTotal(): Promise<number> {
         return await this.patchService.getPatchTotal();
@@ -36,10 +24,24 @@ export class PatchController {
         return this.patchService.getUserPatchTotal(req.user.id);
     }
 
+
+    @Get(":first/:last")
+    async findLatestPatches(@Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
+        const patches = await this.patchService.getLatestPatches(first, last);
+        return patches;
+    }
+
+    
     @UseGuards(JwtAuthGuard)
     @Get('/mine/:first/:last')
     getMyPatches(@Request() req, @Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
         return this.patchService.getPatchesByUser(req.user.id, first, last);
+    }
+
+    @Get(":id")
+    async findOne(@Param("id") id: string): Promise<Patch> {
+        const patch = await this.patchService.getPatch(id);
+        return patch;
     }
 
 }
