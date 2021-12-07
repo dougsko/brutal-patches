@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Patch } from 'src/interfaces/patch.interface';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
 
 @Controller('api/patches')

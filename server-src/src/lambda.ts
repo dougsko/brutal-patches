@@ -3,9 +3,10 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { Context, Handler } from 'aws-lambda';
 import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
-import express from 'express';
+// import express from 'express';
 import { Server } from 'http';
 import { AppModule } from './app.module';
+import express = require('express');
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
@@ -27,7 +28,6 @@ async function bootstrapServer(): Promise<Server> {
 }
 
 export const handler: Handler = async (event: any, context: Context) => {
-//  cachedServer = await bootstrapServer();
  cachedServer = await bootstrapServer();
  return proxy(cachedServer, event, context, 'PROMISE').promise;
 }
