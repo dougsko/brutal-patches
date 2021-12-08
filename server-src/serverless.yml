@@ -2,23 +2,17 @@ service:
   name: aws-nestjs-dynamodb
 
 plugins:
-  - "@hewmen/serverless-plugin-typescript"
+  - '@hewmen/serverless-plugin-typescript'
   - serverless-plugin-optimize
   - serverless-offline
-  # - serverless-plugin-warmup
-
-# custom:
-#   # Enable warmup on all functions (only for production and staging)
-#   warmup:
-#       enabled: true
-
+  - serverless-api-gateway-caching
 provider:
   name: aws
   tracing:
     apiGateway: true
     lambda: true
   runtime: nodejs12.x
-  memorySize: 256
+  memorySize: 2048
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   lambdaHashingVersion: 20201221
@@ -27,6 +21,7 @@ provider:
   iamRoleStatements:
     - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
   apiGateway:
+    minimumCompressionSize: 1024
     shouldStartNameWithService: true
     description: aws-nestjs-dynamodb
 
@@ -41,6 +36,11 @@ functions:
   main: # The name of the lambda function
     handler: src/lambda.handler # The module 'handler' is exported in the file 'src/lambda'
     events:
+      - http:
+        method: get
+        cors: true
+        caching:
+          enabled: true
       - http:
           method: any
           path: /{any+}

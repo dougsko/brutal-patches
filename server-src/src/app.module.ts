@@ -1,5 +1,4 @@
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,15 +17,13 @@ import { UsersModule } from './users/users.module';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7200s' },
-    }),
-    CacheModule.register()
+    })
   ],
   controllers: [AppController, PatchController, AuthController],
   providers: [
     AppService, 
     PatchService, 
-    AuthService,
-    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor }  
+    AuthService
   ]
 })
 export class AppModule {}

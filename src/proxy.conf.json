@@ -1,6 +1,6 @@
 {
     "/api/*": {
-      "target": "https://8y03vfs9j8.execute-api.us-east-1.amazonaws.com/dev",
+      "target": "http://localhost:3000/dev",
       "secure": true,
       "changeOrigin": true
     }
