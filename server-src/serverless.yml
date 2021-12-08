@@ -12,7 +12,8 @@ provider:
     apiGateway: true
     lambda: true
   runtime: nodejs12.x
-  memorySize: 2048
+  memorySize: 512
+  architecture: arm64
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   lambdaHashingVersion: 20201221
