@@ -2,7 +2,7 @@ service:
   name: aws-nestjs-dynamodb
 
 plugins:
-  - '@hewmen/serverless-plugin-typescript'
+  - "@hewmen/serverless-plugin-typescript"
   - serverless-plugin-optimize
   - serverless-offline
   # - serverless-plugin-warmup
@@ -13,25 +13,29 @@ plugins:
 #       enabled: true
 
 provider:
-    name: aws
-    tracing:
-        apiGateway: true
-        lambda: true
-    runtime: nodejs12.x
-    memorySize: 256
-    stage: ${opt:stage, 'dev'}
-    region: us-east-1
-    lambdaHashingVersion: 20201221
-    environment:
-        USERS_TABLE_NAME: ${self:custom.UsersTable.name}
-    iamRoleStatements:
-        - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
-    apiGateway:
-      shouldStartNameWithService: true
-      description: aws-nestjs-dynamodb
+  name: aws
+  tracing:
+    apiGateway: true
+    lambda: true
+  runtime: nodejs12.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  environment:
+    USERS_TABLE_NAME: ${self:custom.UsersTable.name}
+  iamRoleStatements:
+    - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
+  apiGateway:
+    shouldStartNameWithService: true
+    description: aws-nestjs-dynamodb
 
 package:
   individually: true
+
+resources:
+  Resources:
+    UsersTable: ${file(resources/UsersTable.yml):UsersTable}  
 
 functions:
   main: # The name of the lambda function
@@ -40,8 +44,9 @@ functions:
       - http:
           method: any
           path: /{any+}
+          cors: true
 
 custom:
-    UsersTable:
-        name: !Ref UsersTable
-        arn: !GetAtt UsersTable.Arn
+  UsersTable:
+    name: !Ref UsersTable
+    arn: !GetAtt UsersTable.Arn

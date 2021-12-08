@@ -13,6 +13,7 @@ async function bootstrap() {
     new FastifyAdapter()
   );
   await app.register(fastifyHelmet);
+  app.enableCors();
   await app.listen(port);
   Logger.log(`Server started running on http://localhost:${port}`, 'Bootstrap');
 }
