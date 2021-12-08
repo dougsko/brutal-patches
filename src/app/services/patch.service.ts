@@ -2,8 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { Patch } from '../interfaces/patch';
 
+const PATCH_API = `${environment.apiUrl}/api/patches`
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,7 @@ export class PatchService {
   ) { }
 
   getPatches(): Observable<any> {
-    return this.http.get('/api/patches').pipe(
+    return this.http.get(PATCH_API).pipe(
       catchError(err => {
         return throwError(err);
       })
@@ -23,8 +25,7 @@ export class PatchService {
   }
 
   getLatestPatches(first: number, last: number): Observable<any> {
-    // console.log("Getting new patches")
-    return this.http.get(`/api/patches/${first}/${last}`).pipe(
+    return this.http.get(`${PATCH_API}/${first}/${last}`).pipe(
       catchError(err => {
         return throwError(err);
       })
@@ -32,7 +33,7 @@ export class PatchService {
   }
 
   getPatch(id: number): Observable<any|Patch> {
-    return this.http.get(`/api/patches/${id}`).pipe(
+    return this.http.get(`${PATCH_API}/${id}`).pipe(
       catchError(err => {
         return throwError(err);
       })
@@ -40,7 +41,7 @@ export class PatchService {
   }
 
   getPatchTotal(): Observable<any> {
-    return this.http.get(`/api/patches/total`).pipe(
+    return this.http.get(`${PATCH_API}/total`).pipe(
       catchError(err => {
         return throwError(err);
       })
@@ -54,7 +55,7 @@ export class PatchService {
   }
 
   getMyPatchTotal(): Observable<any> {
-    return this.http.get(`/api/patches/mine/total`).pipe(
+    return this.http.get(`${PATCH_API}/mine/total`).pipe(
       catchError(err => {
         return throwError(err);
       })
@@ -63,7 +64,7 @@ export class PatchService {
 
   getMyPatches(first: number, last: number): Observable<any> {
     // console.log("Getting new patches")
-    return this.http.get(`/api/patches/mine/${first}/${last}`).pipe(
+    return this.http.get(`${environment.apiUrl}/api/patches/mine/${first}/${last}`).pipe(
       catchError(err => {
         return throwError(err);
       })
