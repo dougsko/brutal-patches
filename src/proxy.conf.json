@@ -1,5 +1,5 @@
 {
-    "/api/*": {
+    "https://dougsko.github.io/api/*": {
       "target": "https://m8l62e1l42.execute-api.us-east-1.amazonaws.com/dev",
       "secure": true,
       "changeOrigin": true
