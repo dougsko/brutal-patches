@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Patch } from 'src/interfaces/patch.interface';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
 
 @Controller('api/patches')
@@ -10,18 +10,6 @@ export class PatchController {
     @Get()
     async findAll(): Promise<Patch[]> {
         const patches = await this.patchService.getAllPatches();
-        return patches;
-    }
-
-    @Get(":id")
-    async findOne(@Param("id") id: string): Promise<Patch> {
-        const patch = await this.patchService.getPatch(id);
-        return patch;
-    }
-
-    @Get(":first/:last")
-    async findLatestPatches(@Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
-        const patches = await this.patchService.getLatestPatches(first, last);
         return patches;
     }
 
@@ -36,10 +24,24 @@ export class PatchController {
         return this.patchService.getUserPatchTotal(req.user.id);
     }
 
+
+    @Get(":first/:last")
+    async findLatestPatches(@Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
+        const patches = await this.patchService.getLatestPatches(first, last);
+        return patches;
+    }
+
+    
     @UseGuards(JwtAuthGuard)
     @Get('/mine/:first/:last')
     getMyPatches(@Request() req, @Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
         return this.patchService.getPatchesByUser(req.user.id, first, last);
+    }
+
+    @Get(":id")
+    async findOne(@Param("id") id: string): Promise<Patch> {
+        const patch = await this.patchService.getPatch(id);
+        return patch;
     }
 
 }

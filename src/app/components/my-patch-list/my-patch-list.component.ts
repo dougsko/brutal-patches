@@ -14,7 +14,8 @@ export class MyPatchListComponent implements OnInit {
   patches: Patch[] = [];
   visiblePatches: Patch[] = [];
   selectedPatch?: Patch;
-  private patchSub!: Subscription;
+  // private patchSub!: Subscription;
+  private subs: Subscription[] = [];
   lowValue: number = 0;
   highValue: number = 25;
   totalPatches!: number;
@@ -41,39 +42,46 @@ export class MyPatchListComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.patchSub.unsubscribe();
+    this.subs.forEach( sub => {
+      sub.unsubscribe();
+    });
   }
 
   getPatches(): void {
-    this.patchSub = this.patchService.getPatches().subscribe( patches => {
+    let patchSub = this.patchService.getPatches().subscribe( patches => {
       this.patches = patches;
     });
+    this.subs.push(patchSub);
   }
 
   getLatestPatches(first: number, last: number): void {
-    this.patchSub = this.patchService.getLatestPatches(first, last).subscribe( patches => {
+    let patchSub = this.patchService.getLatestPatches(first, last).subscribe( patches => {
       this.patches = patches;
       this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
     });
+    this.subs.push(patchSub);
   }
 
   getMyPatches(first: number, last: number): void {
-    this.patchSub = this.patchService.getMyPatches(first, last).subscribe( patches => {
+    let patchSub = this.patchService.getMyPatches(first, last).subscribe( patches => {
       this.patches = patches;
       this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
     });
+    this.subs.push(patchSub);
   }
 
   getPatchTotal(): void {
-    this.patchSub = this.patchService.getPatchTotal().subscribe( total => {
+    let patchSub = this.patchService.getPatchTotal().subscribe( total => {
       this.totalPatches = total;
     });
+    this.subs.push(patchSub);
   }
 
   getMyPatchTotal(): void {
-    this.patchSub = this.patchService.getMyPatchTotal().subscribe( total => {
+    let patchSub = this.patchService.getMyPatchTotal().subscribe( total => {
       this.myPatchTotal = total;
     })
+    this.subs.push(patchSub);
   }
 
   public getPaginatorData(event: PageEvent): PageEvent {

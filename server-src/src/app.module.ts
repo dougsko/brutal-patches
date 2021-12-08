@@ -17,9 +17,13 @@ import { UsersModule } from './users/users.module';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7200s' },
-    }),
+    })
   ],
   controllers: [AppController, PatchController, AuthController],
-  providers: [AppService, PatchService, AuthService]
+  providers: [
+    AppService, 
+    PatchService, 
+    AuthService
+  ]
 })
 export class AppModule {}

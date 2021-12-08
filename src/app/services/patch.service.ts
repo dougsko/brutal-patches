@@ -24,7 +24,7 @@ export class PatchService {
 
   getLatestPatches(first: number, last: number): Observable<any> {
     // console.log("Getting new patches")
-    return this.http.get(`api/patches/${first}/${last}`).pipe(
+    return this.http.get(`/api/patches/${first}/${last}`).pipe(
       catchError(err => {
         return throwError(err);
       })

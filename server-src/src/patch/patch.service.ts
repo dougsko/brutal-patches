@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Patch } from 'src/interfaces/patch.interface';
-import { User } from 'src/interfaces/user.interface';
-import { UsersService } from 'src/users/users.service';
+import { Patch } from '../interfaces/patch.interface';
+import { User } from '../interfaces/user.interface';
 import { PATCHES } from '../mock-patches';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PatchService {
