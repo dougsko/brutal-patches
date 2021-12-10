@@ -26,7 +26,6 @@ async function bootstrapServer(): Promise<Server> {
       origin: /cloudfront\.net$/
     });
     nestApp.use(corstOpts)
-    nestApp.disable('x-powered-by');
     await nestApp.init();
     cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
  }
