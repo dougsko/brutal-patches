@@ -24,8 +24,7 @@ async function bootstrapServer(): Promise<Server> {
       nestApp.use(eventContext());
       nestApp.enableCors({
          origin: /cloudfront\.net$/,
-         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-         credentials: true,
+         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
       });
       await nestApp.init();
       cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
