@@ -3,9 +3,11 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { Context, Handler } from 'aws-lambda';
 import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
+import * as cors from 'cors';
 import { Server } from 'http';
 import { AppModule } from './app.module';
 import express = require('express');
+
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
@@ -20,7 +22,11 @@ async function bootstrapServer(): Promise<Server> {
     const expressApp = express();
     const nestApp = await NestFactory.create(AppModule, new ExpressAdapter(expressApp))
     nestApp.use(eventContext());
-    nestApp.enableCors();
+    const corstOpts = cors({ 
+      origin: /cloudfront\.net$/
+    });
+    nestApp.use(corstOpts)
+    nestApp.disable('x-powered-by');
     await nestApp.init();
     cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
  }
