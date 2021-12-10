@@ -23,7 +23,7 @@ async function bootstrapServer(): Promise<Server> {
       const nestApp = await NestFactory.create(AppModule, new ExpressAdapter(expressApp))
       nestApp.use(eventContext());
       nestApp.enableCors({
-         origin: 'https://brutalpatches.com',
+         origin: '*',
       });
       await nestApp.init();
       cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
