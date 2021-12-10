@@ -23,7 +23,7 @@ async function bootstrapServer(): Promise<Server> {
       const nestApp = await NestFactory.create(AppModule, new ExpressAdapter(expressApp))
       nestApp.use(eventContext());
       nestApp.enableCors({
-         origin: /cloudfront\.net$/,
+         origin: 'brutalpatches.com',
          methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
       });
       await nestApp.init();

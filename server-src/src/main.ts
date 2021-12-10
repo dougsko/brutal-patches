@@ -14,7 +14,7 @@ async function bootstrap() {
   );
   await app.register(fastifyHelmet);
   app.enableCors({
-    origin: /cloudfront\.net$/,
+    origin: 'brutalpatches.com', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS'
  });
   await app.listen(port);
