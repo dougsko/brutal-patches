@@ -9,6 +9,7 @@ import { jwtConstants } from './auth/constants';
 import { PatchController } from './patch/patch.controller';
 import { PatchService } from './patch/patch.service';
 import { UsersModule } from './users/users.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -19,11 +20,12 @@ import { UsersModule } from './users/users.module';
       signOptions: { expiresIn: '7200s' },
     })
   ],
-  controllers: [AppController, PatchController, AuthController],
+  controllers: [AppController, PatchController, AuthController ],
   providers: [
     AppService, 
     PatchService, 
-    AuthService
+    AuthService,
+    UsersService
   ]
 })
 export class AppModule {}

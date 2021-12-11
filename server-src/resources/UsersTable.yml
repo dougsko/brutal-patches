@@ -6,6 +6,23 @@ UsersTable:
         AttributeDefinitions:
             - AttributeName: id
               AttributeType: S
+            - AttributeName: username
+              AttributeType: S
+            - AttributeName: email
+              AttributeType: S
+            - AttributeName: password
+              AttributeType: S      
         KeySchema:
             - AttributeName: id
               KeyType: HASH
+            - AttributeName: username
+              KeyType: RANGE  
+        GlobalSecondaryIndexes:
+            - IndexName: UserDetail
+              KeySchema:
+                - AttributeName: email
+                  KeyType: HASH
+                - AttributeName: password
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: ALL
