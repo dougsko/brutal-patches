@@ -1,9 +1,11 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
+
+const bcrypt = require('bcryptjs');
 
 // This should be a real class/interface representing a user entity
 
@@ -48,8 +50,11 @@ export class UsersService {
   async createUser(createUserDto: CreateUserDto) {
     /* const createdOffer = await this.userRepository.createUser(createUserDto);
     return createdOffer; */
-    const saltOrRounds = 10;
-    const hash = await bcrypt.hash(createUserDto.password, saltOrRounds);
+    // const saltOrRounds = 10;
+    // const hash = await bcrypt.hash(createUserDto.password, saltOrRounds);
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(createUserDto.password, salt);
 
     const newUser = {
       id: uuid(),
