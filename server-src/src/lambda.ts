@@ -25,7 +25,7 @@ async function bootstrapServer(): Promise<Server> {
       /* nestApp.enableCors({
          origin: 'https://brutalpatches.com',
       }); */
-      // nestApp.enableCors();
+      nestApp.enableCors();
       await nestApp.init();
       cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
    }
