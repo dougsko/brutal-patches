@@ -13,9 +13,9 @@ async function bootstrap() {
     new FastifyAdapter()
   );
   await app.register(fastifyHelmet);
-  app.enableCors({
+  /* app.enableCors({
     origin: 'https://brutalpatches.com', 
- });
+ }); */
   await app.listen(port);
   Logger.log(`Server started running on http://localhost:${port}`, 'Bootstrap');
 }
