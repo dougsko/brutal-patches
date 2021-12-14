@@ -105,4 +105,29 @@ export class UsersService {
 
     return { ok: true, data: user };
   }
+
+  async getUserByUsername(username) {
+    /* const User = await this.userRepository.getUserById(id);
+    return User; */
+
+    let user;
+    try {
+      const result = await new AWS.DynamoDB.DocumentClient()
+        .get({
+          TableName: process.env.USERS_TABLE_NAME,
+          Key: { username },
+        })
+        .promise();
+
+      user = result.Item;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    if (!user) {
+      throw new NotFoundException(`User with username "${username}" not found`);
+    }
+
+    return { ok: true, data: user };
+  }
 }

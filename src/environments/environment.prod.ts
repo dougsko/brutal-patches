@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.brutalpatches.com'
+  apiUrl: 'https://j404vd5log.execute-api.us-east-1.amazonaws.com/dev'
 };
