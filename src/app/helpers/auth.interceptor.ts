@@ -28,8 +28,8 @@ export class AuthInterceptor implements HttpInterceptor {
             return;
           }
           // this.eventBusService.emit(new EventData('logout', null));
-          this.token.signOut();
-          this.router.navigate(['login']);
+          /* this.token.signOut();
+          this.router.navigate(['login']); */
         }
       }));
   }

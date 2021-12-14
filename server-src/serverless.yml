@@ -13,7 +13,7 @@ provider:
     lambda: true
   runtime: nodejs12.x
   memorySize: 512
-  architecture: arm64
+  architecture: x86_64
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   lambdaHashingVersion: 20201221
