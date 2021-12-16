@@ -1,0 +1,22 @@
+.center {
+    position: absolute;
+    left: 30%;
+}
+
+label{
+  display: inline-block;
+  float: left;
+  clear: left;
+  width: 100px;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+input {
+  display: inline-block;
+  float: left;
+}
+
+button {
+  margin-top: 10px;
+}
