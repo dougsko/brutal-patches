@@ -32,10 +32,10 @@ export class PatchService {
             .slice(first, last);
     }
 
-    public async getPatchesByUser(userId: number, first: number, last: number,): Promise<Patch[]> {
+    public async getPatchesByUser(username: string, first: number, last: number,): Promise<Patch[]> {
         let userPatches: Patch[] = [];
         let myUser: User;
-        return this.userService.findOneById(userId).then( user => {
+        return this.userService.findOneByUsername(username).then( user => {
             myUser = user;
             this.patches.forEach(patch => {
                 if (myUser.patches.includes(patch.id)) {
@@ -46,10 +46,10 @@ export class PatchService {
         });
     }
 
-    public async getUserPatchTotal(userId: number): Promise<number> {
+    public async getUserPatchTotal(username: string): Promise<number> {
         let userPatches: Patch[] = [];
         let myUser: User;
-        return this.userService.findOneById(userId).then( user => {
+        return this.userService.findOneByUsername(username).then( user => {
             myUser = user;
             this.patches.forEach(patch => {
                 if (myUser.patches.includes(patch.id)) {

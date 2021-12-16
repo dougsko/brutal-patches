@@ -30,10 +30,10 @@ export class UsersController {
         }
     }
 
-    @Get('/getUserById/:id')
-    async getUserById(@Param('id') id: string, @Res() res: any) {
+    @Get('/getUserByUsername/:username')
+    async getUserById(@Param('username') username: string, @Res() res: any) {
         try {
-            const user: any = await this.userService.getUserById(id);
+            const user: any = await this.userService.getUserByUsername(username);
             if (user.ok) {
                 return res.status(HttpStatus.OK).json({
                     ok: true,
