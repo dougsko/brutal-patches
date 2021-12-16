@@ -1,9 +1,10 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
 
 const bcrypt = require('bcryptjs');
+
 
 @Injectable()
 export class UsersService {
@@ -42,6 +43,12 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
+    let response = await this.getUserByUsername(createUserDto.username);
+    if(response.data.length > 0) {
+      throw new HttpException('Username already exists.', HttpStatus.BAD_REQUEST)
+      // return { ok: false };
+    }
+
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(createUserDto.password, salt);
 
@@ -66,20 +73,26 @@ export class UsersService {
     return { ok: true, data: newUser };
   }
 
-  async getUserByUsername(username) {
+  async getUserByUsername(username: string) {
     /* const User = await this.userRepository.getUserById(id);
     return User; */
-
     let user;
+
+    let params = {
+      TableName: process.env.USERS_TABLE_NAME,
+      KeyConditionExpression: 'username = :hkey',
+      ExpressionAttributeValues: {
+        ':hkey': username
+      }
+    };
+
     try {
       const result = await new AWS.DynamoDB.DocumentClient()
-        .get({
-          TableName: process.env.USERS_TABLE_NAME,
-          Key: { username },
-        })
+        .query(params)
         .promise();
 
-      user = result.Item;
+      user = result.Items;
+      console.log(result);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

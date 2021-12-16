@@ -1,5 +1,5 @@
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -19,7 +19,11 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
           }
           else {
             console.log('this is server side error');
-            errorMsg = `Error Code: ${error.status},  Message: ${error.error.message}`;
+            if(error.error.errors) {
+              errorMsg = `Error Code: ${error.error.errors.status},  Message: ${error.error.errors.message}`;
+            } else { 
+              errorMsg = `Error Code: ${error.status},  Message: ${error.error.message}`;
+            }
           }
           console.log(errorMsg);
           return throwError(errorMsg);

@@ -2,8 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { TokenStorageService } from './token-storage.service';
-
 
 const AUTH_API = `${environment.apiUrl}/api/auth/`;
 const USERS_API = `${environment.apiUrl}/api/users/`
@@ -16,7 +14,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient, private tokenStorage: TokenStorageService) { }
+  constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<any> {
     return this.http.post(AUTH_API + 'login', {
