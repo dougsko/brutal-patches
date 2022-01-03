@@ -19,11 +19,12 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
           }
           else {
             console.log('this is server side error');
-            if(error.error.errors) {
-              errorMsg = `Error Code: ${error.error.errors.status},  Message: ${error.error.errors.message}`;
-            } else { 
+            //console.log(error);
+            //if(error.error.errors) {
+            //  errorMsg = `Error Code: ${error.error.errors.status},  Message: ${error.error.errors.message}`;
+            //} else { 
               errorMsg = `Error Code: ${error.status},  Message: ${error.error.message}`;
-            }
+            //}
           }
           console.log(errorMsg);
           return throwError(errorMsg);

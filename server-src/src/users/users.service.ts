@@ -79,7 +79,7 @@ export class UsersService {
     let user;
 
     let params = {
-      TableName: process.env.USERS_TABLE_NAME,
+      TableName: 'UsersTable-dev', //process.env.USERS_TABLE_NAME,
       KeyConditionExpression: 'username = :hkey',
       ExpressionAttributeValues: {
         ':hkey': username
