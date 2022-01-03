@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -9,7 +9,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   form: any = {
     username: null,
     password: null
@@ -50,8 +50,7 @@ export class LoginComponent implements OnInit {
         this.reloadPage();
       },
       err => {
-        console.log(err)
-        this.errorMessage = err.error.message;
+        //this.errorMessage = err;
         this.isLoginFailed = true;
       }
     );
