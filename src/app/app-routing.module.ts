@@ -9,8 +9,8 @@ import { RegisterComponent } from './components/register/register.component';
 
 const routes: Routes = [
   { path: 'patches', component: PatchListComponent },
-  { path: 'patches/mine', component: MyPatchListComponent },
-  { path: 'patches/:id', component: PatchComponent },
+  { path: 'patches/:username', component: MyPatchListComponent },
+  { path: 'patch/:id',  component: PatchComponent },
   { path: '', redirectTo: '/patches', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },

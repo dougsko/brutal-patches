@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
+import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Patch } from '../../interfaces/patch';
 import { PatchService } from '../../services/patch.service';
 
@@ -25,7 +26,7 @@ export class PatchListComponent implements OnInit, OnDestroy {
   myPatchTotal: number = 0;
   isLoggedIn = false;
 
-  constructor(private patchService: PatchService) {
+  constructor(private patchService: PatchService, private tokenStorageService: TokenStorageService) {
    }
 
   ngOnInit(): void {
@@ -63,7 +64,7 @@ export class PatchListComponent implements OnInit, OnDestroy {
   }
 
   getMyPatchTotal(): void {
-    this.patchSub = this.patchService.getMyPatchTotal().subscribe( total => {
+    this.patchSub = this.patchService.getUserPatchTotal(this.tokenStorageService.getUser()).subscribe( total => {
       this.getMyPatchTotal = total;
     })
   }

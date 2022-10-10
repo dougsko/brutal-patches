@@ -54,17 +54,17 @@ export class PatchService {
     return of("ok");
   }
 
-  getMyPatchTotal(): Observable<any> {
-    return this.http.get(`${PATCH_API}/mine/total`).pipe(
+  getUserPatchTotal(username: string): Observable<any> {
+    return this.http.get(`${PATCH_API}/${username}/total`).pipe(
       catchError(err => {
         return throwError(err);
       })
     );
   }
 
-  getMyPatches(first: number, last: number): Observable<any> {
+  getUserPatches(username: string, first: number, last: number): Observable<any> {
     // console.log("Getting new patches")
-    return this.http.get(`${environment.apiUrl}/api/patches/mine/${first}/${last}`).pipe(
+    return this.http.get(`${environment.apiUrl}/api/patches/${username}/${first}/${last}`).pipe(
       catchError(err => {
         return throwError(err);
       })

@@ -19,9 +19,9 @@ export class PatchController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/mine/total')
-    getMyTotal(@Request() req): Promise<number> {
-        return this.patchService.getUserPatchTotal(req.user.username);
+    @Get('/:username/total')
+    getMyTotal(@Request() req, @Param("username") username:string,): Promise<number> {
+        return this.patchService.getUserPatchTotal(username);
     }
 
 
@@ -33,9 +33,9 @@ export class PatchController {
 
     
     @UseGuards(JwtAuthGuard)
-    @Get('/mine/:first/:last')
-    getMyPatches(@Request() req, @Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
-        return this.patchService.getPatchesByUser(req.user.username, first, last);
+    @Get('/:username/:first/:last')
+    getMyPatches(@Request() req, @Param("username") username:string, @Param("first") first:number, @Param("last") last:number): Promise<Patch[]> {
+        return this.patchService.getPatchesByUser(username, first, last);
     }
 
     @Get(":id")

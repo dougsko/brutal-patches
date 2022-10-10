@@ -63,7 +63,7 @@ export class MyPatchListComponent implements OnInit {
   }
 
   getMyPatches(first: number, last: number): void {
-    let patchSub = this.patchService.getMyPatches(first, last).subscribe( patches => {
+    let patchSub = this.patchService.getUserPatches(this.tokenStorage.getUser().username, first, last).subscribe( patches => {
       this.patches = patches;
       this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
     });
@@ -78,7 +78,7 @@ export class MyPatchListComponent implements OnInit {
   }
 
   getMyPatchTotal(): void {
-    let patchSub = this.patchService.getMyPatchTotal().subscribe( total => {
+    let patchSub = this.patchService.getUserPatchTotal(this.tokenStorage.getUser().username).subscribe( total => {
       this.myPatchTotal = total;
     })
     this.subs.push(patchSub);
