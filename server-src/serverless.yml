@@ -1,5 +1,4 @@
-service:
-  name: aws-nestjs-dynamodb
+service: aws-nestjs-dynamodb
 
 plugins:
   - '@hewmen/serverless-plugin-typescript'

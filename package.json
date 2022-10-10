@@ -29,9 +29,9 @@
     "jquery-slider": "^0.0.1",
     "jquery-templates": "^1.0.0",
     "jquery-ui": "^1.13.0",
-    "jqwidgets-ng": "^12.2.1",
+    "jqwidgets-ng": "^14.1.17",
     "jsplumb": "^2.15.6",
-    "rxjs": "~6.6.0",
+    "rxjs": "~7.5.7",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
@@ -39,14 +39,14 @@
     "@angular-devkit/build-angular": "^14.2.5",
     "@angular/cli": "^14.2.5",
     "@angular/compiler-cli": "^14.2.5",
-    "@types/jasmine": "~3.8.0",
-    "@types/node": "^12.11.1",
-    "jasmine-core": "~3.8.0",
-    "karma": "~6.3.0",
+    "@types/jasmine": "~4.3.0",
+    "@types/node": "^18.8.3",
+    "jasmine-core": "~4.4.0",
+    "karma": "~6.4.1",
     "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage": "~2.0.3",
-    "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "~4.6.4"
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.0.0",
+    "typescript": "~4.8.4"
   }
 }
