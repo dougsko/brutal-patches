@@ -115,8 +115,12 @@
             "scripts": []
           }
         },
-        "deploy": {
+        "deploy-pages": {
           "builder": "angular-cli-ghpages:deploy"
+        },
+        "deploy": {
+          "builder": "@jefiozie/ngx-aws-deploy:deploy",
+          "options": {}
         }
       }
     }
