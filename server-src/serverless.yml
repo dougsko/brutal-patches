@@ -15,10 +15,9 @@ provider:
   architecture: x86_64
   stage: ${opt:stage, 'dev'}
   region: us-east-1
-  lambdaHashingVersion: 20201221
   environment:
     USERS_TABLE_NAME: ${self:custom.UsersTable.name}
-  iamRoleStatements:
+  iam.role.statements:
     - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
   apiGateway:
     minimumCompressionSize: 1024
@@ -37,15 +36,11 @@ functions:
     handler: src/lambda.handler # The module 'handler' is exported in the file 'src/lambda'
     events:
       - http:
-        method: get
-        cors: true
-        caching:
-          enabled: true
-      - http:
           method: any
           path: /{any+}
           cors: true
-
+          caching:
+            enabled: true
 custom:
   UsersTable:
     name: !Ref UsersTable
