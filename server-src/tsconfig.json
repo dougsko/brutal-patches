@@ -19,6 +19,6 @@
     "skipDefaultLibCheck": true,
     "noErrorTruncation": true,
     "typeRoots": ["./node_modules/@types"],
-    "types": []
+    "types": ["jest", "node"]
   }
 }
