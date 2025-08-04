@@ -1,8 +1,7 @@
 service: aws-nestjs-dynamodb
 
 plugins:
-  - '@hewmen/serverless-plugin-typescript'
-  - serverless-plugin-optimize
+  - serverless-esbuild
   - serverless-offline
   - serverless-api-gateway-caching
 provider:
@@ -47,3 +46,14 @@ custom:
   UsersTable:
     name: !Ref UsersTable
     arn: !GetAtt UsersTable.Arn
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude:
+      - aws-sdk
+    target: node20
+    define:
+      require.resolve: undefined
+    platform: node
+    concurrency: 10
