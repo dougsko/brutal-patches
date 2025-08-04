@@ -33,6 +33,8 @@ Configure the following secrets in your GitHub repository settings (`Settings > 
 
 Your GitHub Actions IAM user needs the following permissions:
 
+**Important**: After updating your IAM policy, you may need to wait a few minutes for AWS to propagate the permission changes.
+
 ```json
 {
   "Version": "2012-10-17",
@@ -71,8 +73,8 @@ Your GitHub Actions IAM user needs the following permissions:
         "s3:DeleteObjectVersion"
       ],
       "Resource": [
-        "arn:aws:s3:::*serverlessdeploymentbucket*",
-        "arn:aws:s3:::*serverlessdeploymentbucket*/*"
+        "arn:aws:s3:::aws-nestjs-dynamodb-*",
+        "arn:aws:s3:::aws-nestjs-dynamodb-*/*"
       ]
     },
     {
@@ -169,8 +171,13 @@ npm run start:all
 
 1. **Build failures**: Check Node.js version compatibility
 2. **Permission errors**: Verify IAM policies and secrets
-3. **CORS issues**: Ensure API Gateway CORS is configured
-4. **Cache issues**: Invalidate CloudFront distribution
+3. **S3 CreateBucket permission errors**: 
+   - Update IAM policy with the S3 permissions above
+   - Wait 5-10 minutes for AWS permission propagation
+   - Retry deployment after permissions are updated
+4. **Deployment bucket removed manually**: The workflow will automatically clean up failed CloudFormation stacks
+5. **CORS issues**: Ensure API Gateway CORS is configured
+6. **Cache issues**: Invalidate CloudFront distribution
 
 ### Monitoring
 
