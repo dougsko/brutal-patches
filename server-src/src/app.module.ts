@@ -13,19 +13,14 @@ import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
-    AuthModule, 
+    AuthModule,
     UsersModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7200s' },
-    })
+    }),
   ],
-  controllers: [AppController, PatchController, AuthController ],
-  providers: [
-    AppService, 
-    PatchService, 
-    AuthService,
-    UsersService
-  ]
+  controllers: [AppController, PatchController, AuthController],
+  providers: [AppService, PatchService, AuthService, UsersService],
 })
 export class AppModule {}

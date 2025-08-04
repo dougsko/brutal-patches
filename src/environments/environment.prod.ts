@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.brutalpatches.com'
+  apiUrl: 'https://d3n1xt94lbswuw.cloudfront.net'
 };

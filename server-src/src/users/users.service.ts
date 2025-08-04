@@ -1,14 +1,19 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
 
 const bcrypt = require('bcryptjs');
 
-
 @Injectable()
 export class UsersService {
-  constructor() { }
+  constructor() {}
 
   private readonly users: User[] = [
     {
@@ -16,26 +21,26 @@ export class UsersService {
       password: 'changeme',
       email: 'john@gmail.com',
       roles: ['admin'],
-      patches: [567, 623, 707, 710]
+      patches: [567, 623, 707, 710],
     },
     {
       username: 'maria',
       password: 'guess',
       email: 'maria@gmail.com',
       roles: ['user'],
-      patches: []
+      patches: [],
     },
   ];
 
   async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+    return this.users.find((user) => user.username === username);
   }
 
   async findOneByUsername(username: string): Promise<User | undefined> {
     let myUser: User;
-    this.users.forEach(user => {
+    this.users.forEach((user) => {
       if (user.username == username) {
-        myUser = user
+        myUser = user;
         return user;
       }
     });
@@ -43,9 +48,12 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    let response = await this.getUserByUsername(createUserDto.username);
-    if(response.data.length > 0) {
-      throw new HttpException('Username already exists.', HttpStatus.BAD_REQUEST)
+    const response = await this.getUserByUsername(createUserDto.username);
+    if (response.data.length > 0) {
+      throw new HttpException(
+        'Username already exists.',
+        HttpStatus.BAD_REQUEST,
+      );
       // return { ok: false };
     }
 
@@ -55,7 +63,7 @@ export class UsersService {
     const newUser = {
       username: createUserDto.username,
       email: createUserDto.email,
-      password: hash
+      password: hash,
     };
     console.log(newUser);
 
@@ -78,12 +86,12 @@ export class UsersService {
     return User; */
     let user;
 
-    let params = {
+    const params = {
       TableName: 'UsersTable-dev', //process.env.USERS_TABLE_NAME,
       KeyConditionExpression: 'username = :hkey',
       ExpressionAttributeValues: {
-        ':hkey': username
-      }
+        ':hkey': username,
+      },
     };
 
     try {

@@ -17,8 +17,10 @@ provider:
   region: us-east-1
   environment:
     USERS_TABLE_NAME: ${self:custom.UsersTable.name}
-  iam.role.statements:
-    - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
+  iam:
+    role:
+      statements:
+        - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
