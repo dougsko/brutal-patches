@@ -32,4 +32,44 @@ describe('FilterComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize with filter parameters', () => {
+    expect(component.patch.cutoff).toBeDefined();
+    expect(component.patch.resonance).toBeDefined();
+    expect(component.patch.env_amt).toBeDefined();
+    expect(component.patch.brute_factor).toBeDefined();
+    expect(component.patch.kbd_tracking).toBeDefined();
+    expect(component.patch.mode).toBeDefined();
+  });
+
+  it('should handle filter parameter updates', () => {
+    component.patch.cutoff = 0.9;
+    expect(component.patch.cutoff).toBe(0.9);
+    
+    component.patch.resonance = 0.2;
+    expect(component.patch.resonance).toBe(0.2);
+    
+    component.patch.brute_factor = 0.7;
+    expect(component.patch.brute_factor).toBe(0.7);
+  });
+
+  it('should handle mode switching', () => {
+    component.patch.mode = 2;
+    expect(component.patch.mode).toBe(2);
+    
+    // Mode should be discrete values
+    expect(Number.isInteger(component.patch.mode)).toBe(true);
+  });
+
+  it('should validate parameter ranges for continuous controls', () => {
+    const continuousParams = ['cutoff', 'resonance', 'env_amt', 'brute_factor', 'kbd_tracking'];
+    
+    continuousParams.forEach(param => {
+      const value = component.patch[param];
+      if (typeof value === 'number') {
+        expect(value).toBeGreaterThanOrEqual(0);
+        expect(value).toBeLessThanOrEqual(1);
+      }
+    });
+  });
 });
