@@ -17,6 +17,8 @@
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
     "skipDefaultLibCheck": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": []
   }
 }
