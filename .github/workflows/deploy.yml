@@ -69,11 +69,18 @@ jobs:
           cd server-src
           npm install
 
+      - name: Build backend with NestJS
+        run: |
+          cd server-src
+          npm run build
+
       - name: Verify serverless configuration
         run: |
           cd server-src
           echo "Serverless configuration:"
           cat serverless.yml | grep runtime
+          echo "Checking if dist directory exists:"
+          ls -la dist/
 
       - name: Deploy backend to AWS Lambda
         run: |

@@ -1,7 +1,6 @@
 service: aws-nestjs-dynamodb
 
 plugins:
-  - serverless-plugin-typescript
   - serverless-plugin-optimize
   - serverless-offline
   - serverless-api-gateway-caching
@@ -35,7 +34,7 @@ resources:
 
 functions:
   main: # The name of the lambda function
-    handler: src/lambda.handler # The module 'handler' is exported in the file 'src/lambda'
+    handler: dist/lambda.handler # The module 'handler' is exported in the compiled file 'dist/lambda'
     events:
       - http:
           method: any
@@ -47,5 +46,3 @@ custom:
   UsersTable:
     name: !Ref UsersTable
     arn: !GetAtt UsersTable.Arn
-  serverless-plugin-typescript:
-    tsConfigFileLocation: './tsconfig.deploy.json'
