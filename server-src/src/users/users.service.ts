@@ -8,24 +8,21 @@ import {
 import * as AWS from 'aws-sdk';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
-
-const bcrypt = require('bcryptjs');
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-  constructor() {}
-
   private readonly users: User[] = [
     {
       username: 'john',
-      password: 'changeme',
+      password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
       email: 'john@gmail.com',
       roles: ['admin'],
       patches: [567, 623, 707, 710],
     },
     {
       username: 'maria',
-      password: 'guess',
+      password: '$2a$10$.uduR30EnQScbkm3Em7Se.5AJI4zsKipYRwyi6khCkSLmHP7Br5x6', // 'guess'
       email: 'maria@gmail.com',
       roles: ['user'],
       patches: [],
@@ -48,13 +45,13 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const response = await this.getUserByUsername(createUserDto.username);
-    if (response.data.length > 0) {
+    // Check if user already exists
+    const existingUser = this.users.find(user => user.username === createUserDto.username);
+    if (existingUser) {
       throw new HttpException(
         'Username already exists.',
         HttpStatus.BAD_REQUEST,
       );
-      // return { ok: false };
     }
 
     const salt = bcrypt.genSaltSync(10);
@@ -64,51 +61,23 @@ export class UsersService {
       username: createUserDto.username,
       email: createUserDto.email,
       password: hash,
+      roles: ['user'],
+      patches: [],
     };
-    console.log(newUser);
-
-    try {
-      await new AWS.DynamoDB.DocumentClient()
-        .put({
-          TableName: process.env.USERS_TABLE_NAME,
-          Item: newUser,
-        })
-        .promise();
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
+    
+    // Add to in-memory array for local development
+    this.users.push(newUser);
+    console.log('New user created:', newUser);
 
     return { ok: true, data: newUser };
   }
 
   async getUserByUsername(username: string) {
-    /* const User = await this.userRepository.getUserById(id);
-    return User; */
-    let user;
-
-    const params = {
-      TableName: 'UsersTable-dev', //process.env.USERS_TABLE_NAME,
-      KeyConditionExpression: 'username = :hkey',
-      ExpressionAttributeValues: {
-        ':hkey': username,
-      },
-    };
-
-    try {
-      const result = await new AWS.DynamoDB.DocumentClient()
-        .query(params)
-        .promise();
-
-      user = result.Items;
-      console.log(result);
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-
-    if (!user) {
-      throw new NotFoundException(`User with username "${username}" not found`);
-    }
-
+    // Use in-memory array for local development
+    const user = this.users.filter(u => u.username === username);
+    
+    console.log(`Looking for user: ${username}`, user);
+    
     return { ok: true, data: user };
   }
 }

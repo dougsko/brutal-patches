@@ -6,7 +6,6 @@ import { eventContext } from 'aws-serverless-express/middleware';
 import { Server } from 'http';
 import { AppModule } from './app.module';
 import express = require('express');
-import exp = require('constants');
 import cors = require('cors');
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely

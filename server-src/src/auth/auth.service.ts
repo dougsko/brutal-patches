@@ -3,8 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/interfaces/user.interface';
 import { CreateUserDto } from 'src/users/dto/create-user-dto';
 import { UsersService } from '../users/users.service';
-
-const bcrypt = require('bcryptjs');
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -14,18 +13,23 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const userDto: CreateUserDto = {
-      username: username,
-      email: null,
-      password: pass,
-    };
-    const response = await this.usersService.getUserByUsername(
-      userDto.username,
-    );
-    if (bcrypt.compareSync(pass, response.data[0].password)) {
-      return response.data;
+    try {
+      const response = await this.usersService.getUserByUsername(username);
+      console.log('Auth validateUser response:', response);
+      
+      if (response.data && response.data.length > 0) {
+        const user = response.data[0];
+        if (bcrypt.compareSync(pass, user.password)) {
+          console.log('Password validation successful for user:', username);
+          return response.data;
+        }
+      }
+      console.log('Password validation failed for user:', username);
+      return null;
+    } catch (error) {
+      console.error('Error in validateUser:', error);
+      return null;
     }
-    return null;
   }
 
   async login(user: User) {

@@ -5,7 +5,7 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import 'dotenv/config';
-import { fastifyHelmet } from 'fastify-helmet';
+import helmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 
 const port = process.env.PORT;
@@ -15,11 +15,12 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-  await app.register(fastifyHelmet);
+  await app.register(helmet);
+  // Enable CORS for local development
   app.enableCors({
-    origin: 'https://brutalpatches.com',
+    origin: ['http://localhost:4200', 'https://brutalpatches.com'],
+    credentials: true,
   });
-  // app.enableCors();
   await app.listen(port);
   Logger.log(`Server started running on http://localhost:${port}`, 'Bootstrap');
 }
