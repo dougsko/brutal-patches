@@ -83,7 +83,10 @@ Your GitHub Actions IAM user needs the following permissions:
         "apigateway:*",
         "iam:*",
         "dynamodb:*",
-        "logs:*"
+        "logs:*",
+        "cloudformation:DescribeStacks",
+        "cloudformation:DeleteStack",
+        "cloudformation:DescribeStackEvents"
       ],
       "Resource": "*"
     },
