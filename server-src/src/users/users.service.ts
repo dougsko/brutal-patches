@@ -27,6 +27,13 @@ export class UsersService {
       roles: ['user'],
       patches: [],
     },
+    {
+      username: 'dougsko',
+      password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
+      email: 'dougsko@gmail.com',
+      roles: ['admin'],
+      patches: [567, 623],
+    },
   ];
 
   async findOne(username: string): Promise<User | undefined> {
@@ -34,14 +41,7 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string): Promise<User | undefined> {
-    let myUser: User;
-    this.users.forEach((user) => {
-      if (user.username == username) {
-        myUser = user;
-        return user;
-      }
-    });
-    return myUser;
+    return this.users.find((user) => user.username === username);
   }
 
   async createUser(createUserDto: CreateUserDto) {
