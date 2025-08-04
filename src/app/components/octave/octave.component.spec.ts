@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { OctaveComponent } from './octave.component';
 
@@ -8,7 +9,8 @@ describe('OctaveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OctaveComponent ]
+      declarations: [ OctaveComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
   });
@@ -16,6 +18,9 @@ describe('OctaveComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OctaveComponent);
     component = fixture.componentInstance;
+    component.patch = {
+      octave: 0
+    } as any;
     fixture.detectChanges();
   });
 

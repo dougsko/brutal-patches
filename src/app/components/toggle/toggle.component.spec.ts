@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 import { ToggleComponent } from './toggle.component';
 
@@ -8,7 +9,8 @@ describe('ToggleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToggleComponent ]
+      declarations: [ ToggleComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
   });
@@ -16,6 +18,7 @@ describe('ToggleComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ToggleComponent);
     component = fixture.componentInstance;
+    component.patch = {} as any;
     fixture.detectChanges();
   });
 
