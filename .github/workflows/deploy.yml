@@ -61,8 +61,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install Serverless Framework
-        run: npm install -g serverless
+      - name: Install Serverless Framework v3
+        run: npm install -g serverless@3
 
       - name: Install backend dependencies
         run: |
