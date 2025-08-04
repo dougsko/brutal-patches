@@ -1,11 +1,11 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatLegacyPaginatorModule as MatPaginatorModule } from '@angular/material/legacy-paginator';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -37,54 +37,48 @@ import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    PatchListComponent,
-    PatchDetailComponent,
-    KnobComponent,
-    PatchInfoComponent,
-    ToggleComponent,
-    SliderComponent,
-    OctaveComponent,
-    OscillatorComponent,
-    FilterComponent,
-    ModMatrixComponent,
-    VolumeComponent,
-    ControlsComponent,
-    LfoComponent,
-    EnvelopeComponent,
-    SequencerComponent,
-    PatchComponent,
-    ToolbarComponent,
-    LoginComponent,
-    RegisterComponent,
-    ProfileComponent,
-    MyPatchListComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    jqxKnobModule,
-    jqxSliderModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatPaginatorModule,
-    MatButtonModule
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptorService,
-      multi: true
-    },
-    authInterceptorProviders
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        PatchListComponent,
+        PatchDetailComponent,
+        KnobComponent,
+        PatchInfoComponent,
+        ToggleComponent,
+        SliderComponent,
+        OctaveComponent,
+        OscillatorComponent,
+        FilterComponent,
+        ModMatrixComponent,
+        VolumeComponent,
+        ControlsComponent,
+        LfoComponent,
+        EnvelopeComponent,
+        SequencerComponent,
+        PatchComponent,
+        ToolbarComponent,
+        LoginComponent,
+        RegisterComponent,
+        ProfileComponent,
+        MyPatchListComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        jqxKnobModule,
+        jqxSliderModule,
+        BrowserAnimationsModule,
+        MatChipsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatPaginatorModule,
+        MatButtonModule], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptorService,
+            multi: true
+        },
+        authInterceptorProviders,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

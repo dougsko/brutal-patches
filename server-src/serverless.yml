@@ -10,15 +10,17 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  runtime: nodejs14.x
+  runtime: nodejs20.x
   memorySize: 512
   architecture: x86_64
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   environment:
     USERS_TABLE_NAME: ${self:custom.UsersTable.name}
-  iam.role.statements:
-    - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
+  iam:
+    role:
+      statements:
+        - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true

@@ -18,9 +18,14 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "deploy": "serverless deploy --stage prod",
+    "deploy:dev": "serverless deploy --stage dev",
+    "remove": "serverless remove --stage prod",
+    "logs": "serverless logs -f main --stage prod"
   },
   "dependencies": {
+    "@fastify/helmet": "^11.1.1",
     "@nestjs/common": "^9.1.4",
     "@nestjs/core": "^9.1.4",
     "@nestjs/jwt": "^9.0.0",
@@ -38,7 +43,6 @@
     "compression": "^1.7.4",
     "dotenv": "^16.0.3",
     "fastify-compress": "^4.0.0",
-    "fastify-helmet": "^7.1.0",
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",

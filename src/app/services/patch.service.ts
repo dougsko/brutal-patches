@@ -19,7 +19,7 @@ export class PatchService {
   getPatches(): Observable<any> {
     return this.http.get(PATCH_API).pipe(
       catchError(err => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
@@ -35,7 +35,7 @@ export class PatchService {
   getPatch(id: number): Observable<any|Patch> {
     return this.http.get(`${PATCH_API}/${id}`).pipe(
       catchError(err => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
@@ -43,7 +43,7 @@ export class PatchService {
   getPatchTotal(): Observable<any> {
     return this.http.get(`${PATCH_API}/total`).pipe(
       catchError(err => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
@@ -57,7 +57,7 @@ export class PatchService {
   getUserPatchTotal(username: string): Observable<any> {
     return this.http.get(`${PATCH_API}/${username}/total`).pipe(
       catchError(err => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
@@ -66,7 +66,7 @@ export class PatchService {
     // console.log("Getting new patches")
     return this.http.get(`${environment.apiUrl}/api/patches/${username}/${first}/${last}`).pipe(
       catchError(err => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       })
     );
   }
