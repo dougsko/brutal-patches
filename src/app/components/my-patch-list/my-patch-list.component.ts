@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 import { Patch } from 'src/app/interfaces/patch';
 import { PatchService } from 'src/app/services/patch.service';
