@@ -29,7 +29,7 @@ jobs:
       - name: Install backend dependencies
         run: |
           cd server-src
-          npm ci
+          npm install
 
       - name: Run frontend tests
         run: npm run test:ci
@@ -67,7 +67,7 @@ jobs:
       - name: Install backend dependencies
         run: |
           cd server-src
-          npm ci
+          npm install
 
       - name: Verify serverless configuration
         run: |
