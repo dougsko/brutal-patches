@@ -48,4 +48,4 @@ custom:
     name: !Ref UsersTable
     arn: !GetAtt UsersTable.Arn
   serverless-plugin-typescript:
-    tsConfigFileLocation: './tsconfig.json'
+    tsConfigFileLocation: './tsconfig.deploy.json'
