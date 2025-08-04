@@ -69,7 +69,10 @@ check_success "Frontend build"
 # Deploy backend
 echo -e "${YELLOW}🚀 Deploying backend...${NC}"
 cd $BACKEND_DIR
-npx serverless deploy --stage $STAGE --region $REGION
+export SERVERLESS_DISABLE_USAGE_TRACKING=true
+export SLS_DISABLE_ANALYTICS=true 
+export SLS_DISABLE_TELEMETRY=true
+npm run deploy
 check_success "Backend deployment"
 cd ..
 

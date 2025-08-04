@@ -19,8 +19,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "deploy": "serverless deploy --stage prod",
-    "deploy:dev": "serverless deploy --stage dev",
+    "deploy": "npm run build && serverless deploy --stage prod",
+    "deploy:dev": "npm run build && serverless deploy --stage dev",
     "remove": "serverless remove --stage prod",
     "logs": "serverless logs -f main --stage prod"
   },

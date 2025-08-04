@@ -61,25 +61,29 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Install Serverless Framework v3
-        run: npm install -g serverless@3
+      - name: Install Serverless Framework v3 (stable)
+        run: npm install -g serverless@3.38.0
 
       - name: Install backend dependencies
         run: |
           cd server-src
           npm ci
 
-      - name: Verify serverless configuration
+      - name: Build backend
         run: |
           cd server-src
-          echo "Serverless configuration:"
-          cat serverless.yml | grep runtime
+          npm run build
 
-      - name: Deploy backend to AWS Lambda
+      - name: Deploy backend with Serverless Framework
         run: |
           cd server-src
           serverless deploy --stage prod --region ${{ env.AWS_REGION }}
         env:
+          # Disable analytics and usage tracking to avoid auth issues
+          SERVERLESS_DISABLE_USAGE_TRACKING: true
+          SLS_DISABLE_ANALYTICS: true
+          SLS_DISABLE_TELEMETRY: true
+          # Use existing AWS credentials
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -121,13 +125,21 @@ jobs:
       - name: Invalidate CloudFront (if configured)
         run: |
           if [ ! -z "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
-            aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+            echo "Attempting CloudFront cache invalidation..."
+            if aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*" 2>/dev/null; then
+              echo "✅ CloudFront cache invalidation successful"
+            else
+              echo "⚠️ CloudFront invalidation failed (possibly due to permissions)"
+              echo "Frontend deployed to S3 successfully, but cache may need manual invalidation"
+              echo "This is not critical - the deployment was successful"
+            fi
           else
             echo "CloudFront distribution ID not configured, skipping invalidation"
           fi
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        continue-on-error: true
 
   notify:
     name: Deployment Notification
