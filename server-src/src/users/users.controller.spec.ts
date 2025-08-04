@@ -35,14 +35,12 @@ describe('UsersController', () => {
       password: 'testpass',
     };
 
-    const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
-    };
-
-    await controller.createUser(createUserDto, mockRes);
+    const result = await controller.createUser(createUserDto);
 
     expect(mockUsersService.createUser).toHaveBeenCalledWith(createUserDto);
-    expect(mockRes.status).toHaveBeenCalledWith(201);
+    expect(result).toEqual({
+      ok: true,
+      data: { username: 'testuser', email: 'test@example.com' },
+    });
   });
 });

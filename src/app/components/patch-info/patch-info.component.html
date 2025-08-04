@@ -3,21 +3,21 @@
    <p><textarea rows="3" cols="100" style="border: none;" id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea></p>
 
     <mat-form-field class="tag-list" appearance="fill">
-      <mat-chip-list #chipList>
-        <mat-chip *ngFor="let tag of patch.tags" [selectable]="selectable"
-                 [removable]="removable" (removed)="remove(tag)" class="tag">
+      <mat-chip-grid #chipGrid>
+        <mat-chip-row *ngFor="let tag of patch.tags" 
+                      [removable]="removable" (removed)="remove(tag)" class="tag">
           {{tag}}
           <button matChipRemove *ngIf="removable">
             <mat-icon class="grey">highlight_off</mat-icon>
           </button>
-        </mat-chip>
+        </mat-chip-row>
         <input placeholder="New tag..."
-               [matChipInputFor]="chipList"
+               [matChipInputFor]="chipGrid"
                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                [matChipInputAddOnBlur]="addOnBlur"
                (matChipInputTokenEnd)="add($event)"
                style="font-family: monospace;">
-      </mat-chip-list>
+      </mat-chip-grid>
     </mat-form-field>
 
 </div>
