@@ -9,7 +9,7 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  runtime: nodejs20.x
+  runtime: nodejs16.x
   memorySize: 512
   architecture: x86_64
   stage: ${opt:stage, 'dev'}
@@ -52,7 +52,12 @@ custom:
     sourcemap: true
     exclude:
       - aws-sdk
-    target: node20
+    external:
+      - class-transformer
+      - '@nestjs/microservices'
+      - '@nestjs/websockets'
+      - '@nestjs/platform-socket.io'
+    target: node16
     define:
       require.resolve: undefined
     platform: node
