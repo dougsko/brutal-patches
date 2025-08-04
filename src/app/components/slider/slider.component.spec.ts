@@ -9,7 +9,8 @@ describe('SliderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SliderComponent ]
+      declarations: [ SliderComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
   });
@@ -17,6 +18,9 @@ describe('SliderComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(SliderComponent);
     component = fixture.componentInstance;
+    // Initialize required properties
+    component.patch = {} as any;
+    component.name = 'testSlider';
     fixture.detectChanges();
   });
 

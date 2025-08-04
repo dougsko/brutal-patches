@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-
 import { ModMatrixComponent } from './mod-matrix.component';
+import { mockPatch } from '../../test-utils/mock-patch';
 
 describe('ModMatrixComponent', () => {
   let component: ModMatrixComponent;
@@ -9,7 +9,8 @@ describe('ModMatrixComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModMatrixComponent ]
+      declarations: [ ModMatrixComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
   });
@@ -17,6 +18,7 @@ describe('ModMatrixComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ModMatrixComponent);
     component = fixture.componentInstance;
+    component.patch = mockPatch;
     fixture.detectChanges();
   });
 

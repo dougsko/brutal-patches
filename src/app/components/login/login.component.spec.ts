@@ -1,15 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
+import { AuthService } from '../../services/auth.service';
+import { TokenStorageService } from '../../services/token-storage.service';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
   beforeEach(async () => {
+    const mockRouter = {
+      navigate: jasmine.createSpy('navigate')
+    };
+    const mockTokenStorage = {
+      saveToken: jasmine.createSpy('saveToken'),
+      saveUser: jasmine.createSpy('saveUser'),
+      getToken: jasmine.createSpy('getToken').and.returnValue(null),
+      getUser: jasmine.createSpy('getUser').and.returnValue({ username: 'testuser', roles: [] })
+    };
+
     await TestBed.configureTestingModule({
       declarations: [ LoginComponent ],
+      imports: [ HttpClientTestingModule, FormsModule ],
+      providers: [
+        AuthService,
+        { provide: Router, useValue: mockRouter },
+        { provide: TokenStorageService, useValue: mockTokenStorage }
+      ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

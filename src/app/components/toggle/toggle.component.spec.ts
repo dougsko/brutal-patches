@@ -18,7 +18,11 @@ describe('ToggleComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ToggleComponent);
     component = fixture.componentInstance;
+    // Initialize required properties
     component.patch = {} as any;
+    component.name = 'testToggle';
+    component.max = '1';
+    component.lower = '0';
     fixture.detectChanges();
   });
 

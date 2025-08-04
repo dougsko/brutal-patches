@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider; ng serve",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider; ng serve --proxy-config src/proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "export NODE_OPTIONS=--openssl-legacy-provider; ng test",
