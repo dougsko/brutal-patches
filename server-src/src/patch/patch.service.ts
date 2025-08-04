@@ -55,11 +55,12 @@ export class PatchService {
 
   public async getUserPatchTotal(username: string): Promise<number> {
     const userPatches: Patch[] = [];
-    let myUser: User;
     return this.userService.findOneByUsername(username).then((user) => {
-      myUser = user;
+      if (!user) {
+        throw new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND);
+      }
       this.patches.forEach((patch) => {
-        if (myUser.patches.includes(patch.id)) {
+        if (user.patches && user.patches.includes(patch.id)) {
           userPatches.push(patch);
         }
       });
