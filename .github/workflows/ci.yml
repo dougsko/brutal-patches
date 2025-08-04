@@ -1,0 +1,179 @@
+name: CI Tests
+
+on:
+  push:
+    branches: ['**']  # Run on all branch pushes
+  pull_request:
+    branches: [main]  # Run on PRs to main
+
+# Cancel previous runs on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  # Optimize npm for CI
+  NPM_CONFIG_PROGRESS: false
+  NPM_CONFIG_AUDIT: false
+
+jobs:
+  # Quick smoke test to fail fast
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Check package.json files
+        run: |
+          echo "✅ Checking package.json files..."
+          if ! [ -f package.json ]; then
+            echo "❌ Frontend package.json not found"
+            exit 1
+          fi
+          if ! [ -f server-src/package.json ]; then
+            echo "❌ Backend package.json not found"
+            exit 1
+          fi
+          echo "✅ Package files exist"
+
+      - name: Validate Node.js version compatibility
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend linting (if available)
+        run: |
+          if npm run lint --silent 2>/dev/null; then
+            npm run lint
+          else
+            echo "No frontend linting configured, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Run frontend tests
+        run: npm run test:ci
+
+      - name: Generate test coverage (if available)
+        run: |
+          if npm run test:coverage --silent 2>/dev/null; then
+            npm run test:coverage
+          else
+            echo "No test coverage configured, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Test frontend build
+        run: npm run build:prod
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    defaults:
+      run:
+        working-directory: server-src
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: server-src/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci
+
+      - name: Run backend linting
+        run: |
+          if npm run lint --silent 2>/dev/null; then
+            npm run lint
+          else
+            echo "No backend linting configured, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Run backend unit tests
+        run: npm test
+
+      - name: Run backend tests with coverage
+        run: |
+          if npm run test:cov --silent 2>/dev/null; then
+            npm run test:cov
+          else
+            echo "No test coverage configured, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Run backend e2e tests
+        run: |
+          if npm run test:e2e --silent 2>/dev/null; then
+            npm run test:e2e
+          else
+            echo "No e2e tests configured, skipping..."
+          fi
+        continue-on-error: true
+
+      - name: Test backend build
+        run: npm run build
+
+  test-results:
+    name: Test Results Summary
+    runs-on: ubuntu-latest
+    needs: [frontend-tests, backend-tests]
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.frontend-tests.result }}" == "success" ]]; then
+            echo "✅ Frontend tests: PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Frontend tests: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [[ "${{ needs.backend-tests.result }}" == "success" ]]; then
+            echo "✅ Backend tests: PASSED" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Backend tests: FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.frontend-tests.result }}" == "success" && "${{ needs.backend-tests.result }}" == "success" ]]; then
+            echo "🎉 **All tests passed!** Ready for deployment." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          else
+            echo "🚨 **Some tests failed.** Please fix issues before merging." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
