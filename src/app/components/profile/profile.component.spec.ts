@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProfileComponent } from './profile.component';
 import { TokenStorageService } from '../../services/token-storage.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -17,13 +18,15 @@ describe('ProfileComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ ProfileComponent ],
-      imports: [ HttpClientTestingModule ],
-      providers: [
-        { provide: TokenStorageService, useValue: mockTokenStorage }
-      ],
-      schemas: [ NO_ERRORS_SCHEMA ]
-    })
+    declarations: [ProfileComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
+        { provide: TokenStorageService, useValue: mockTokenStorage },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   });
 

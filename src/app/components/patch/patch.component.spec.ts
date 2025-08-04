@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
 import { PatchComponent } from './patch.component';
 import { PatchService } from '../../services/patch.service';
 import { mockPatch } from '../../test-utils/mock-patch';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PatchComponent', () => {
   let component: PatchComponent;
@@ -33,15 +34,17 @@ describe('PatchComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ PatchComponent ],
-      imports: [ HttpClientTestingModule ],
-      providers: [
+    declarations: [PatchComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         { provide: PatchService, useValue: mockPatchService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: Location, useValue: mockLocation }
-      ],
-      schemas: [ NO_ERRORS_SCHEMA ]
-    })
+        { provide: Location, useValue: mockLocation },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   });
 

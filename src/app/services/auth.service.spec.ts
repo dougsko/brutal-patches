@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
 import { TokenStorageService } from './token-storage.service';
 import { environment } from '../../environments/environment';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -14,12 +15,14 @@ describe('AuthService', () => {
       ['saveToken', 'getToken', 'saveUser', 'getUser', 'signOut']);
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [
+    imports: [],
+    providers: [
         AuthService,
-        { provide: TokenStorageService, useValue: tokenStorageSpy }
-      ]
-    });
+        { provide: TokenStorageService, useValue: tokenStorageSpy },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
     
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);

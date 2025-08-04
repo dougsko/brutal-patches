@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PatchListComponent } from './patch-list.component';
 import { PatchService } from '../../services/patch.service';
 import { TokenStorageService } from '../../services/token-storage.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('PatchListComponent', () => {
   let component: PatchListComponent;
@@ -16,14 +17,16 @@ describe('PatchListComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ PatchListComponent ],
-      imports: [ HttpClientTestingModule ],
-      providers: [
+    declarations: [PatchListComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         PatchService,
-        { provide: TokenStorageService, useValue: mockTokenStorage }
-      ],
-      schemas: [ NO_ERRORS_SCHEMA ]
-    })
+        { provide: TokenStorageService, useValue: mockTokenStorage },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   });
 

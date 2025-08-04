@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ToolbarComponent } from './toolbar.component';
 import { AuthService } from '../../services/auth.service';
 import { TokenStorageService } from '../../services/token-storage.service';
 import { EventBusService } from '../../services/event-bus.service';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -26,16 +27,18 @@ describe('ToolbarComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [ ToolbarComponent ],
-      imports: [ HttpClientTestingModule ],
-      providers: [
+    declarations: [ToolbarComponent],
+    schemas: [NO_ERRORS_SCHEMA],
+    imports: [],
+    providers: [
         { provide: Router, useValue: mockRouter },
         { provide: TokenStorageService, useValue: mockTokenStorage },
         { provide: EventBusService, useValue: mockEventBus },
-        AuthService
-      ],
-      schemas: [ NO_ERRORS_SCHEMA ]
-    })
+        AuthService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
     .compileComponents();
   });
 
