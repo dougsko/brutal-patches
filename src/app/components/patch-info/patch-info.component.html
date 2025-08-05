@@ -2,8 +2,7 @@
     <input id="title-text" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
     
     <div class="tags-container">
-        <mat-form-field class="tag-list" appearance="outline">
-          <mat-chip-grid #chipGrid>
+        <mat-chip-grid #chipGrid class="tag-list">
             <mat-chip-row *ngFor="let tag of patch.tags" 
                           [removable]="removable" (removed)="remove(tag)" class="tag">
               {{tag}}
@@ -17,8 +16,7 @@
                    [matChipInputAddOnBlur]="addOnBlur"
                    (matChipInputTokenEnd)="add($event)"
                    class="tag-input">
-          </mat-chip-grid>
-        </mat-form-field>
+        </mat-chip-grid>
     </div>
     
    <textarea id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea>
