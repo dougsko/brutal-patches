@@ -4,17 +4,17 @@
 
 #meta-info {
     max-width: 940px;
-    margin: 40px auto 24px;
+    margin: 10px auto 5px;
 }
 
 #title-text {
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
     font-family: 'Noto Sans', sans-serif;
-    font-size: 36px;
+    font-size: 24px;
     color: #fd9901;
-    line-height: 30px;
-    margin-bottom: 24px;
+    line-height: 26px;
+    margin-bottom: 8px;
 }
 #description-text {
     color: #aaa;
@@ -56,4 +56,35 @@ td.description-text {
    border-width: thin;
    border-color: #aaa;
    fill: #aaa
+}
+
+.title-tags-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.tags-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.tag-list {
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+#title-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+::ng-deep .mat-mdc-form-field {
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  padding-bottom: 5px;
 }
