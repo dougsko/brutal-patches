@@ -16,6 +16,7 @@ provider:
   region: us-east-1
   environment:
     USERS_TABLE_NAME: ${self:custom.UsersTable.name}
+    JWT_SECRET: ${env:JWT_SECRET, 'dev-secret-change-me-in-production'}
   iam:
     role:
       statements:
