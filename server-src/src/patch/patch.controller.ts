@@ -18,15 +18,6 @@ export class PatchController {
     return await this.patchService.getPatchTotal();
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/:username/total')
-  getMyTotal(
-    @Request() req,
-    @Param('username') username: string,
-  ): Promise<number> {
-    return this.patchService.getUserPatchTotal(username);
-  }
-
   @Get('/:first/:last')
   async findLatestPatches(
     @Param('first') first: number,
@@ -36,15 +27,22 @@ export class PatchController {
     return patches;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('/:username/:first/:last')
   getMyPatches(
-    @Request() req,
     @Param('username') username: string,
     @Param('first') first: number,
     @Param('last') last: number,
   ): Promise<Patch[]> {
     return this.patchService.getPatchesByUser(username, first, last);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/:username/total')
+  getMyTotal(
+    @Request() req,
+    @Param('username') username: string,
+  ): Promise<number> {
+    return this.patchService.getUserPatchTotal(username);
   }
 
   @Get(':id')
