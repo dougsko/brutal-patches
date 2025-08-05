@@ -28,7 +28,14 @@ export class PatchComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getPatch();
+    console.log('PatchComponent ngOnInit called');
+    console.log('Current route snapshot:', this.route.snapshot);
+    
+    // Subscribe to route param changes in case component is reused
+    this.route.params.subscribe(params => {
+      console.log('Route params changed:', params);
+      this.getPatch();
+    });
   }
 
   ngOnDestroy(): void {
@@ -40,8 +47,11 @@ export class PatchComponent implements OnInit {
   getPatch(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     console.log('getPatch called with idParam:', idParam);
+    console.log('Type of idParam:', typeof idParam);
+    console.log('Route snapshot params:', this.route.snapshot.paramMap);
+    console.log('Current URL:', window.location.href);
     
-    if (idParam === 'new') {
+    if (idParam === 'new' || idParam === null || idParam === undefined) {
       // Create a new patch with default values
       console.log('Creating new patch');
       try {
@@ -49,10 +59,26 @@ export class PatchComponent implements OnInit {
         console.log('New patch created successfully:', this.patch);
       } catch (error) {
         console.error('Failed to create new patch:', error);
+        // Create a minimal patch as fallback
+        this.patch = {
+          id: 0,
+          title: 'New Patch',
+          description: '',
+          sub_fifth: 0, overtone: 0, ultra_saw: 0, saw: 0, pulse_width: 0, square: 0, metalizer: 0, triangle: 0,
+          cutoff: 0, mode: 0, resonance: 0, env_amt: 0, brute_factor: 0, kbd_tracking: 0, modmatrix: [],
+          octave: 0, volume: 0, glide: 0, mod_wheel: 0, amount: 0, wave: 0, rate: 0, sync: 0, env_amt_2: 0, vca: 0,
+          attack: 0, decay: 0, sustain: 0, release: 0, pattern: 0, play: 0, rate_2: 0,
+          created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          average_rating: '0', tags: [], username: ''
+        };
       }
     } else {
       const id = Number(idParam);
       console.log('Fetching existing patch with id:', id);
+      if (isNaN(id) || id === 0) {
+        console.error('Invalid patch ID:', idParam);
+        return;
+      }
       this.patchSub = this.patchService.getPatch(id).subscribe({
         next: (patch) => {
           this.patch = patch;
