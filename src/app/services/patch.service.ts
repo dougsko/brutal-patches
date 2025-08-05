@@ -51,7 +51,22 @@ export class PatchService {
   savePatch(patch: Patch): Observable<any> {
     console.log("Saving patch: ")
     console.log(patch);
-    return of("ok");
+    
+    if (patch.id === 0) {
+      // New patch - POST request
+      return this.http.post(PATCH_API, patch).pipe(
+        catchError(err => {
+          return throwError(() => new Error(err));
+        })
+      );
+    } else {
+      // Existing patch - PUT request
+      return this.http.put(`${PATCH_API}/${patch.id}`, patch).pipe(
+        catchError(err => {
+          return throwError(() => new Error(err));
+        })
+      );
+    }
   }
 
   getUserPatchTotal(username: string): Observable<any> {

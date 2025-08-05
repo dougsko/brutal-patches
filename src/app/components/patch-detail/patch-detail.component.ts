@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
@@ -8,6 +8,8 @@ import { Patch } from 'src/app/interfaces/patch';
 })
 export class PatchDetailComponent implements OnInit {
   @Input() patch!: Patch;
+  @Output() save = new EventEmitter<void>();
+  saveMessage: string = '';
 
   constructor() { }
 
@@ -15,7 +17,22 @@ export class PatchDetailComponent implements OnInit {
   }
 
   savePatch(): void {
-    console.log("saving patch");
-    console.log(this.patch);
+    if (!this.patch.title || this.patch.title.trim() === '') {
+      this.saveMessage = 'Error: Patch title is required';
+      setTimeout(() => this.saveMessage = '', 3000);
+      return;
+    }
+    
+    this.saveMessage = 'Saving...';
+    this.save.emit();
+  }
+
+  onSaveComplete(success: boolean, message?: string): void {
+    if (success) {
+      this.saveMessage = 'Patch saved successfully!';
+    } else {
+      this.saveMessage = message || 'Error saving patch';
+    }
+    setTimeout(() => this.saveMessage = '', 3000);
   }
 }

@@ -15,4 +15,4 @@
     <input id="patch-title" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
 </div>
  -->
-<patch-detail [patch]="patch"></patch-detail>
+<patch-detail [patch]="patch" (save)="savePatch()"></patch-detail>

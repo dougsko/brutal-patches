@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { Patch } from 'src/interfaces/patch.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
@@ -51,5 +51,21 @@ export class PatchController {
   async findOne(@Param('id') id: string): Promise<Patch> {
     const patch = await this.patchService.getPatch(id);
     return patch;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async create(@Request() req, @Body() patch: Patch): Promise<Patch> {
+    return this.patchService.createPatch(req.user.username, patch);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id')
+  async update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() patch: Patch,
+  ): Promise<Patch> {
+    return this.patchService.updatePatch(req.user.username, id, patch);
   }
 }
