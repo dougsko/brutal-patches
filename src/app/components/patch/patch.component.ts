@@ -39,14 +39,22 @@ export class PatchComponent implements OnInit {
 
   getPatch(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
+    console.log('getPatch called with idParam:', idParam);
     
     if (idParam === 'new') {
       // Create a new patch with default values
+      console.log('Creating new patch');
       this.patch = this.createNewPatch();
     } else {
       const id = Number(idParam);
-      this.patchSub = this.patchService.getPatch(id).subscribe( patch => {
-        this.patch = patch;
+      console.log('Fetching existing patch with id:', id);
+      this.patchSub = this.patchService.getPatch(id).subscribe({
+        next: (patch) => {
+          this.patch = patch;
+        },
+        error: (error) => {
+          console.error('Error fetching patch:', error);
+        }
       });
       this.subs.push(this.patchSub);
     }
