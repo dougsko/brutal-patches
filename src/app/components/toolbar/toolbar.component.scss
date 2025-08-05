@@ -1,7 +1,48 @@
+// Toolbar spacing
 .toolbar-spacer {
     flex: 1 1 auto;
-  }
+}
 
-  .nav-item {
-    padding: 10px;
-  }
+// Enhanced app title styling - "BRUTAL" smaller than "PATCHES"
+h1 {
+    -webkit-font-smoothing: antialiased;
+    text-transform: uppercase;
+    font-family: var(--brutal-font);
+    font-size: 44px !important;  // "BRUTAL" size - smaller than "PATCHES"
+    color: var(--brutal-orange) !important;
+    line-height: 38px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    // "PATCHES" styling - bigger than "BRUTAL"
+    span.grey {
+        font-size: 56px !important;  // Bigger than "BRUTAL"
+        color: var(--brutal-grey) !important;
+        display: block;
+        line-height: 50px !important;
+    }
+}
+
+// Consistent navigation links with app theme
+.nav-item {
+    padding: 8px 16px;
+    font-family: var(--brutal-font);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--brutal-grey);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+    
+    &:hover {
+        color: var(--brutal-orange);
+        background: rgba(253, 153, 1, 0.1);
+    }
+    
+    &:active, &.active {
+        color: var(--brutal-orange);
+        background: rgba(253, 153, 1, 0.15);
+    }
+}

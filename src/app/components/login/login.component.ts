@@ -35,7 +35,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(): void {
+  onSubmit(form?: any): void {
+    if (form && !form.form.valid) {
+      return;
+    }
+
     const { username, password } = this.form;
 
     this.authSub = this.authService.login(username, password).subscribe(
@@ -50,7 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.reloadPage();
       },
       err => {
-        //this.errorMessage = err;
+        this.errorMessage = err.error?.message || 'Invalid username or password';
         this.isLoginFailed = true;
       }
     );

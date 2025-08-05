@@ -1,12 +1,28 @@
-<div class="center row section">
+<div class="patch-list-container row section">
     <div class="title"><span>Latest Patches</span></div>
 
-    <ul>
-        <li *ngFor="let patch of visiblePatches">
-            <a routerLink="/patch/{{patch.id}}">{{patch.id}}. {{patch.title}}</a>
-        </li>
-    </ul>
+    <div class="patches-grid">
+        <mat-card *ngFor="let patch of visiblePatches" class="patch-card" routerLink="/patch/{{patch.id}}">
+            <mat-card-header>
+                <mat-card-title class="patch-title">{{patch.title}}</mat-card-title>
+                <mat-card-subtitle class="patch-id">#{{patch.id}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="patch-meta">
+                    <span class="patch-author" *ngIf="patch.username">by {{patch.username}}</span>
+                    <span class="patch-date" *ngIf="patch.created_at">{{patch.created_at | date:'shortDate'}}</span>
+                </div>
+                <p class="patch-description" *ngIf="patch.description">{{patch.description}}</p>
+                <div class="patch-tags" *ngIf="patch.tags && patch.tags.length">
+                    <mat-chip-set>
+                        <mat-chip *ngFor="let tag of patch.tags.slice(0, 3)" class="patch-tag">{{tag}}</mat-chip>
+                    </mat-chip-set>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    
     <mat-paginator [length]="totalPatches" pageSize=25 (page)="getPaginatorData($event)"
-        showFirstLastButtons="true">
+        showFirstLastButtons="true" class="patch-paginator">
     </mat-paginator>
 </div>
