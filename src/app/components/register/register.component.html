@@ -2,7 +2,7 @@
   <div class="register-content section">
     <div class="title"><span>Registration</span></div>
     
-    <form *ngIf="!isSuccessful" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate class="register-form">
+    <form *ngIf="!isSuccessful" name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate class="register-form">
       <div class="form-field">
         <label class="field-label" for="username">Username</label>
         <input type="text" 
@@ -62,7 +62,7 @@
       </div>
       
       <div class="form-actions">
-        <button type="submit" class="register-button" [disabled]="!f.form.valid">
+        <button type="submit" class="register-button">
           Sign Up
         </button>
         <div class="login-link">

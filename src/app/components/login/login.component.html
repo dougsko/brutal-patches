@@ -2,7 +2,7 @@
   <div class="login-content section">
     <div class="title"><span>Login</span></div>
     
-    <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate class="login-form">
+    <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate class="login-form">
       <div class="form-field">
         <label class="field-label" for="username">Username</label>
         <input type="text" 
@@ -36,7 +36,7 @@
       </div>
       
       <div class="form-actions">
-        <button type="submit" class="login-button" [disabled]="!f.form.valid">
+        <button type="submit" class="login-button">
           Login
         </button>
         <div class="signup-link">
@@ -45,7 +45,7 @@
       </div>
       
       <div class="error-message global-error" *ngIf="f.submitted && isLoginFailed">
-        Login failed: {{ errorMessage }}
+        {{ errorMessage }}
       </div>
     </form>
 

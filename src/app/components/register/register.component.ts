@@ -29,7 +29,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(): void {
+  onSubmit(form?: any): void {
+    if (form && !form.form.valid) {
+      return;
+    }
+
     const { username, email, password } = this.form;
     this.registerSub = this.userService.create(username, email, password).subscribe(
       data => {
