@@ -1,28 +1,26 @@
 <div id="meta-info">
-    <div class="title-tags-row">
-        <input size="50" style="border: none;" id="title-text" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
-        
-        <div class="tags-container">
-            <mat-form-field class="tag-list" appearance="fill">
-              <mat-chip-grid #chipGrid>
-                <mat-chip-row *ngFor="let tag of patch.tags" 
-                              [removable]="removable" (removed)="remove(tag)" class="tag">
-                  {{tag}}
-                  <button matChipRemove *ngIf="removable">
-                    <mat-icon class="grey">highlight_off</mat-icon>
-                  </button>
-                </mat-chip-row>
-                <input placeholder="New tag..."
-                       [matChipInputFor]="chipGrid"
-                       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                       [matChipInputAddOnBlur]="addOnBlur"
-                       (matChipInputTokenEnd)="add($event)"
-                       style="font-family: monospace;">
-              </mat-chip-grid>
-            </mat-form-field>
-        </div>
+    <input id="title-text" [(ngModel)]="patch.title" placeholder="{{patch.title}}">
+    
+    <div class="tags-container">
+        <mat-form-field class="tag-list" appearance="outline">
+          <mat-chip-grid #chipGrid>
+            <mat-chip-row *ngFor="let tag of patch.tags" 
+                          [removable]="removable" (removed)="remove(tag)" class="tag">
+              {{tag}}
+              <button matChipRemove *ngIf="removable">
+                <mat-icon class="grey">highlight_off</mat-icon>
+              </button>
+            </mat-chip-row>
+            <input placeholder="New tag..."
+                   [matChipInputFor]="chipGrid"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   (matChipInputTokenEnd)="add($event)"
+                   class="tag-input">
+          </mat-chip-grid>
+        </mat-form-field>
     </div>
     
-   <p><textarea rows="2" cols="100" style="border: none; margin-bottom: 5px;" id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea></p>
+   <textarea id="description-text" [(ngModel)]="patch.description" placeholder="{{patch.description}}"></textarea>
 
 </div>
