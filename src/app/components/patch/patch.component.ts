@@ -44,7 +44,12 @@ export class PatchComponent implements OnInit {
     if (idParam === 'new') {
       // Create a new patch with default values
       console.log('Creating new patch');
-      this.patch = this.createNewPatch();
+      try {
+        this.patch = this.createNewPatch();
+        console.log('New patch created successfully:', this.patch);
+      } catch (error) {
+        console.error('Failed to create new patch:', error);
+      }
     } else {
       const id = Number(idParam);
       console.log('Fetching existing patch with id:', id);
@@ -85,8 +90,11 @@ export class PatchComponent implements OnInit {
   }
 
   private createNewPatch(): Patch {
-    const user = this.tokenStorageService.getUser();
-    const now = new Date().toISOString();
+    console.log('createNewPatch() called');
+    try {
+      const user = this.tokenStorageService.getUser();
+      console.log('User from token storage:', user);
+      const now = new Date().toISOString();
     
     return {
       id: 0, // Will be assigned by backend
@@ -130,6 +138,10 @@ export class PatchComponent implements OnInit {
       tags: [],
       username: user?.username || ''
     };
+    } catch (error) {
+      console.error('Error in createNewPatch:', error);
+      throw error;
+    }
   }
 
 }
