@@ -1,4 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* CSS Custom Properties for consistent theming */
+:root {
+  --brutal-orange: #fd9901;
+  --brutal-grey: #aaa;
+  --brutal-font: 'Noto Sans', sans-serif;
+  --brutal-white: #fff;
+  --brutal-dark: #222;
+}
+
 /* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License: none (public domain) */
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
     margin: 0;
@@ -588,7 +598,7 @@ input[type="submit"], #patch-reset {
 }
 /*Page styles*/
 body{
-    font-family: 'Noto Sans', sans-serif;
+    font-family: var(--brutal-font);
    /*background: #FFF url('../img/grid.jpg') no-repeat center center fixed;
    */
     -webkit-background-size: cover;
@@ -599,9 +609,9 @@ body{
 h1{
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
-    font-family: 'Noto Sans', sans-serif;
+    font-family: var(--brutal-font);
     font-size: 48px;
-    color: #fd9901;
+    color: var(--brutal-orange);
     line-height: 30px;
     margin-bottom: 24px;
     max-width: 940px;
@@ -611,14 +621,14 @@ h1{
 h2{
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
-    font-family: 'Noto Sans', sans-serif;
+    font-family: var(--brutal-font);
     font-size: 36px;
-    color: #fd9901;
+    color: var(--brutal-orange);
     line-height: 30px;
     margin-bottom: 24px;
 }
 #intro-copy{
-    color: #aaa;
+    color: var(--brutal-grey);
     text-align: right;
     margin-top: 25px;
     font-size: 14px;
@@ -722,10 +732,10 @@ footer a{
     left:2px;
 }
 .orange {
-    color: #fd9901;
+    color: var(--brutal-orange);
 }
 .grey {
-    color: #aaa;
+    color: var(--brutal-grey);
 }
 
 // html, body { height: 100%; }

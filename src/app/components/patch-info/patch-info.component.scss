@@ -8,10 +8,10 @@
 #title-text {
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
-    font-family: 'Noto Sans', sans-serif;
+    font-family: var(--brutal-font);
     font-size: 28px;
     font-weight: 600;
-    color: #fd9901;
+    color: var(--brutal-orange);
     line-height: 32px;
     margin: 0;
     padding: 0;
@@ -45,10 +45,6 @@
         margin: 0;
         padding: 1px 0 0 1px;
         min-height: 24px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px;
         border: none;
         outline: none;
         background: transparent;
@@ -103,7 +99,7 @@
 
 // Description textarea - slightly bigger font
 #description-text {
-    color: #aaa;
+    color: var(--brutal-grey);
     line-height: 20px;
     font-size: 14px;
     border: none;
@@ -119,22 +115,14 @@
 
 // Legacy styles cleanup
 .tag {
-    color: #fd9901;
+    color: var(--brutal-orange);
     font-family: monospace;
 }
 
 .mat-standard-chip {
    border-style: solid;
    border-width: thin;
-   border-color: #aaa;
-   fill: #aaa;
+   border-color: var(--brutal-grey);
+   fill: var(--brutal-grey);
 }
 
-// Remove any extra spacing from Material components
-::ng-deep {
-    .mat-mdc-form-field-error-wrapper,
-    .mat-mdc-form-field-hint-wrapper,
-    .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label {
-        display: none !important;
-    }
-}
