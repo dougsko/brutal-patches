@@ -4,27 +4,30 @@
     margin: 2px auto 0;
 }
 
-// Compact title styling - no bottom margin
+// Enhanced patch title styling - bigger and more prominent
 #title-text {
     -webkit-font-smoothing: antialiased;
     text-transform: uppercase;
     font-family: 'Noto Sans', sans-serif;
-    font-size: 20px;
+    font-size: 28px;
+    font-weight: 600;
     color: #fd9901;
-    line-height: 20px;
+    line-height: 32px;
     margin: 0;
     padding: 0;
     border: none;
     background: transparent;
     width: 100%;
     outline: none;
+    letter-spacing: 0.5px;
 }
 
-// Compact tags container - pull way up to title
+// Compact tags container - pull way up to title, ensure tag borders aren't cut off
 .tags-container {
     margin: -12px 0 2px 0;
+    padding: 0 2px 0 0;
     clear: both;
-    overflow: hidden;
+    overflow: visible;
 }
 
 // Clean tag list without form field wrapper - unified styling
@@ -40,7 +43,7 @@
     
     ::ng-deep .mat-mdc-chip-grid {
         margin: 0;
-        padding: 0;
+        padding: 1px 0 0 1px;
         min-height: 24px;
         display: flex;
         flex-wrap: wrap;
