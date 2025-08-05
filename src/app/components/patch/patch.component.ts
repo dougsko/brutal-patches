@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Patch } from 'src/app/interfaces/patch';
 import { PatchService } from '../../services/patch.service';
+import { TokenStorageService } from '../../services/token-storage.service';
+import { PatchDetailComponent } from '../patch-detail/patch-detail.component';
 
 @Component({
   selector: 'patch',
@@ -15,15 +17,25 @@ export class PatchComponent implements OnInit {
   private patchSub!: Subscription;
   private saveSub!: Subscription;
   private subs: Subscription[] = []
+  
+  @ViewChild(PatchDetailComponent) patchDetailComponent!: PatchDetailComponent;
 
   constructor(
     private route: ActivatedRoute,
     private patchService: PatchService,
-    private location: Location
+    private location: Location,
+    private tokenStorageService: TokenStorageService
   ) { }
 
   ngOnInit(): void {
-    this.getPatch();
+    console.log('PatchComponent ngOnInit called');
+    console.log('Current route snapshot:', this.route.snapshot);
+    
+    // Subscribe to route param changes in case component is reused
+    this.route.params.subscribe(params => {
+      console.log('Route params changed:', params);
+      this.getPatch();
+    });
   }
 
   ngOnDestroy(): void {
@@ -33,18 +45,129 @@ export class PatchComponent implements OnInit {
   }
 
   getPatch(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.patchSub = this.patchService.getPatch(id).subscribe( patch => {
-      this.patch = patch;
-    });
-    this.subs.push(this.patchSub);
+    const idParam = this.route.snapshot.paramMap.get('id');
+    console.log('getPatch called with idParam:', idParam);
+    console.log('Type of idParam:', typeof idParam);
+    console.log('Route snapshot params:', this.route.snapshot.paramMap);
+    console.log('Current URL:', window.location.href);
+    
+    if (idParam === 'new' || idParam === null || idParam === undefined) {
+      // Create a new patch with default values
+      console.log('Creating new patch');
+      try {
+        this.patch = this.createNewPatch();
+        console.log('New patch created successfully:', this.patch);
+      } catch (error) {
+        console.error('Failed to create new patch:', error);
+        // Create a minimal patch as fallback
+        this.patch = {
+          id: 0,
+          title: 'New Patch',
+          description: '',
+          sub_fifth: 0, overtone: 0, ultra_saw: 0, saw: 0, pulse_width: 0, square: 0, metalizer: 0, triangle: 0,
+          cutoff: 0, mode: 0, resonance: 0, env_amt: 0, brute_factor: 0, kbd_tracking: 0, modmatrix: [],
+          octave: 0, volume: 0, glide: 0, mod_wheel: 0, amount: 0, wave: 0, rate: 0, sync: 0, env_amt_2: 0, vca: 0,
+          attack: 0, decay: 0, sustain: 0, release: 0, pattern: 0, play: 0, rate_2: 0,
+          created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          average_rating: '0', tags: [], username: ''
+        };
+      }
+    } else {
+      const id = Number(idParam);
+      console.log('Fetching existing patch with id:', id);
+      if (isNaN(id) || id === 0) {
+        console.error('Invalid patch ID:', idParam);
+        return;
+      }
+      this.patchSub = this.patchService.getPatch(id).subscribe({
+        next: (patch) => {
+          this.patch = patch;
+        },
+        error: (error) => {
+          console.error('Error fetching patch:', error);
+        }
+      });
+      this.subs.push(this.patchSub);
+    }
   }
   
   savePatch(): void {
-    this.saveSub = this.patchService.savePatch(this.patch).subscribe( res => {
-      console.log(res);
+    this.saveSub = this.patchService.savePatch(this.patch).subscribe({
+      next: (savedPatch) => {
+        console.log('Patch saved:', savedPatch);
+        // Update the local patch with the returned data (includes new ID for new patches)
+        this.patch = savedPatch;
+        // Update URL if this was a new patch
+        if (this.route.snapshot.paramMap.get('id') === 'new') {
+          this.location.replaceState(`/patch/${savedPatch.id}`);
+        }
+        this.patchDetailComponent?.onSaveComplete(true);
+      },
+      error: (error) => {
+        console.error('Error saving patch:', error);
+        let errorMessage = 'Error saving patch';
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+        this.patchDetailComponent?.onSaveComplete(false, errorMessage);
+      }
     });
     this.subs.push(this.saveSub);
+  }
+
+  private createNewPatch(): Patch {
+    console.log('createNewPatch() called');
+    try {
+      const user = this.tokenStorageService.getUser();
+      console.log('User from token storage:', user);
+      const now = new Date().toISOString();
+    
+    return {
+      id: 0, // Will be assigned by backend
+      title: 'New Patch',
+      description: '',
+      sub_fifth: 0,
+      overtone: 0,
+      ultra_saw: 0,
+      saw: 0,
+      pulse_width: 0,
+      square: 0,
+      metalizer: 0,
+      triangle: 0,
+      cutoff: 0,
+      mode: 0,
+      resonance: 0,
+      env_amt: 0,
+      brute_factor: 0,
+      kbd_tracking: 0,
+      modmatrix: [],
+      octave: 0,
+      volume: 0,
+      glide: 0,
+      mod_wheel: 0,
+      amount: 0,
+      wave: 0,
+      rate: 0,
+      sync: 0,
+      env_amt_2: 0,
+      vca: 0,
+      attack: 0,
+      decay: 0,
+      sustain: 0,
+      release: 0,
+      pattern: 0,
+      play: 0,
+      rate_2: 0,
+      created_at: now,
+      updated_at: now,
+      average_rating: '0',
+      tags: [],
+      username: user?.username || ''
+    };
+    } catch (error) {
+      console.error('Error in createNewPatch:', error);
+      throw error;
+    }
   }
 
 }

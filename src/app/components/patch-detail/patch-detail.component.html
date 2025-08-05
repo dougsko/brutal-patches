@@ -16,4 +16,7 @@
     </div>
     <patch-info [patch]="patch"></patch-info>
     <button (click)="savePatch()" class="button">Save</button>
+    <div *ngIf="saveMessage" class="save-message" [ngClass]="{'error': saveMessage.includes('Error'), 'success': saveMessage.includes('successfully')}">
+        {{saveMessage}}
+    </div>
 </div>

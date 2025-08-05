@@ -67,4 +67,72 @@ export class PatchService {
       return userPatches.length;
     });
   }
+
+  public async createPatch(username: string, patchData: Patch): Promise<Patch> {
+    const user = await this.userService.findOneByUsername(username);
+    if (!user) {
+      throw new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND);
+    }
+
+    // Validate required fields
+    if (!patchData.title || patchData.title.trim() === '') {
+      throw new HttpException('Patch title is required', HttpStatus.BAD_REQUEST);
+    }
+
+    // Generate new ID (in a real app, this would be done by database)
+    const newId = Math.max(...this.patches.map(p => p.id), 0) + 1;
+    const now = new Date().toISOString();
+    
+    const newPatch: Patch = {
+      ...patchData,
+      id: newId,
+      created_at: now,
+      updated_at: now,
+      average_rating: '0'
+    };
+
+    this.patches.push(newPatch);
+    
+    // Add patch ID to user's patches
+    if (!user.patches) {
+      user.patches = [];
+    }
+    user.patches.push(newId);
+
+    return newPatch;
+  }
+
+  public async updatePatch(username: string, id: string, patchData: Patch): Promise<Patch> {
+    const user = await this.userService.findOneByUsername(username);
+    if (!user) {
+      throw new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND);
+    }
+
+    const patchId = parseInt(id);
+    const patchIndex = this.patches.findIndex(p => p.id === patchId);
+    
+    if (patchIndex === -1) {
+      throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Check if user owns this patch
+    if (!user.patches || !user.patches.includes(patchId)) {
+      throw new HttpException('Unauthorized to modify this patch', HttpStatus.FORBIDDEN);
+    }
+
+    // Validate required fields
+    if (!patchData.title || patchData.title.trim() === '') {
+      throw new HttpException('Patch title is required', HttpStatus.BAD_REQUEST);
+    }
+
+    const updatedPatch: Patch = {
+      ...this.patches[patchIndex],
+      ...patchData,
+      id: patchId, // Ensure ID doesn't change
+      updated_at: new Date().toISOString()
+    };
+
+    this.patches[patchIndex] = updatedPatch;
+    return updatedPatch;
+  }
 }
