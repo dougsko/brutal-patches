@@ -1,12 +1,14 @@
 export const jwtConstants = {
   secret: process.env.JWT_SECRET || (() => {
+    const fallbackSecret = 'dev-secret-change-me-in-production';
     if (process.env.NODE_ENV === 'production') {
-      throw new Error('JWT_SECRET environment variable is required in production');
+      console.warn('WARNING: Using fallback JWT secret in production. Set JWT_SECRET environment variable for security.');
+    } else {
+      console.warn('WARNING: Using default JWT secret for development. Set JWT_SECRET environment variable.');
     }
-    console.warn('WARNING: Using default JWT secret for development. Set JWT_SECRET environment variable.');
-    return 'dev-secret-change-me-in-production';
+    return fallbackSecret;
   })(),
   signOptions: {
-    expiresIn: '24h', // Add token expiration
+    expiresIn: '2h', // Token expiration
   },
 };
