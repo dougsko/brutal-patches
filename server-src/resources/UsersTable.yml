@@ -11,8 +11,6 @@ UsersTable:
         KeySchema:
             - AttributeName: username
               KeyType: HASH
-            - AttributeName: email
-              KeyType: RANGE  
         GlobalSecondaryIndexes:
             - IndexName: EmailIndex
               KeySchema:
