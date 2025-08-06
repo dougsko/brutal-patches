@@ -1,3 +1,5 @@
+# Phase 2: Add the EmailIndex GSI after Phase 1 has been deployed
+# Replace UsersTable.yml with this content after Phase 1 deployment succeeds
 UsersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -6,7 +8,15 @@ UsersTable:
         AttributeDefinitions:
             - AttributeName: username
               AttributeType: S
+            - AttributeName: email
+              AttributeType: S
         KeySchema:
             - AttributeName: username
               KeyType: HASH
-        # Phase 1: No GSI - this removes any existing GSI
+        GlobalSecondaryIndexes:
+            - IndexName: EmailIndex
+              KeySchema:
+                - AttributeName: email
+                  KeyType: HASH
+              Projection:
+                ProjectionType: ALL
