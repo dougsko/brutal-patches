@@ -8,19 +8,13 @@ UsersTable:
               AttributeType: S
             - AttributeName: email
               AttributeType: S
-            - AttributeName: password
-              AttributeType: S      
         KeySchema:
             - AttributeName: username
               KeyType: HASH
-            - AttributeName: email
-              KeyType: RANGE  
         GlobalSecondaryIndexes:
-            - IndexName: UserDetail
+            - IndexName: EmailIndex
               KeySchema:
                 - AttributeName: email
                   KeyType: HASH
-                - AttributeName: password
-                  KeyType: RANGE
               Projection:
                 ProjectionType: ALL
