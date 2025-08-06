@@ -38,20 +38,20 @@ export class UsersController {
     try {
       const newUser: any = await this.userService.createUser(createUserDto);
       console.log('Service response:', newUser);
-      if (newUser.ok) {
-        return {
-          ok: true,
-          data: newUser.data,
-        };
-      } else {
-        return {
-          ok: false,
-          message: 'Error Trying to Create User',
-        };
-      }
+      return {
+        ok: true,
+        data: newUser.data,
+      };
     } catch (error) {
       console.error('Controller error:', error);
-      throw new HttpException(`Error creating user: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+      
+      // Re-throw HttpExceptions as-is (like "Username already exists")
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      
+      // For other errors, throw a generic 500 error
+      throw new HttpException('Failed to create user', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
