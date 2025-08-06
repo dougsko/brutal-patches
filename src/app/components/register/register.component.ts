@@ -41,7 +41,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.isSignUpFailed = false;
       },
       err => {
-        this.errorMessage = err.error.message;
+        // Handle different error response formats
+        this.errorMessage = err.error?.errors?.message || err.error?.message || 'Registration failed';
         this.isSignUpFailed = true;
       }
     );
