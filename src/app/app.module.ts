@@ -37,6 +37,7 @@ import { VolumeComponent } from './components/volume/volume.component';
 import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
+import { SessionTimeoutWarningComponent } from './components/session-timeout-warning/session-timeout-warning.component';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -61,6 +62,7 @@ import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.c
         RegisterComponent,
         ProfileComponent,
         MyPatchListComponent,
+        SessionTimeoutWarningComponent,
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,

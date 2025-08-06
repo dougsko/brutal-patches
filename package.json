@@ -36,6 +36,7 @@
     "jquery-ui": "^1.13.0",
     "jqwidgets-ng": "^14.1.17",
     "jsplumb": "^2.15.6",
+    "jwt-decode": "^4.0.0",
     "rxjs": "~7.5.7",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"

@@ -1,0 +1,134 @@
+.session-timeout-warning {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+
+  .warning-content {
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .warning-icon {
+    color: #856404;
+    
+    .material-icons {
+      font-size: 24px;
+    }
+  }
+
+  .warning-text {
+    flex: 1;
+    
+    h4 {
+      margin: 0 0 8px 0;
+      color: #856404;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0 0 8px 0;
+      color: #856404;
+      font-size: 14px;
+      line-height: 1.4;
+      
+      &:last-of-type {
+        margin-bottom: 12px;
+      }
+    }
+    
+    strong {
+      font-weight: 600;
+      color: #dc3545;
+    }
+  }
+
+  .warning-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.btn-primary {
+      background-color: #007bff;
+      color: white;
+      
+      &:hover {
+        background-color: #0056b3;
+      }
+      
+      &:focus {
+        outline: 2px solid #0056b3;
+        outline-offset: 2px;
+      }
+    }
+    
+    &.btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: #545b62;
+      }
+      
+      &:focus {
+        outline: 2px solid #545b62;
+        outline-offset: 2px;
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+  .session-timeout-warning {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    
+    .warning-content {
+      padding: 12px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .warning-actions {
+      justify-content: stretch;
+      
+      .btn {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+}

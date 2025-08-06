@@ -1,0 +1,28 @@
+<div *ngIf="showWarning" class="session-timeout-warning" role="alert" aria-live="polite">
+  <div class="warning-content">
+    <div class="warning-icon">
+      <i class="material-icons">warning</i>
+    </div>
+    <div class="warning-text">
+      <h4>Session Expiring Soon</h4>
+      <p>Your session will expire in <strong>{{ timeUntilExpiryFormatted }}</strong>.</p>
+      <p>Would you like to extend your session?</p>
+    </div>
+    <div class="warning-actions">
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="extendSession()"
+        aria-label="Extend session">
+        Stay Logged In
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        (click)="logout()"
+        aria-label="Logout now">
+        Logout
+      </button>
+    </div>
+  </div>
+</div>
