@@ -40,7 +40,26 @@ export class AuthService {
     };
     return {
       username: user.username,
+      email: user.email,
+      roles: user.roles || ['user'],
       access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async refreshToken(user: User) {
+    // Generate a new token for the authenticated user
+    const payload = {
+      username: user.username,
+      sub: user.username,
+      email: user.email,
+    };
+    
+    return {
+      username: user.username,
+      email: user.email,
+      roles: user.roles || ['user'],
+      access_token: this.jwtService.sign(payload),
+      refreshed: true,
     };
   }
 }
