@@ -1,13 +1,17 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
   Param,
   Post,
+  Request,
   Res,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UsersService } from './users.service';
 
@@ -15,9 +19,17 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('/test')
-  testEndpoint() {
-    return { message: 'Users controller is working!' };
+  testEndpoint(@Request() req) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new ForbiddenException('Test endpoint disabled in production');
+    }
+    return { 
+      message: 'Users controller is working!', 
+      user: req.user.username,
+      environment: process.env.NODE_ENV || 'development'
+    };
   }
 
   @Post('/create')
@@ -43,26 +55,63 @@ export class UsersController {
     }
   }
 
-  @Get('/getUserByUsername/:username')
-  async getUserById(@Param('username') username: string, @Res() res: any) {
+  @UseGuards(JwtAuthGuard)
+  @Get('/profile')
+  async getProfile(@Request() req, @Res() res: any) {
     try {
-      const user: any = await this.userService.getUserByUsername(username);
-      if (user.ok) {
+      const user: any = await this.userService.getUserByUsername(req.user.username);
+      if (user.ok && user.data.length > 0) {
+        // Return user's own profile with all details
+        const { password, ...userWithoutPassword } = user.data[0];
         return res.status(HttpStatus.OK).send({
           ok: true,
-          user: user.data,
+          user: userWithoutPassword,
         });
       } else {
-        return res.status(HttpStatus.BAD_REQUEST).send({
+        return res.status(HttpStatus.NOT_FOUND).send({
           ok: false,
-          message: 'Error Trying to Get User',
+          message: 'User not found',
         });
       }
     } catch (error) {
+      console.error('Error getting user profile:', error);
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
         ok: false,
-        message: 'Error Trying to reach DB',
-        errors: error,
+        message: 'Error retrieving profile',
+        errors: error.message,
+      });
+    }
+  }
+
+  @Get('/getUserByUsername/:username')
+  async getPublicUserProfile(@Param('username') username: string, @Res() res: any) {
+    try {
+      const user: any = await this.userService.getUserByUsername(username);
+      if (user.ok && user.data.length > 0) {
+        // Return only public user information
+        const userData = user.data[0];
+        const publicProfile = {
+          username: userData.username,
+          // Only include public fields - no email, password, roles, etc.
+          patches: userData.patches || [],
+          createdAt: userData.createdAt,
+        };
+        return res.status(HttpStatus.OK).send({
+          ok: true,
+          user: publicProfile,
+        });
+      } else {
+        return res.status(HttpStatus.NOT_FOUND).send({
+          ok: false,
+          message: 'User not found',
+        });
+      }
+    } catch (error) {
+      console.error('Error getting public user profile:', error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
+        ok: false,
+        message: 'Error retrieving user profile',
+        errors: error.message,
       });
     }
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { Patch } from 'src/interfaces/patch.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
@@ -27,12 +27,18 @@ export class PatchController {
     return patches;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/:username/:first/:last')
   getMyPatches(
+    @Request() req,
     @Param('username') username: string,
     @Param('first') first: number,
     @Param('last') last: number,
   ): Promise<Patch[]> {
+    // Users can only access their own patches through this endpoint
+    if (req.user.username !== username) {
+      throw new ForbiddenException('Access denied: You can only view your own patches');
+    }
     return this.patchService.getPatchesByUser(username, first, last);
   }
 
@@ -42,6 +48,10 @@ export class PatchController {
     @Request() req,
     @Param('username') username: string,
   ): Promise<number> {
+    // Users can only access their own patch totals
+    if (req.user.username !== username) {
+      throw new ForbiddenException('Access denied: You can only view your own patch statistics');
+    }
     return this.patchService.getUserPatchTotal(username);
   }
 
