@@ -25,6 +25,8 @@
     "logs": "serverless logs -f main --stage prod"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.859.0",
+    "@aws-sdk/lib-dynamodb": "^3.859.0",
     "@fastify/helmet": "^11.1.1",
     "@nestjs/common": "^9.1.4",
     "@nestjs/core": "^9.1.4",

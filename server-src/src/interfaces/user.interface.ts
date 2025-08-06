@@ -4,4 +4,6 @@ export interface User {
   email: string;
   roles: string[];
   patches: number[];
+  createdAt?: string;
+  updatedAt?: string;
 }
