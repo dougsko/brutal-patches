@@ -63,7 +63,13 @@ export class MyPatchListComponent implements OnInit {
   }
 
   getMyPatches(first: number, last: number): void {
-    let patchSub = this.patchService.getUserPatches(this.tokenStorage.getUser().username, first, last).subscribe( patches => {
+    const user = this.tokenStorage.getUser();
+    if (!user || !user.username) {
+      console.error('No valid user found, cannot fetch user patches');
+      return;
+    }
+    
+    let patchSub = this.patchService.getUserPatches(user.username, first, last).subscribe( patches => {
       this.patches = patches;
       this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
     });
@@ -78,7 +84,13 @@ export class MyPatchListComponent implements OnInit {
   }
 
   getMyPatchTotal(): void {
-    let patchSub = this.patchService.getUserPatchTotal(this.tokenStorage.getUser().username).subscribe( total => {
+    const user = this.tokenStorage.getUser();
+    if (!user || !user.username) {
+      console.error('No valid user found, cannot fetch user patch total');
+      return;
+    }
+    
+    let patchSub = this.patchService.getUserPatchTotal(user.username).subscribe( total => {
       this.myPatchTotal = total;
     })
     this.subs.push(patchSub);

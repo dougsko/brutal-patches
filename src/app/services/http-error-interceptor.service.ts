@@ -23,7 +23,7 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
             //if(error.error.errors) {
             //  errorMsg = `Error Code: ${error.error.errors.status},  Message: ${error.error.errors.message}`;
             //} else { 
-              errorMsg = `Error Code: ${error.status},  Message: ${error.error.message}`;
+              errorMsg = `Error Code: ${error.status},  Message: ${error.error?.message || error.message || 'Unknown error'}`;
             //}
           }
           console.log(errorMsg);
