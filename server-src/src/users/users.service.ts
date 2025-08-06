@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
 import * as bcrypt from 'bcryptjs';
@@ -196,7 +196,7 @@ export class UsersService {
 
   private async findUserByEmail(email: string): Promise<User | undefined> {
     try {
-      // Use the EmailIndex GSI to find user by email
+      // Try to use the EmailIndex GSI if it exists
       const command = new QueryCommand({
         TableName: this.tableName,
         IndexName: 'EmailIndex',
@@ -210,8 +210,25 @@ export class UsersService {
       const result = await this.dynamoClient.send(command);
       return result.Items && result.Items.length > 0 ? result.Items[0] as User : undefined;
     } catch (error) {
-      console.warn('Email query failed, using fallback:', error.message);
-      return this.fallbackUsers.find((user) => user.email === email);
+      console.warn('Email GSI query failed (may be during migration), using scan fallback:', error.message);
+      
+      // Fallback: scan table for email (less efficient but works during migration)
+      try {
+        const scanCommand = new ScanCommand({
+          TableName: this.tableName,
+          FilterExpression: 'email = :email',
+          ExpressionAttributeValues: {
+            ':email': email,
+          },
+          Limit: 1,
+        });
+        
+        const scanResult = await this.dynamoClient.send(scanCommand);
+        return scanResult.Items && scanResult.Items.length > 0 ? scanResult.Items[0] as User : undefined;
+      } catch (scanError) {
+        console.warn('DynamoDB scan also failed, using in-memory fallback:', scanError.message);
+        return this.fallbackUsers.find((user) => user.email === email);
+      }
     }
   }
 

@@ -6,15 +6,7 @@ UsersTable:
         AttributeDefinitions:
             - AttributeName: username
               AttributeType: S
-            - AttributeName: email
-              AttributeType: S
         KeySchema:
             - AttributeName: username
               KeyType: HASH
-        GlobalSecondaryIndexes:
-            - IndexName: EmailIndex
-              KeySchema:
-                - AttributeName: email
-                  KeyType: HASH
-              Projection:
-                ProjectionType: ALL
+        # Phase 1: No GSI - this removes any existing GSI
