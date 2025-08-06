@@ -83,20 +83,18 @@ export class UsersService {
 
   async findOneByUsername(username: string): Promise<User | undefined> {
     try {
-      // Use Query operation since we have a composite primary key (username + email)
-      const command = new QueryCommand({
+      // Use GetCommand since username is now the primary key
+      const command = new GetCommand({
         TableName: this.tableName,
-        KeyConditionExpression: 'username = :username',
-        ExpressionAttributeValues: {
-          ':username': username,
+        Key: {
+          username: username,
         },
-        Limit: 1, // We only need the first match
       });
 
       const result = await this.dynamoClient.send(command);
-      return result.Items && result.Items.length > 0 ? result.Items[0] as User : undefined;
+      return result.Item as User | undefined;
     } catch (error) {
-      console.warn('DynamoDB query failed, using fallback:', error.message);
+      console.warn('DynamoDB get failed, using fallback:', error.message);
       return this.fallbackUsers.find((user) => user.username === username);
     }
   }
@@ -105,7 +103,7 @@ export class UsersService {
     const command = new PutCommand({
       TableName: this.tableName,
       Item: user,
-      ConditionExpression: 'attribute_not_exists(username) AND attribute_not_exists(email)', // Prevent overwriting with composite key
+      ConditionExpression: 'attribute_not_exists(username)', // Prevent overwriting existing username
     });
 
     await this.dynamoClient.send(command);
@@ -198,6 +196,7 @@ export class UsersService {
 
   private async findUserByEmail(email: string): Promise<User | undefined> {
     try {
+      // Use the EmailIndex GSI to find user by email
       const command = new QueryCommand({
         TableName: this.tableName,
         IndexName: 'EmailIndex',
@@ -205,6 +204,7 @@ export class UsersService {
         ExpressionAttributeValues: {
           ':email': email,
         },
+        Limit: 1, // Only need first match since email should be unique
       });
 
       const result = await this.dynamoClient.send(command);
