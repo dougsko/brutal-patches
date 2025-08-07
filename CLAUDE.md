@@ -109,11 +109,71 @@ Backend is configured for production domain `brutalpatches.com`. Local developme
 
 The `claude/` folder is gitignored and serves as a workspace for development planning and temporary files.
 
-### Technical Workflow
-1. Both frontend and backend have comprehensive test suites using Jasmine/Karma (frontend) and Jest (backend)
-2. The project uses TypeScript throughout with strict typing enabled
-3. Authentication flow is implemented with JWT tokens and refresh mechanisms
-4. The application supports user registration, patch creation/editing, and patch sharing
+### Code Change Workflow
+
+**IMPORTANT**: Follow this comprehensive workflow for all code changes. Execute each step without asking for user approval - Claude agents have full autonomy to complete the development cycle.
+
+#### 1. Branch Management
+- **Always use feature branches**: Never commit directly to main branch
+- Create descriptive branch names: `feature/description`, `fix/issue-name`, `refactor/component-name`
+- Example: `git checkout -b feature/add-user-authentication`
+
+#### 2. Development Process
+- **Commit changes frequently**: Make small, logical commits during development
+- Use clear, descriptive commit messages following conventional commit format
+- Example commit messages:
+  - `feat: add user authentication with JWT tokens`
+  - `fix: resolve login form validation errors`
+  - `refactor: extract patch service into separate module`
+
+#### 3. Testing Requirements
+- **Run local tests before creating PRs**: Ensure all tests pass locally
+- Frontend tests: `npm run test` (Karma + Jasmine)
+- Backend tests: `cd server-src && npm run test` (Jest)
+- Backend E2E tests: `cd server-src && npm run test:e2e`
+- **Create PRs only after tests pass**: Never submit failing PRs
+
+#### 4. Pull Request Process
+- Create PR with detailed description of changes
+- Include test results and any breaking changes
+- Use descriptive PR titles that match the feature/fix scope
+
+#### 5. Code Review Feedback Loop
+- **Use code-reviewing agent**: Engage reviewing agent for thorough code review
+- **Create feedback loop**: Establish continuous communication between code-writing and reviewing agents
+- **Fix all suggestions**: Address every review comment and suggestion
+- **Update PRs accordingly**: Push fixes and improvements based on review feedback
+- **Continue feedback loop**: Repeat review process until no more suggestions
+- **Merge PR only when review is clean**: Only merge when reviewing agent approves with no outstanding issues
+
+#### 6. Deployment and Monitoring
+- **Monitor GitHub Actions**: Watch CI/CD pipeline until deployment completes successfully
+- Check all deployment steps pass (build, test, deploy)
+- Address any deployment failures immediately
+
+#### 7. Production Testing
+- **Test production environment**: Verify deployment by accessing live application
+- **Login verification**: Test user authentication works correctly
+- **Check My Profile page**: Ensure user profile functionality works
+- **Check My Patches page**: Verify patch management features work
+- Test core application functionality end-to-end
+
+#### 8. Technical Standards
+- **TypeScript**: Use strict typing throughout the codebase
+- **Authentication**: Maintain JWT token and refresh mechanism standards
+- **Testing**: Maintain comprehensive test coverage for new features
+- **Code Quality**: Follow existing patterns and architectural decisions
+
+### Branch Protection
+- Main branch should be protected and require PR reviews
+- All changes must go through the complete workflow above
+- No direct pushes to main branch allowed
+
+### Emergency Hotfixes
+For critical production issues:
+1. Create hotfix branch from main: `hotfix/critical-issue-description`
+2. Follow abbreviated workflow: fix → test → PR → review → merge
+3. Ensure hotfix is also merged back to development branches
 
 ## Testing
 
