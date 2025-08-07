@@ -740,3 +740,105 @@ footer a{
 
 // html, body { height: 100%; }
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Error handling and notification styles */
+.snackbar-error {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.snackbar-warning {
+  background: #ff9800 !important;
+  color: white !important;
+}
+
+.snackbar-success {
+  background: #4caf50 !important;
+  color: white !important;
+}
+
+.snackbar-info {
+  background: #2196f3 !important;
+  color: white !important;
+}
+
+/* Loading states */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--brutal-orange);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error states */
+.error-message {
+  color: #f44336;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message mat-icon {
+  font-size: 1rem;
+}
+
+.form-error {
+  border-color: #f44336 !important;
+}
+
+.error-container {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.error-container.warning {
+  background: #fff3e0;
+  border-color: #ffcc02;
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for better accessibility */
+.mat-button:focus,
+.mat-raised-button:focus,
+.mat-fab:focus,
+.mat-mini-fab:focus {
+  outline: 2px solid var(--brutal-orange);
+  outline-offset: 2px;
+}
