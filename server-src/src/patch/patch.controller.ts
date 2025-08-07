@@ -18,13 +18,17 @@ export class PatchController {
     return await this.patchService.getPatchTotal();
   }
 
-  @Get('/:first/:last')
-  async findLatestPatches(
-    @Param('first') first: number,
-    @Param('last') last: number,
-  ): Promise<Patch[]> {
-    const patches = await this.patchService.getLatestPatches(first, last);
-    return patches;
+  @UseGuards(JwtAuthGuard)
+  @Get('/:username/total')
+  getMyTotal(
+    @Request() req,
+    @Param('username') username: string,
+  ): Promise<number> {
+    // Users can only access their own patch totals
+    if (req.user.username !== username) {
+      throw new ForbiddenException('Access denied: You can only view your own patch statistics');
+    }
+    return this.patchService.getUserPatchTotal(username);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -42,17 +46,13 @@ export class PatchController {
     return this.patchService.getPatchesByUser(username, first, last);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/:username/total')
-  getMyTotal(
-    @Request() req,
-    @Param('username') username: string,
-  ): Promise<number> {
-    // Users can only access their own patch totals
-    if (req.user.username !== username) {
-      throw new ForbiddenException('Access denied: You can only view your own patch statistics');
-    }
-    return this.patchService.getUserPatchTotal(username);
+  @Get('/:first/:last')
+  async findLatestPatches(
+    @Param('first') first: number,
+    @Param('last') last: number,
+  ): Promise<Patch[]> {
+    const patches = await this.patchService.getLatestPatches(first, last);
+    return patches;
   }
 
   @Get(':id')
