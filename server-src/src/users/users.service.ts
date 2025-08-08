@@ -17,6 +17,7 @@ export class UsersService {
   // Fallback users for development when DynamoDB is not available
   private readonly fallbackUsers: User[] = [
     {
+      id: 'user-1',
       username: 'john',
       password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
       email: 'john@gmail.com',
@@ -24,6 +25,7 @@ export class UsersService {
       patches: [567, 623, 707, 710],
     },
     {
+      id: 'user-2',
       username: 'maria',
       password: '$2a$10$.uduR30EnQScbkm3Em7Se.5AJI4zsKipYRwyi6khCkSLmHP7Br5x6', // 'guess'
       email: 'maria@gmail.com',
@@ -31,6 +33,7 @@ export class UsersService {
       patches: [],
     },
     {
+      id: 'user-3',
       username: 'dougsko',
       password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
       email: 'dougsko@gmail.com',
@@ -111,6 +114,7 @@ export class UsersService {
       const hashedPassword = bcrypt.hashSync(createUserDto.password, salt);
 
       const newUser: User = {
+        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         username: createUserDto.username,
         email: createUserDto.email,
         password: hashedPassword,
@@ -156,6 +160,7 @@ export class UsersService {
     const hashedPassword = bcrypt.hashSync(createUserDto.password, salt);
 
     const newUser: User = {
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       username: createUserDto.username,
       email: createUserDto.email,
       password: hashedPassword,

@@ -71,7 +71,7 @@ export interface PatchCollection {
   id: number;
   name: string;
   description: string;
-  userId: number;
+  userId: string;
   patchIds: number[];
   isPublic: boolean;
   created_at: string;

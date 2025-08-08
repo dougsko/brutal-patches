@@ -51,7 +51,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
    * Get collections by user
    */
   async getUserCollections(
-    userId: number,
+    userId: string,
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
@@ -59,18 +59,19 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
     }
   ): Promise<{ items: PatchCollection[]; lastEvaluatedKey?: any; count: number }> {
     try {
+      const expressionAttributeValues = !options?.includePrivate ? 
+        { ':userId': userId, ':isPublic': true } : 
+        { ':userId': userId };
+
       const result = await this.queryByIndex(
         'UserIndex',
         'userId = :userId',
-        { ':userId': userId },
+        expressionAttributeValues,
         {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: false, // Newest first
           filterExpression: !options?.includePrivate ? 'isPublic = :isPublic' : undefined,
-          expressionAttributeValues: !options?.includePrivate ? 
-            { ':userId': userId, ':isPublic': true } : 
-            { ':userId': userId },
         }
       );
 
@@ -170,7 +171,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   async searchCollections(
     searchTerm: string,
     options?: {
-      userId?: number;
+      userId?: string;
       publicOnly?: boolean;
       limit?: number;
       exclusiveStartKey?: any;
@@ -258,7 +259,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   async getCollectionsContainingPatch(
     patchId: number,
     options?: {
-      userId?: number;
+      userId?: string;
       publicOnly?: boolean;
       limit?: number;
     }
@@ -334,7 +335,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
    * Import collection from export data
    */
   async importCollection(
-    userId: number,
+    userId: string,
     importData: any,
     options?: {
       name?: string;

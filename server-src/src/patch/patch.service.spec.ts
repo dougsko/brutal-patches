@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PatchService } from './patch.service';
 import { UsersService } from '../users/users.service';
+import { PatchRepository } from './patch.repository';
+import { PatchVersionRepository } from './patch-version.repository';
+import { PatchCollectionRepository } from './patch-collection.repository';
 
 describe('PatchService', () => {
   let service: PatchService;
@@ -15,10 +18,32 @@ describe('PatchService', () => {
       findOneByUsername: jest.fn(),
     };
 
+    const mockPatchRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const mockPatchVersionRepository = {
+      createVersion: jest.fn(),
+      getPatchHistory: jest.fn(),
+    };
+
+    const mockPatchCollectionRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      getUserCollections: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PatchService,
         { provide: UsersService, useValue: mockUsersService },
+        { provide: PatchRepository, useValue: mockPatchRepository },
+        { provide: PatchVersionRepository, useValue: mockPatchVersionRepository },
+        { provide: PatchCollectionRepository, useValue: mockPatchCollectionRepository },
       ],
     }).compile();
 

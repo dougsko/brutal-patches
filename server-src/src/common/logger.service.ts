@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import * as winston from 'winston';
+import { CloudWatchLogsClient, CreateLogStreamCommand, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
 
 @Injectable()
 export class LoggerService {
   private logger: winston.Logger;
+  private cloudWatchLogs: CloudWatchLogsClient;
+  private logGroupName: string;
+  private logStreamName: string;
+  private nextSequenceToken: string | undefined;
 
   constructor() {
+    // Initialize CloudWatch Logs client
+    this.cloudWatchLogs = new CloudWatchLogsClient({
+      region: process.env.AWS_REGION || 'us-east-1',
+    });
+    
+    this.logGroupName = '/aws/brutal-patches/api';
+    this.logStreamName = `api-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Initialize CloudWatch log stream in production
+    if (process.env.NODE_ENV === 'production') {
+      this.initializeCloudWatchStream();
+    }
     const logFormat = winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       winston.format.errors({ stack: true }),
@@ -117,5 +134,119 @@ export class LoggerService {
       success,
       ...details
     });
+  }
+
+  // Enhanced logging methods with CloudWatch integration
+  async logWithMetrics(level: string, message: string, context?: string, meta?: any) {
+    const logEntry = {
+      level,
+      message,
+      context,
+      timestamp: new Date().toISOString(),
+      ...meta,
+    };
+
+    // Log locally with Winston
+    this.logger.log(level, message, { context, ...meta });
+
+    // Send to CloudWatch in production
+    if (process.env.NODE_ENV === 'production') {
+      await this.sendToCloudWatch(logEntry);
+    }
+  }
+
+  // Structured logging for security events
+  async logSecurityEvent(event: string, userId?: string, details?: any) {
+    const securityLog = {
+      type: 'security',
+      event,
+      userId,
+      timestamp: new Date().toISOString(),
+      ip: details?.ip,
+      userAgent: details?.userAgent,
+      ...details,
+    };
+
+    this.logger.warn(`Security Event: ${event}`, securityLog);
+    
+    if (process.env.NODE_ENV === 'production') {
+      await this.sendToCloudWatch(securityLog);
+    }
+  }
+
+  // Performance logging
+  async logPerformance(operation: string, duration: number, metadata?: any) {
+    const performanceLog = {
+      type: 'performance',
+      operation,
+      duration,
+      timestamp: new Date().toISOString(),
+      ...metadata,
+    };
+
+    if (duration > 1000) { // Log slow operations
+      this.logger.warn(`Slow Operation: ${operation} took ${duration}ms`, performanceLog);
+    } else {
+      this.logger.info(`Performance: ${operation} completed in ${duration}ms`, performanceLog);
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      await this.sendToCloudWatch(performanceLog);
+    }
+  }
+
+  // Business event logging
+  async logBusinessEvent(event: string, userId?: string, metadata?: any) {
+    const businessLog = {
+      type: 'business',
+      event,
+      userId,
+      timestamp: new Date().toISOString(),
+      ...metadata,
+    };
+
+    this.logger.info(`Business Event: ${event}`, businessLog);
+    
+    if (process.env.NODE_ENV === 'production') {
+      await this.sendToCloudWatch(businessLog);
+    }
+  }
+
+  // Initialize CloudWatch log stream
+  private async initializeCloudWatchStream() {
+    try {
+      const command = new CreateLogStreamCommand({
+        logGroupName: this.logGroupName,
+        logStreamName: this.logStreamName,
+      });
+      
+      await this.cloudWatchLogs.send(command);
+    } catch (error) {
+      // Stream might already exist or log group doesn't exist
+      console.warn('Could not initialize CloudWatch log stream:', error.message);
+    }
+  }
+
+  // Send log to CloudWatch
+  private async sendToCloudWatch(logEntry: any) {
+    try {
+      const command = new PutLogEventsCommand({
+        logGroupName: this.logGroupName,
+        logStreamName: this.logStreamName,
+        logEvents: [
+          {
+            message: JSON.stringify(logEntry),
+            timestamp: Date.now(),
+          },
+        ],
+        sequenceToken: this.nextSequenceToken,
+      });
+
+      const response = await this.cloudWatchLogs.send(command);
+      this.nextSequenceToken = response.nextSequenceToken;
+    } catch (error) {
+      // Fail silently to avoid infinite logging loops
+      console.warn('Failed to send log to CloudWatch:', error.message);
+    }
   }
 }

@@ -1,0 +1,1779 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@angular-devkit/schematics-cli": {
+      "name": "@angular-devkit/schematics-cli",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "inquirer"
+      ],
+      "effects": [
+        "@nestjs/cli"
+      ],
+      "range": "0.12.0-beta.0 - 18.1.0-rc.1",
+      "nodes": [
+        "node_modules/@angular-devkit/schematics-cli"
+      ],
+      "fixAvailable": true
+    },
+    "@babel/helpers": {
+      "name": "@babel/helpers",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1104001,
+          "name": "@babel/helpers",
+          "dependency": "@babel/helpers",
+          "title": "Babel has inefficient RegExp complexity in generated code with .replace when transpiling named capturing groups",
+          "url": "https://github.com/advisories/GHSA-968p-4wvh-cqc8",
+          "severity": "moderate",
+          "range": "<7.26.10"
+        }
+      ],
+      "effects": [],
+      "range": "<7.26.10",
+      "nodes": [
+        "node_modules/@babel/helpers"
+      ],
+      "fixAvailable": true
+    },
+    "@nestjs/cli": {
+      "name": "@nestjs/cli",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "@angular-devkit/schematics-cli",
+        "inquirer",
+        "webpack"
+      ],
+      "effects": [],
+      "range": "2.0.0-rc.1 - 10.4.9",
+      "nodes": [
+        "node_modules/@nestjs/cli"
+      ],
+      "fixAvailable": true
+    },
+    "@nestjs/common": {
+      "name": "@nestjs/common",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1103903,
+          "name": "@nestjs/common",
+          "dependency": "@nestjs/common",
+          "title": "nest allows a remote attacker to execute arbitrary code via the Content-Type header",
+          "url": "https://github.com/advisories/GHSA-cj7v-w2c7-cp7c",
+          "severity": "moderate",
+          "range": "<10.4.16"
+        }
+      ],
+      "effects": [
+        "@nestjs/core",
+        "@nestjs/jwt",
+        "@nestjs/passport",
+        "@nestjs/platform-express",
+        "@nestjs/platform-fastify",
+        "@nestjs/testing"
+      ],
+      "range": "<10.4.16",
+      "nodes": [
+        "node_modules/@nestjs/common"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/common",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/core": {
+      "name": "@nestjs/core",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common",
+        "@nestjs/platform-express",
+        "path-to-regexp"
+      ],
+      "effects": [
+        "@nestjs/platform-express",
+        "@nestjs/platform-fastify",
+        "@nestjs/testing"
+      ],
+      "range": "<=10.4.1",
+      "nodes": [
+        "node_modules/@nestjs/core"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/core",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/jwt": {
+      "name": "@nestjs/jwt",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common",
+        "jsonwebtoken"
+      ],
+      "effects": [],
+      "range": "<=10.0.3",
+      "nodes": [
+        "node_modules/@nestjs/jwt"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/jwt",
+        "version": "11.0.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/passport": {
+      "name": "@nestjs/passport",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common"
+      ],
+      "effects": [],
+      "range": "<=9.0.3",
+      "nodes": [
+        "node_modules/@nestjs/passport"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/passport",
+        "version": "11.0.5",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/platform-express": {
+      "name": "@nestjs/platform-express",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common",
+        "@nestjs/core",
+        "body-parser",
+        "multer"
+      ],
+      "effects": [
+        "@nestjs/core",
+        "@nestjs/testing"
+      ],
+      "range": "<=10.4.17 || 11.0.0-next.1 - 11.1.1",
+      "nodes": [
+        "node_modules/@nestjs/platform-express"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-express",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/platform-fastify": {
+      "name": "@nestjs/platform-fastify",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common",
+        "@nestjs/core",
+        "fastify",
+        "light-my-request",
+        "path-to-regexp"
+      ],
+      "effects": [],
+      "range": "<=10.4.4",
+      "nodes": [
+        "node_modules/@nestjs/platform-fastify"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "@nestjs/testing": {
+      "name": "@nestjs/testing",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@nestjs/common",
+        "@nestjs/core",
+        "@nestjs/platform-express"
+      ],
+      "effects": [],
+      "range": "<=9.4.3",
+      "nodes": [
+        "node_modules/@nestjs/testing"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/testing",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "@serverless/dashboard-plugin": {
+      "name": "@serverless/dashboard-plugin",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "@serverless/utils"
+      ],
+      "effects": [
+        "serverless"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@serverless/dashboard-plugin"
+      ],
+      "fixAvailable": {
+        "name": "serverless",
+        "version": "4.18.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@serverless/platform-client": {
+      "name": "@serverless/platform-client",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "axios"
+      ],
+      "effects": [],
+      "range": "<=4.4.0",
+      "nodes": [
+        "node_modules/@serverless/platform-client"
+      ],
+      "fixAvailable": true
+    },
+    "@serverless/utils": {
+      "name": "@serverless/utils",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "inquirer"
+      ],
+      "effects": [
+        "@serverless/dashboard-plugin",
+        "serverless",
+        "serverless-offline"
+      ],
+      "range": ">=2.0.0",
+      "nodes": [
+        "node_modules/@serverless/utils"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "aws-sdk": {
+      "name": "aws-sdk",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "xml2js"
+      ],
+      "effects": [],
+      "range": "<=2.1353.0",
+      "nodes": [
+        "node_modules/aws-sdk"
+      ],
+      "fixAvailable": true
+    },
+    "axios": {
+      "name": "axios",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1097679,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "Axios Cross-Site Request Forgery Vulnerability",
+          "url": "https://github.com/advisories/GHSA-wf5p-g6vw-rhxx",
+          "severity": "moderate",
+          "range": ">=0.8.1 <0.28.0"
+        },
+        {
+          "source": 1103617,
+          "name": "axios",
+          "dependency": "axios",
+          "title": "axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL",
+          "url": "https://github.com/advisories/GHSA-jr5f-v2jv-69x6",
+          "severity": "high",
+          "range": "<0.30.0"
+        }
+      ],
+      "effects": [
+        "@serverless/platform-client"
+      ],
+      "range": "<=0.29.0",
+      "nodes": [
+        "node_modules/@serverless/platform-client/node_modules/axios"
+      ],
+      "fixAvailable": true
+    },
+    "body-parser": {
+      "name": "body-parser",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1099520,
+          "name": "body-parser",
+          "dependency": "body-parser",
+          "title": "body-parser vulnerable to denial of service when url encoding is enabled",
+          "url": "https://github.com/advisories/GHSA-qwcr-r2fm-qrc7",
+          "severity": "high",
+          "range": "<1.20.3"
+        }
+      ],
+      "effects": [
+        "@nestjs/platform-express",
+        "express"
+      ],
+      "range": "<1.20.3",
+      "nodes": [
+        "node_modules/body-parser"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-express",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "brace-expansion": {
+      "name": "brace-expansion",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1105443,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion Regular Expression Denial of Service vulnerability",
+          "url": "https://github.com/advisories/GHSA-v6h2-p8h4-qcjw",
+          "severity": "low",
+          "range": ">=1.0.0 <=1.1.11"
+        },
+        {
+          "source": 1105444,
+          "name": "brace-expansion",
+          "dependency": "brace-expansion",
+          "title": "brace-expansion Regular Expression Denial of Service vulnerability",
+          "url": "https://github.com/advisories/GHSA-v6h2-p8h4-qcjw",
+          "severity": "low",
+          "range": ">=2.0.0 <=2.0.1"
+        }
+      ],
+      "effects": [],
+      "range": "1.0.0 - 1.1.11 || 2.0.0 - 2.0.1",
+      "nodes": [
+        "node_modules/brace-expansion",
+        "node_modules/readdir-glob/node_modules/brace-expansion"
+      ],
+      "fixAvailable": true
+    },
+    "braces": {
+      "name": "braces",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1098094,
+          "name": "braces",
+          "dependency": "braces",
+          "title": "Uncontrolled resource consumption in braces",
+          "url": "https://github.com/advisories/GHSA-grv7-fg5c-xmjg",
+          "severity": "high",
+          "range": "<3.0.3"
+        }
+      ],
+      "effects": [],
+      "range": "<3.0.3",
+      "nodes": [
+        "node_modules/braces"
+      ],
+      "fixAvailable": true
+    },
+    "class-validator": {
+      "name": "class-validator",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1088816,
+          "name": "class-validator",
+          "dependency": "class-validator",
+          "title": "SQL Injection and Cross-site Scripting in class-validator",
+          "url": "https://github.com/advisories/GHSA-fj58-h2fr-3pp2",
+          "severity": "critical",
+          "range": "<0.14.0"
+        }
+      ],
+      "effects": [],
+      "range": "<0.14.0",
+      "nodes": [
+        "node_modules/class-validator"
+      ],
+      "fixAvailable": {
+        "name": "class-validator",
+        "version": "0.14.2",
+        "isSemVerMajor": true
+      }
+    },
+    "compression": {
+      "name": "compression",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "on-headers"
+      ],
+      "effects": [],
+      "range": "1.0.3 - 1.8.0",
+      "nodes": [
+        "node_modules/compression"
+      ],
+      "fixAvailable": true
+    },
+    "cookie": {
+      "name": "cookie",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1103907,
+          "name": "cookie",
+          "dependency": "cookie",
+          "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
+          "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x",
+          "severity": "low",
+          "range": "<0.7.0"
+        }
+      ],
+      "effects": [
+        "express",
+        "light-my-request"
+      ],
+      "range": "<0.7.0",
+      "nodes": [
+        "node_modules/cookie",
+        "node_modules/fastify/node_modules/cookie"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "cookiejar": {
+      "name": "cookiejar",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102457,
+          "name": "cookiejar",
+          "dependency": "cookiejar",
+          "title": "cookiejar Regular Expression Denial of Service via Cookie.parse function",
+          "url": "https://github.com/advisories/GHSA-h452-7996-h45h",
+          "severity": "moderate",
+          "range": "<2.1.4"
+        }
+      ],
+      "effects": [],
+      "range": "<2.1.4",
+      "nodes": [
+        "node_modules/cookiejar"
+      ],
+      "fixAvailable": true
+    },
+    "cross-spawn": {
+      "name": "cross-spawn",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1104663,
+          "name": "cross-spawn",
+          "dependency": "cross-spawn",
+          "title": "Regular Expression Denial of Service (ReDoS) in cross-spawn",
+          "url": "https://github.com/advisories/GHSA-3xgq-45jj-v275",
+          "severity": "high",
+          "range": "<6.0.6"
+        },
+        {
+          "source": 1104664,
+          "name": "cross-spawn",
+          "dependency": "cross-spawn",
+          "title": "Regular Expression Denial of Service (ReDoS) in cross-spawn",
+          "url": "https://github.com/advisories/GHSA-3xgq-45jj-v275",
+          "severity": "high",
+          "range": ">=7.0.0 <7.0.5"
+        }
+      ],
+      "effects": [],
+      "range": "<6.0.6 || >=7.0.0 <7.0.5",
+      "nodes": [
+        "node_modules/child-process-ext/node_modules/cross-spawn",
+        "node_modules/cross-spawn"
+      ],
+      "fixAvailable": true
+    },
+    "debug": {
+      "name": "debug",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096793,
+          "name": "debug",
+          "dependency": "debug",
+          "title": "Regular Expression Denial of Service in debug",
+          "url": "https://github.com/advisories/GHSA-gxpj-cx7g-858c",
+          "severity": "low",
+          "range": ">=3.2.0 <3.2.7"
+        }
+      ],
+      "effects": [
+        "mocha"
+      ],
+      "range": "3.2.0 - 3.2.6",
+      "nodes": [
+        "node_modules/mocha/node_modules/debug"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "dynamodb-localhost": {
+      "name": "dynamodb-localhost",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "mocha",
+        "tar"
+      ],
+      "effects": [
+        "serverless-dynamodb-local"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/dynamodb-localhost"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "es5-ext": {
+      "name": "es5-ext",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096592,
+          "name": "es5-ext",
+          "dependency": "es5-ext",
+          "title": "es5-ext vulnerable to Regular Expression Denial of Service in `function#copy` and `function#toStringTokens`",
+          "url": "https://github.com/advisories/GHSA-4gmj-3p3h-gm8h",
+          "severity": "low",
+          "range": ">=0.10.0 <0.10.63"
+        }
+      ],
+      "effects": [],
+      "range": "0.10.1 - 0.10.62",
+      "nodes": [
+        "node_modules/es5-ext"
+      ],
+      "fixAvailable": true
+    },
+    "express": {
+      "name": "express",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096820,
+          "name": "express",
+          "dependency": "express",
+          "title": "Express.js Open Redirect in malformed URLs",
+          "url": "https://github.com/advisories/GHSA-rv95-896h-c2vc",
+          "severity": "moderate",
+          "range": "<4.19.2"
+        },
+        {
+          "source": 1100530,
+          "name": "express",
+          "dependency": "express",
+          "title": "express vulnerable to XSS via response.redirect()",
+          "url": "https://github.com/advisories/GHSA-qw6h-vgh9-j6wx",
+          "severity": "low",
+          "range": "<4.20.0"
+        },
+        "body-parser",
+        "cookie",
+        "path-to-regexp",
+        "send"
+      ],
+      "effects": [],
+      "range": "<=4.21.0 || 5.0.0-alpha.1 - 5.0.0",
+      "nodes": [
+        "node_modules/express"
+      ],
+      "fixAvailable": true
+    },
+    "external-editor": {
+      "name": "external-editor",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "tmp"
+      ],
+      "effects": [
+        "inquirer"
+      ],
+      "range": ">=1.1.1",
+      "nodes": [
+        "node_modules/external-editor"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "fastify": {
+      "name": "fastify",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1089455,
+          "name": "fastify",
+          "dependency": "fastify",
+          "title": "Fastify: Incorrect Content-Type parsing can lead to CSRF attack ",
+          "url": "https://github.com/advisories/GHSA-3fjj-p79j-c9hh",
+          "severity": "moderate",
+          "range": ">=4.0.0 <4.10.2"
+        },
+        {
+          "source": 1090180,
+          "name": "fastify",
+          "dependency": "fastify",
+          "title": "fastify vulnerable to denial of service via malicious Content-Type",
+          "url": "https://github.com/advisories/GHSA-455w-c45v-86rg",
+          "severity": "high",
+          "range": ">=4.0.0 <4.8.1"
+        },
+        "find-my-way",
+        "light-my-request",
+        "middie"
+      ],
+      "effects": [
+        "@nestjs/platform-fastify"
+      ],
+      "range": "2.11.0 - 4.25.2",
+      "nodes": [
+        "node_modules/@nestjs/platform-fastify/node_modules/fastify",
+        "node_modules/fastify"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "find-my-way": {
+      "name": "find-my-way",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1099853,
+          "name": "find-my-way",
+          "dependency": "find-my-way",
+          "title": "find-my-way has a ReDoS vulnerability in multiparametric routes",
+          "url": "https://github.com/advisories/GHSA-rrr8-f88r-h8q6",
+          "severity": "high",
+          "range": ">=5.5.0 <8.2.2"
+        }
+      ],
+      "effects": [
+        "fastify"
+      ],
+      "range": "5.5.0 - 8.2.1",
+      "nodes": [
+        "node_modules/@nestjs/platform-fastify/node_modules/find-my-way"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "flat": {
+      "name": "flat",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1089152,
+          "name": "flat",
+          "dependency": "flat",
+          "title": "flat vulnerable to Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-2j2x-2gpw-g8fm",
+          "severity": "critical",
+          "range": "<5.0.1"
+        }
+      ],
+      "effects": [
+        "yargs-unparser"
+      ],
+      "range": "<5.0.1",
+      "nodes": [
+        "node_modules/yargs-unparser/node_modules/flat"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "follow-redirects": {
+      "name": "follow-redirects",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096353,
+          "name": "follow-redirects",
+          "dependency": "follow-redirects",
+          "title": "Follow Redirects improperly handles URLs in the url.parse() function",
+          "url": "https://github.com/advisories/GHSA-jchw-25xp-jwwc",
+          "severity": "moderate",
+          "range": "<1.15.4"
+        },
+        {
+          "source": 1096856,
+          "name": "follow-redirects",
+          "dependency": "follow-redirects",
+          "title": "follow-redirects' Proxy-Authorization header kept across hosts",
+          "url": "https://github.com/advisories/GHSA-cxjh-pqwp-8mfp",
+          "severity": "moderate",
+          "range": "<=1.15.5"
+        }
+      ],
+      "effects": [],
+      "range": "<=1.15.5",
+      "nodes": [
+        "node_modules/follow-redirects"
+      ],
+      "fixAvailable": true
+    },
+    "form-data": {
+      "name": "form-data",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1106507,
+          "name": "form-data",
+          "dependency": "form-data",
+          "title": "form-data uses unsafe random function in form-data for choosing boundary",
+          "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4",
+          "severity": "critical",
+          "range": ">=4.0.0 <4.0.4"
+        }
+      ],
+      "effects": [],
+      "range": "4.0.0 - 4.0.3",
+      "nodes": [
+        "node_modules/form-data"
+      ],
+      "fixAvailable": true
+    },
+    "formidable": {
+      "name": "formidable",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "qs"
+      ],
+      "effects": [],
+      "range": "2.0.0-canary.20200129.2 - 2.0.1",
+      "nodes": [
+        "node_modules/formidable"
+      ],
+      "fixAvailable": true
+    },
+    "get-func-name": {
+      "name": "get-func-name",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1094574,
+          "name": "get-func-name",
+          "dependency": "get-func-name",
+          "title": "Chaijs/get-func-name vulnerable to ReDoS",
+          "url": "https://github.com/advisories/GHSA-4q6p-r6v2-jvc5",
+          "severity": "high",
+          "range": "<2.0.1"
+        }
+      ],
+      "effects": [],
+      "range": "<2.0.1",
+      "nodes": [
+        "node_modules/get-func-name"
+      ],
+      "fixAvailable": true
+    },
+    "http-cache-semantics": {
+      "name": "http-cache-semantics",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102456,
+          "name": "http-cache-semantics",
+          "dependency": "http-cache-semantics",
+          "title": "http-cache-semantics vulnerable to Regular Expression Denial of Service",
+          "url": "https://github.com/advisories/GHSA-rc47-6667-2j5j",
+          "severity": "high",
+          "range": "<4.1.1"
+        }
+      ],
+      "effects": [],
+      "range": "<4.1.1",
+      "nodes": [
+        "node_modules/http-cache-semantics"
+      ],
+      "fixAvailable": true
+    },
+    "inquirer": {
+      "name": "inquirer",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "external-editor"
+      ],
+      "effects": [
+        "@angular-devkit/schematics-cli",
+        "@nestjs/cli",
+        "@serverless/utils"
+      ],
+      "range": "3.0.0 - 9.3.7",
+      "nodes": [
+        "node_modules/@angular-devkit/schematics-cli/node_modules/inquirer",
+        "node_modules/@serverless/utils/node_modules/inquirer",
+        "node_modules/inquirer"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jose": {
+      "name": "jose",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096835,
+          "name": "jose",
+          "dependency": "jose",
+          "title": "jose vulnerable to resource exhaustion via specifically crafted JWE with compressed plaintext",
+          "url": "https://github.com/advisories/GHSA-hhhv-q57g-882q",
+          "severity": "moderate",
+          "range": ">=3.0.0 <=4.15.4"
+        }
+      ],
+      "effects": [],
+      "range": "3.0.0 - 4.15.4",
+      "nodes": [
+        "node_modules/jose"
+      ],
+      "fixAvailable": true
+    },
+    "json5": {
+      "name": "json5",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096544,
+          "name": "json5",
+          "dependency": "json5",
+          "title": "Prototype Pollution in JSON5 via Parse Method",
+          "url": "https://github.com/advisories/GHSA-9c47-m6qq-7p4h",
+          "severity": "high",
+          "range": ">=2.0.0 <2.2.2"
+        }
+      ],
+      "effects": [],
+      "range": "2.0.0 - 2.2.1",
+      "nodes": [
+        "node_modules/json5"
+      ],
+      "fixAvailable": true
+    },
+    "jsonpath-plus": {
+      "name": "jsonpath-plus",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102423,
+          "name": "jsonpath-plus",
+          "dependency": "jsonpath-plus",
+          "title": "JSONPath Plus Remote Code Execution (RCE) Vulnerability",
+          "url": "https://github.com/advisories/GHSA-pppg-cpfq-h7wr",
+          "severity": "critical",
+          "range": "<10.2.0"
+        },
+        {
+          "source": 1102895,
+          "name": "jsonpath-plus",
+          "dependency": "jsonpath-plus",
+          "title": "JSONPath Plus allows Remote Code Execution",
+          "url": "https://github.com/advisories/GHSA-hw8r-x6gr-5gjp",
+          "severity": "high",
+          "range": "<10.3.0"
+        }
+      ],
+      "effects": [
+        "serverless-offline"
+      ],
+      "range": "<=10.2.0",
+      "nodes": [
+        "node_modules/jsonpath-plus"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "jsonwebtoken": {
+      "name": "jsonwebtoken",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        {
+          "source": 1097690,
+          "name": "jsonwebtoken",
+          "dependency": "jsonwebtoken",
+          "title": "jsonwebtoken unrestricted key type could lead to legacy keys usage ",
+          "url": "https://github.com/advisories/GHSA-8cf7-32gw-wr33",
+          "severity": "high",
+          "range": "<=8.5.1"
+        },
+        {
+          "source": 1102458,
+          "name": "jsonwebtoken",
+          "dependency": "jsonwebtoken",
+          "title": "jsonwebtoken vulnerable to signature validation bypass due to insecure default algorithm in jwt.verify()",
+          "url": "https://github.com/advisories/GHSA-qwph-4952-7xr6",
+          "severity": "moderate",
+          "range": "<9.0.0"
+        }
+      ],
+      "effects": [
+        "@nestjs/jwt",
+        "passport-jwt"
+      ],
+      "range": "<=8.5.1",
+      "nodes": [
+        "node_modules/jsonwebtoken"
+      ],
+      "fixAvailable": {
+        "name": "jsonwebtoken",
+        "version": "9.0.2",
+        "isSemVerMajor": true
+      }
+    },
+    "light-my-request": {
+      "name": "light-my-request",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        "cookie"
+      ],
+      "effects": [
+        "@nestjs/platform-fastify",
+        "fastify"
+      ],
+      "range": "3.7.0 - 5.13.0 || 6.0.0-pre.fv5.1 - 6.0.0",
+      "nodes": [
+        "node_modules/fastify/node_modules/light-my-request",
+        "node_modules/light-my-request"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "luxon": {
+      "name": "luxon",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096442,
+          "name": "luxon",
+          "dependency": "luxon",
+          "title": "Luxon Inefficient Regular Expression Complexity vulnerability",
+          "url": "https://github.com/advisories/GHSA-3xq5-wjfh-ppjc",
+          "severity": "high",
+          "range": ">=1.0.0 <1.28.1"
+        },
+        {
+          "source": 1096443,
+          "name": "luxon",
+          "dependency": "luxon",
+          "title": "Luxon Inefficient Regular Expression Complexity vulnerability",
+          "url": "https://github.com/advisories/GHSA-3xq5-wjfh-ppjc",
+          "severity": "high",
+          "range": ">=3.0.0 <3.2.1"
+        }
+      ],
+      "effects": [],
+      "range": "1.0.0 - 1.28.0 || 3.0.0 - 3.2.0",
+      "nodes": [
+        "node_modules/cron-parser/node_modules/luxon",
+        "node_modules/luxon"
+      ],
+      "fixAvailable": true
+    },
+    "micromatch": {
+      "name": "micromatch",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1098681,
+          "name": "micromatch",
+          "dependency": "micromatch",
+          "title": "Regular Expression Denial of Service (ReDoS) in micromatch",
+          "url": "https://github.com/advisories/GHSA-952p-6rrq-rcjv",
+          "severity": "moderate",
+          "range": "<4.0.8"
+        }
+      ],
+      "effects": [],
+      "range": "<4.0.8",
+      "nodes": [
+        "node_modules/micromatch"
+      ],
+      "fixAvailable": true
+    },
+    "middie": {
+      "name": "middie",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "path-to-regexp"
+      ],
+      "effects": [
+        "fastify"
+      ],
+      "range": "4.1.0",
+      "nodes": [
+        "node_modules/fastify/node_modules/middie"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-fastify",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096485,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch ReDoS vulnerability",
+          "url": "https://github.com/advisories/GHSA-f8q6-p94x-37v3",
+          "severity": "high",
+          "range": "<3.0.5"
+        }
+      ],
+      "effects": [
+        "mocha"
+      ],
+      "range": "<3.0.5",
+      "nodes": [
+        "node_modules/mocha/node_modules/minimatch"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "mocha": {
+      "name": "mocha",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "debug",
+        "minimatch",
+        "yargs-unparser"
+      ],
+      "effects": [
+        "dynamodb-localhost"
+      ],
+      "range": "5.1.0 - 9.2.1",
+      "nodes": [
+        "node_modules/mocha"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "multer": {
+      "name": "multer",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1104780,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service from maliciously crafted requests",
+          "url": "https://github.com/advisories/GHSA-4pg4-qvpc-4q3h",
+          "severity": "high",
+          "range": ">=1.4.4-lts.1 <2.0.0"
+        },
+        {
+          "source": 1105262,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via unhandled exception",
+          "url": "https://github.com/advisories/GHSA-g5hg-p3ph-g8qg",
+          "severity": "high",
+          "range": ">=1.4.4-lts.1 <2.0.1"
+        },
+        {
+          "source": 1106463,
+          "name": "multer",
+          "dependency": "multer",
+          "title": "Multer vulnerable to Denial of Service via unhandled exception from malformed request",
+          "url": "https://github.com/advisories/GHSA-fjgf-rc76-4x9p",
+          "severity": "high",
+          "range": ">=1.4.4-lts.1 <2.0.2"
+        }
+      ],
+      "effects": [
+        "@nestjs/platform-express"
+      ],
+      "range": "1.4.4-lts.1 - 2.0.1",
+      "nodes": [
+        "node_modules/multer"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/platform-express",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "on-headers": {
+      "name": "on-headers",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1106812,
+          "name": "on-headers",
+          "dependency": "on-headers",
+          "title": "on-headers is vulnerable to http response header manipulation",
+          "url": "https://github.com/advisories/GHSA-76c9-3jph-rj3q",
+          "severity": "low",
+          "range": "<1.1.0"
+        }
+      ],
+      "effects": [
+        "compression"
+      ],
+      "range": "<1.1.0",
+      "nodes": [
+        "node_modules/on-headers"
+      ],
+      "fixAvailable": true
+    },
+    "passport-jwt": {
+      "name": "passport-jwt",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "jsonwebtoken"
+      ],
+      "effects": [],
+      "range": "<=4.0.0",
+      "nodes": [
+        "node_modules/passport-jwt"
+      ],
+      "fixAvailable": true
+    },
+    "path-to-regexp": {
+      "name": "path-to-regexp",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1101846,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp outputs backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-9wv6-86v2-598j",
+          "severity": "high",
+          "range": ">=4.0.0 <6.3.0"
+        },
+        {
+          "source": 1101848,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp outputs backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-9wv6-86v2-598j",
+          "severity": "high",
+          "range": ">=2.0.0 <3.3.0"
+        },
+        {
+          "source": 1101850,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp outputs backtracking regular expressions",
+          "url": "https://github.com/advisories/GHSA-9wv6-86v2-598j",
+          "severity": "high",
+          "range": "<0.1.10"
+        },
+        {
+          "source": 1105199,
+          "name": "path-to-regexp",
+          "dependency": "path-to-regexp",
+          "title": "path-to-regexp contains a ReDoS",
+          "url": "https://github.com/advisories/GHSA-rhx6-c78j-4q9w",
+          "severity": "high",
+          "range": "<0.1.12"
+        }
+      ],
+      "effects": [
+        "@nestjs/core",
+        "@nestjs/platform-fastify",
+        "express",
+        "middie"
+      ],
+      "range": "<=0.1.11 || 2.0.0 - 3.2.0 || 4.0.0 - 6.2.2",
+      "nodes": [
+        "node_modules/@fastify/middie/node_modules/path-to-regexp",
+        "node_modules/express/node_modules/path-to-regexp",
+        "node_modules/fastify/node_modules/path-to-regexp",
+        "node_modules/path-to-regexp"
+      ],
+      "fixAvailable": {
+        "name": "@nestjs/core",
+        "version": "11.1.6",
+        "isSemVerMajor": true
+      }
+    },
+    "plugin": {
+      "name": "plugin",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "underscore"
+      ],
+      "effects": [],
+      "range": ">=0.1.0",
+      "nodes": [
+        "node_modules/plugin"
+      ],
+      "fixAvailable": {
+        "name": "plugin",
+        "version": "0.0.15",
+        "isSemVerMajor": true
+      }
+    },
+    "qs": {
+      "name": "qs",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1104122,
+          "name": "qs",
+          "dependency": "qs",
+          "title": "qs vulnerable to Prototype Pollution",
+          "url": "https://github.com/advisories/GHSA-hrpp-h998-j3pp",
+          "severity": "high",
+          "range": ">=6.9.0 <6.9.7"
+        }
+      ],
+      "effects": [
+        "formidable"
+      ],
+      "range": "6.9.0 - 6.9.6",
+      "nodes": [
+        "node_modules/formidable/node_modules/qs"
+      ],
+      "fixAvailable": true
+    },
+    "semver": {
+      "name": "semver",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1101088,
+          "name": "semver",
+          "dependency": "semver",
+          "title": "semver vulnerable to Regular Expression Denial of Service",
+          "url": "https://github.com/advisories/GHSA-c2qf-rxjj-qqgw",
+          "severity": "high",
+          "range": ">=7.0.0 <7.5.2"
+        },
+        {
+          "source": 1101089,
+          "name": "semver",
+          "dependency": "semver",
+          "title": "semver vulnerable to Regular Expression Denial of Service",
+          "url": "https://github.com/advisories/GHSA-c2qf-rxjj-qqgw",
+          "severity": "high",
+          "range": "<5.7.2"
+        },
+        {
+          "source": 1101090,
+          "name": "semver",
+          "dependency": "semver",
+          "title": "semver vulnerable to Regular Expression Denial of Service",
+          "url": "https://github.com/advisories/GHSA-c2qf-rxjj-qqgw",
+          "severity": "high",
+          "range": ">=6.0.0 <6.3.1"
+        }
+      ],
+      "effects": [],
+      "range": "<=5.7.1 || 6.0.0 - 6.3.0 || 7.0.0 - 7.5.1",
+      "nodes": [
+        "node_modules/@babel/core/node_modules/semver",
+        "node_modules/child-process-ext/node_modules/semver",
+        "node_modules/istanbul-lib-instrument/node_modules/semver",
+        "node_modules/jsonwebtoken/node_modules/semver",
+        "node_modules/make-dir/node_modules/semver",
+        "node_modules/node-environment-flags/node_modules/semver",
+        "node_modules/semver"
+      ],
+      "fixAvailable": true
+    },
+    "send": {
+      "name": "send",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1100526,
+          "name": "send",
+          "dependency": "send",
+          "title": "send vulnerable to template injection that can lead to XSS",
+          "url": "https://github.com/advisories/GHSA-m6fv-jmcg-4jfg",
+          "severity": "low",
+          "range": "<0.19.0"
+        }
+      ],
+      "effects": [
+        "express",
+        "serve-static"
+      ],
+      "range": "<0.19.0",
+      "nodes": [
+        "node_modules/send"
+      ],
+      "fixAvailable": true
+    },
+    "serialize-javascript": {
+      "name": "serialize-javascript",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1105261,
+          "name": "serialize-javascript",
+          "dependency": "serialize-javascript",
+          "title": "Cross-site Scripting (XSS) in serialize-javascript",
+          "url": "https://github.com/advisories/GHSA-76p7-773f-r4q5",
+          "severity": "moderate",
+          "range": ">=6.0.0 <6.0.2"
+        }
+      ],
+      "effects": [],
+      "range": "6.0.0 - 6.0.1",
+      "nodes": [
+        "node_modules/serialize-javascript"
+      ],
+      "fixAvailable": true
+    },
+    "serve-static": {
+      "name": "serve-static",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1100528,
+          "name": "serve-static",
+          "dependency": "serve-static",
+          "title": "serve-static vulnerable to template injection that can lead to XSS",
+          "url": "https://github.com/advisories/GHSA-cm22-4g7w-348p",
+          "severity": "low",
+          "range": "<1.16.0"
+        },
+        "send"
+      ],
+      "effects": [],
+      "range": "<=1.16.0",
+      "nodes": [
+        "node_modules/serve-static"
+      ],
+      "fixAvailable": true
+    },
+    "serverless": {
+      "name": "serverless",
+      "severity": "low",
+      "isDirect": true,
+      "via": [
+        "@serverless/dashboard-plugin",
+        "@serverless/utils"
+      ],
+      "effects": [
+        "serverless-offline"
+      ],
+      "range": "2.2.0-05d703e6 - 3.40.0",
+      "nodes": [
+        "node_modules/serverless"
+      ],
+      "fixAvailable": {
+        "name": "serverless",
+        "version": "4.18.0",
+        "isSemVerMajor": true
+      }
+    },
+    "serverless-dynamodb-local": {
+      "name": "serverless-dynamodb-local",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "dynamodb-localhost"
+      ],
+      "effects": [],
+      "range": ">=0.2.0",
+      "nodes": [
+        "node_modules/serverless-dynamodb-local"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "serverless-offline": {
+      "name": "serverless-offline",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "@serverless/utils",
+        "jsonpath-plus",
+        "serverless"
+      ],
+      "effects": [],
+      "range": "1.0.0-beta3 - 14.3.2",
+      "nodes": [
+        "node_modules/serverless-offline"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "simple-git": {
+      "name": "simple-git",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1093018,
+          "name": "simple-git",
+          "dependency": "simple-git",
+          "title": "simple-git vulnerable to Remote Code Execution when enabling the ext transport protocol",
+          "url": "https://github.com/advisories/GHSA-9p95-fxvg-qgq2",
+          "severity": "high",
+          "range": "<3.15.0"
+        },
+        {
+          "source": 1103707,
+          "name": "simple-git",
+          "dependency": "simple-git",
+          "title": "Remote code execution in simple-git",
+          "url": "https://github.com/advisories/GHSA-9w5j-4mwv-2wj8",
+          "severity": "critical",
+          "range": "<3.16.0"
+        }
+      ],
+      "effects": [],
+      "range": "<=3.15.1",
+      "nodes": [
+        "node_modules/simple-git"
+      ],
+      "fixAvailable": true
+    },
+    "tar": {
+      "name": "tar",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1097493,
+          "name": "tar",
+          "dependency": "tar",
+          "title": "Denial of service while parsing a tar file due to lack of folders count validation",
+          "url": "https://github.com/advisories/GHSA-f5x3-32g6-xq36",
+          "severity": "moderate",
+          "range": "<6.2.1"
+        }
+      ],
+      "effects": [
+        "dynamodb-localhost"
+      ],
+      "range": "<6.2.1",
+      "nodes": [
+        "node_modules/dynamodb-localhost/node_modules/tar",
+        "node_modules/tar"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "tmp": {
+      "name": "tmp",
+      "severity": "low",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1106849,
+          "name": "tmp",
+          "dependency": "tmp",
+          "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+          "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+          "severity": "low",
+          "range": "<=0.2.3"
+        }
+      ],
+      "effects": [
+        "external-editor"
+      ],
+      "range": "<=0.2.3",
+      "nodes": [
+        "node_modules/tmp"
+      ],
+      "fixAvailable": {
+        "name": "serverless-offline",
+        "version": "14.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "underscore": {
+      "name": "underscore",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1095097,
+          "name": "underscore",
+          "dependency": "underscore",
+          "title": "Arbitrary Code Execution in underscore",
+          "url": "https://github.com/advisories/GHSA-cf4h-3jhx-xvhq",
+          "severity": "critical",
+          "range": ">=1.3.2 <1.12.1"
+        }
+      ],
+      "effects": [
+        "plugin"
+      ],
+      "range": "1.3.2 - 1.12.0",
+      "nodes": [
+        "node_modules/underscore"
+      ],
+      "fixAvailable": {
+        "name": "plugin",
+        "version": "0.0.15",
+        "isSemVerMajor": true
+      }
+    },
+    "webpack": {
+      "name": "webpack",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1094471,
+          "name": "webpack",
+          "dependency": "webpack",
+          "title": "Cross-realm object access in Webpack 5",
+          "url": "https://github.com/advisories/GHSA-hc6q-2mpp-qw7j",
+          "severity": "critical",
+          "range": ">=5.0.0 <5.76.0"
+        },
+        {
+          "source": 1099351,
+          "name": "webpack",
+          "dependency": "webpack",
+          "title": "Webpack's AutoPublicPathRuntimeModule has a DOM Clobbering Gadget that leads to XSS",
+          "url": "https://github.com/advisories/GHSA-4vvj-4cpr-p986",
+          "severity": "moderate",
+          "range": ">=5.0.0-alpha.0 <5.94.0"
+        }
+      ],
+      "effects": [
+        "@nestjs/cli"
+      ],
+      "range": "5.0.0-alpha.0 - 5.93.0",
+      "nodes": [
+        "node_modules/webpack"
+      ],
+      "fixAvailable": true
+    },
+    "word-wrap": {
+      "name": "word-wrap",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1102444,
+          "name": "word-wrap",
+          "dependency": "word-wrap",
+          "title": "word-wrap vulnerable to Regular Expression Denial of Service",
+          "url": "https://github.com/advisories/GHSA-j8xg-fqg3-53r7",
+          "severity": "moderate",
+          "range": "<1.2.4"
+        }
+      ],
+      "effects": [],
+      "range": "<1.2.4",
+      "nodes": [
+        "node_modules/word-wrap"
+      ],
+      "fixAvailable": true
+    },
+    "ws": {
+      "name": "ws",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1098392,
+          "name": "ws",
+          "dependency": "ws",
+          "title": "ws affected by a DoS when handling a request with many HTTP headers",
+          "url": "https://github.com/advisories/GHSA-3h5v-q93c-6h6q",
+          "severity": "high",
+          "range": ">=8.0.0 <8.17.1"
+        },
+        {
+          "source": 1098393,
+          "name": "ws",
+          "dependency": "ws",
+          "title": "ws affected by a DoS when handling a request with many HTTP headers",
+          "url": "https://github.com/advisories/GHSA-3h5v-q93c-6h6q",
+          "severity": "high",
+          "range": ">=7.0.0 <7.5.10"
+        }
+      ],
+      "effects": [],
+      "range": "7.0.0 - 7.5.9 || 8.0.0 - 8.17.0",
+      "nodes": [
+        "node_modules/serverless-offline/node_modules/ws",
+        "node_modules/ws"
+      ],
+      "fixAvailable": true
+    },
+    "xml2js": {
+      "name": "xml2js",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1096693,
+          "name": "xml2js",
+          "dependency": "xml2js",
+          "title": "xml2js is vulnerable to prototype pollution",
+          "url": "https://github.com/advisories/GHSA-776f-qx25-q3cc",
+          "severity": "moderate",
+          "range": "<0.5.0"
+        }
+      ],
+      "effects": [
+        "aws-sdk"
+      ],
+      "range": "<0.5.0",
+      "nodes": [
+        "node_modules/xml2js"
+      ],
+      "fixAvailable": true
+    },
+    "yargs-unparser": {
+      "name": "yargs-unparser",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "flat"
+      ],
+      "effects": [
+        "mocha"
+      ],
+      "range": "<=1.6.3",
+      "nodes": [
+        "node_modules/yargs-unparser"
+      ],
+      "fixAvailable": {
+        "name": "serverless-dynamodb-local",
+        "version": "0.1.1",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 16,
+      "moderate": 16,
+      "high": 25,
+      "critical": 12,
+      "total": 69
+    },
+    "dependencies": {
+      "prod": 1003,
+      "dev": 880,
+      "optional": 2,
+      "peer": 21,
+      "peerOptional": 0,
+      "total": 1904
+    }
+  }
+}

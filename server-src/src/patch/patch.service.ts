@@ -192,6 +192,7 @@ export class PatchService {
         created_at: patch.created_at,
         updated_at: new Date().toISOString(),
       },
+      created_at: new Date().toISOString(),
       created_by: username,
     };
 

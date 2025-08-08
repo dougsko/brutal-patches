@@ -50,6 +50,7 @@ describe('PatchVersionRepository', () => {
           resonance: 0.3,
           attack: 0.1,
         } as any,
+        created_at: new Date().toISOString(),
         created_by: 'testuser',
       };
 
@@ -64,7 +65,10 @@ describe('PatchVersionRepository', () => {
       });
       expect(mockDynamoService.putItem).toHaveBeenCalledWith(
         expect.any(Object),
-        expect.objectContaining(versionData),
+        expect.objectContaining({
+          ...versionData,
+          id: expect.any(Number),
+        }),
         expect.any(Object)
       );
     });
@@ -77,6 +81,7 @@ describe('PatchVersionRepository', () => {
         description: 'A test patch',
         changes: 'Initial version',
         patchData: {} as any,
+        created_at: new Date().toISOString(),
         created_by: 'testuser',
       };
 
@@ -167,7 +172,10 @@ describe('PatchVersionRepository', () => {
       expect(mockDynamoService.queryItems).toHaveBeenCalledWith(
         expect.any(Object),
         'patchId = :patchId AND version = :version',
-        { ':patchId': patchId, ':version': version }
+        { ':patchId': patchId, ':version': version },
+        expect.objectContaining({
+          indexName: 'PatchIndex'
+        })
       );
     });
 

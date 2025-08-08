@@ -85,10 +85,23 @@ export class AdminService {
       const users = await this.getUserStats();
       
       // Get patch statistics
-      const patches = await this.patchRepository.getPatchStats();
+      const patchStats = await this.patchRepository.getPatchStats();
+      const patches = {
+        total: patchStats.totalPatches,
+        newPatchesThisWeek: 0, // Would be implemented with proper date filtering
+        newPatchesThisMonth: 0, // Would be implemented with proper date filtering
+        averageRating: patchStats.averageRating,
+        topCategories: patchStats.topCategories,
+      };
       
       // Get collection statistics
-      const collections = await this.collectionRepository.getCollectionStats();
+      const collectionStats = await this.collectionRepository.getCollectionStats();
+      const collections = {
+        total: collectionStats.totalCollections,
+        publicCollections: collectionStats.publicCollections,
+        privateCollections: collectionStats.privateCollections,
+        averagePatchCount: collectionStats.averagePatchCount,
+      };
       
       // Get activity statistics (placeholder for now)
       const activity = {
