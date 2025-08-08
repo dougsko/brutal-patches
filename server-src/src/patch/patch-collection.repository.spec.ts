@@ -40,7 +40,7 @@ describe('PatchCollectionRepository', () => {
       const collectionData = {
         name: 'My Bass Collection',
         description: 'Collection of bass patches',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         tags: ['bass', 'electronic'],
@@ -67,7 +67,7 @@ describe('PatchCollectionRepository', () => {
 
   describe('getUserCollections', () => {
     it('should retrieve user collections successfully', async () => {
-      const userId = 123;
+      const userId = '123';
       const mockCollections: PatchCollection[] = [
         {
           id: 1,
@@ -120,7 +120,7 @@ describe('PatchCollectionRepository', () => {
     });
 
     it('should filter private collections when includePrivate is false', async () => {
-      const userId = 123;
+      const userId = '123';
       const mockCollections: PatchCollection[] = [
         {
           id: 1,
@@ -165,7 +165,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Community Bass Collection',
           description: 'Best bass patches',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -207,7 +207,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -238,7 +238,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -273,7 +273,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -306,7 +306,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Bass Collection',
           description: 'Collection of bass patches',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -355,7 +355,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Public Collection 1',
           description: 'Test',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -365,7 +365,7 @@ describe('PatchCollectionRepository', () => {
           id: 2,
           name: 'Private Collection 1',
           description: 'Test',
-          userId: 123,
+          userId: '123',
           patchIds: [4, 5],
           isPublic: false,
           created_at: '2023-01-02T00:00:00Z',
@@ -375,7 +375,7 @@ describe('PatchCollectionRepository', () => {
           id: 3,
           name: 'Public Collection 2',
           description: 'Test',
-          userId: 456,
+          userId: '456',
           patchIds: [6, 7, 8, 9],
           isPublic: true,
           created_at: '2023-01-03T00:00:00Z',
