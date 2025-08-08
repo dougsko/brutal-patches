@@ -1,5 +1,13 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
-import { Patch } from 'src/interfaces/patch.interface';
+import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { 
+  Patch, 
+  PatchVersion, 
+  PatchHistory, 
+  PatchCollection,
+  PatchSearchFilters,
+  PatchComparison,
+  PatchCategory
+} from 'src/interfaces/patch.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
 
@@ -75,5 +83,148 @@ export class PatchController {
     @Body() patch: Patch,
   ): Promise<Patch> {
     return this.patchService.updatePatch(req.user.username, id, patch);
+  }
+
+  // ====== NEW VERSIONING ENDPOINTS ======
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/version')
+  async updateWithVersioning(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() body: { patch: Patch; changes?: string },
+  ): Promise<{ patch: Patch; version: PatchVersion }> {
+    return this.patchService.updatePatchWithVersioning(
+      req.user.username, 
+      id, 
+      body.patch,
+      body.changes
+    );
+  }
+
+  @Get(':id/history')
+  async getPatchHistory(@Param('id') id: string): Promise<PatchHistory> {
+    return this.patchService.getPatchHistory(id);
+  }
+
+  @Get(':id/version/:version')
+  async getPatchVersion(
+    @Param('id') id: string,
+    @Param('version') version: number,
+  ): Promise<PatchVersion | null> {
+    return this.patchService.getPatchVersion(id, version);
+  }
+
+  @Get(':id/compare/:otherId')
+  async comparePatches(
+    @Param('id') id: string,
+    @Param('otherId') otherId: string,
+  ): Promise<PatchComparison> {
+    return this.patchService.comparePatches(id, otherId);
+  }
+
+  @Get(':id/versions/:version1/compare/:version2')
+  async comparePatchVersions(
+    @Param('id') id: string,
+    @Param('version1') version1: number,
+    @Param('version2') version2: number,
+  ): Promise<any> {
+    return this.patchService.comparePatchVersions(id, version1, version2);
+  }
+
+  @Get(':id/related')
+  async getRelatedPatches(
+    @Param('id') id: string,
+    @Query('limit') limit?: number,
+  ): Promise<Patch[]> {
+    return this.patchService.getRelatedPatches(id, limit || 5);
+  }
+
+  // ====== COLLECTION ENDPOINTS ======
+
+  @UseGuards(JwtAuthGuard)
+  @Post('collections')
+  async createCollection(
+    @Request() req,
+    @Body() collectionData: Omit<PatchCollection, 'id' | 'userId' | 'created_at' | 'updated_at'>,
+  ): Promise<PatchCollection> {
+    return this.patchService.createCollection(req.user.username, collectionData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('collections/my')
+  async getMyCollections(@Request() req): Promise<PatchCollection[]> {
+    return this.patchService.getUserCollections(req.user.username);
+  }
+
+  @Get('collections/public')
+  async getPublicCollections(): Promise<PatchCollection[]> {
+    return this.patchService.getPublicCollections();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('collections/:collectionId/patches/:patchId')
+  async addPatchToCollection(
+    @Request() req,
+    @Param('collectionId') collectionId: number,
+    @Param('patchId') patchId: number,
+  ): Promise<PatchCollection> {
+    return this.patchService.addPatchToCollection(
+      req.user.username, 
+      collectionId, 
+      patchId
+    );
+  }
+
+  // ====== SEARCH AND DISCOVERY ENDPOINTS ======
+
+  @Get('search')
+  async searchPatches(
+    @Query('q') searchTerm?: string,
+    @Query('category') category?: string,
+    @Query('tags') tags?: string,
+    @Query('minRating') minRating?: number,
+    @Query('maxRating') maxRating?: number,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('username') username?: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('sortBy') sortBy?: 'created_at' | 'updated_at' | 'rating' | 'title',
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+  ): Promise<{ patches: Patch[]; total: number }> {
+    const filters: PatchSearchFilters = {};
+    
+    if (category) filters.category = category;
+    if (tags) filters.tags = tags.split(',');
+    if (minRating !== undefined) filters.minRating = minRating;
+    if (maxRating !== undefined) filters.maxRating = maxRating;
+    if (dateFrom) filters.dateFrom = dateFrom;
+    if (dateTo) filters.dateTo = dateTo;
+    if (username) filters.username = username;
+
+    const options = {
+      limit,
+      offset,
+      sortBy,
+      sortOrder,
+    };
+
+    return this.patchService.searchPatches(searchTerm, filters, options);
+  }
+
+  @Get('categories')
+  async getPatchCategories(): Promise<PatchCategory[]> {
+    return this.patchService.getPatchCategories();
+  }
+
+  @Get('trending')
+  async getTrendingPatches(@Query('limit') limit?: number): Promise<Patch[]> {
+    return this.patchService.getTrendingPatches(limit || 10);
+  }
+
+  @Get('featured')
+  async getFeaturedPatches(@Query('limit') limit?: number): Promise<Patch[]> {
+    return this.patchService.getFeaturedPatches(limit || 5);
   }
 }
