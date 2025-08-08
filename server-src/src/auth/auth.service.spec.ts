@@ -72,7 +72,9 @@ describe('AuthService', () => {
   });
 
   it('should throw exception for invalid credentials', async () => {
-    const mockHash = require('bcryptjs').hashSync('correctpass', 10);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const bcrypt = require('bcryptjs');
+    const mockHash = bcrypt.hashSync('correctpass', 10);
 
     mockUsersService.getUserByUsername = jest.fn().mockResolvedValue({
       data: [
