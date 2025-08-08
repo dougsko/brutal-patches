@@ -2,6 +2,9 @@ export interface Patch {
     id: number;
     title: string;
     description: string;
+    version?: number;
+    parentId?: number;
+    isLatest?: boolean;
     sub_fifth: number;
     overtone: number;
     ultra_saw: number;
@@ -44,4 +47,72 @@ export interface Patch {
 export interface ModMatrixEntry {
     source: string;
     target: string;
+}
+
+export interface PatchVersion {
+    id: number;
+    patchId: number;
+    version: number;
+    title: string;
+    description: string;
+    changes: string;
+    patchData: Omit<Patch, 'id' | 'version' | 'parentId' | 'isLatest'>;
+    created_at: string;
+    created_by: string;
+}
+
+export interface PatchHistory {
+    patchId: number;
+    versions: PatchVersion[];
+    totalVersions: number;
+}
+
+export interface PatchCollection {
+    id: number;
+    name: string;
+    description: string;
+    userId: number;
+    patchIds: number[];
+    isPublic: boolean;
+    created_at: string;
+    updated_at: string;
+    tags?: string[];
+}
+
+export interface PatchCategory {
+    id: string;
+    name: string;
+    description: string;
+    parentId?: string;
+    color?: string;
+    icon?: string;
+}
+
+export interface PatchSearchFilters {
+    category?: string;
+    tags?: string[];
+    minRating?: number;
+    maxRating?: number;
+    dateFrom?: string;
+    dateTo?: string;
+    username?: string;
+    hasAudio?: boolean;
+    synthesisParams?: {
+        [key: string]: {
+            min?: number;
+            max?: number;
+        };
+    };
+}
+
+export interface PatchComparison {
+    patch1: Patch;
+    patch2: Patch;
+    differences: {
+        field: string;
+        value1: any;
+        value2: any;
+        type: 'added' | 'removed' | 'modified';
+    }[];
+    similarity: number;
 }

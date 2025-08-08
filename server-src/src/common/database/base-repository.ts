@@ -1,5 +1,10 @@
 import { Logger } from '@nestjs/common';
-import { DynamoDBService, TableConfig, QueryOptions, ScanOptions } from './dynamodb.service';
+import {
+  DynamoDBService,
+  TableConfig,
+  QueryOptions,
+  ScanOptions,
+} from './dynamodb.service';
 
 export interface RepositoryConfig {
   tableName: string;
@@ -72,7 +77,7 @@ export abstract class BaseRepository<T> {
       }
 
       await this.dynamoService.putItem(tableConfig, item, putOptions);
-      
+
       this.logger.log(`Created item with key: ${this.getItemKey(item)}`);
       return item;
     } catch (error) {
@@ -88,17 +93,17 @@ export abstract class BaseRepository<T> {
     try {
       const tableConfig = this.getTableConfig();
       const key: Record<string, any> = { [tableConfig.primaryKey]: id };
-      
+
       if (tableConfig.sortKey && sortKey !== undefined) {
         key[tableConfig.sortKey] = sortKey;
       }
 
       const item = await this.dynamoService.getItem<T>(tableConfig, key);
-      
+
       if (item) {
         this.logger.debug(`Found item with key: ${JSON.stringify(key)}`);
       }
-      
+
       return item;
     } catch (error) {
       this.logger.error(`Failed to find item by id: ${id}`, error);
@@ -110,34 +115,39 @@ export abstract class BaseRepository<T> {
    * Update item
    */
   async update(
-    id: any, 
-    updates: Partial<T>, 
-    options?: UpdateOptions & { sortKey?: any }
+    id: any,
+    updates: Partial<T>,
+    options?: UpdateOptions & { sortKey?: any },
   ): Promise<T | null> {
     try {
       const tableConfig = this.getTableConfig();
       const key: Record<string, any> = { [tableConfig.primaryKey]: id };
-      
+
       if (tableConfig.sortKey && options?.sortKey !== undefined) {
         key[tableConfig.sortKey] = options.sortKey;
       }
 
       // Build update expression
-      const { updateExpression, expressionAttributeNames, expressionAttributeValues } = 
-        this.buildUpdateExpression(updates);
+      const {
+        updateExpression,
+        expressionAttributeNames,
+        expressionAttributeValues,
+      } = this.buildUpdateExpression(updates);
 
       const updateOptions = {
         conditionExpression: options?.conditionExpression,
         expressionAttributeNames,
         expressionAttributeValues,
-        returnValues: (options?.returnUpdatedItem !== false ? 'ALL_NEW' : 'NONE') as any,
+        returnValues: (options?.returnUpdatedItem !== false
+          ? 'ALL_NEW'
+          : 'NONE') as any,
       };
 
       const result = await this.dynamoService.updateItem<T>(
         tableConfig,
         key,
         updateExpression,
-        updateOptions
+        updateOptions,
       );
 
       this.logger.log(`Updated item with key: ${JSON.stringify(key)}`);
@@ -151,11 +161,14 @@ export abstract class BaseRepository<T> {
   /**
    * Delete item
    */
-  async delete(id: any, options?: DeleteOptions & { sortKey?: any }): Promise<T | null> {
+  async delete(
+    id: any,
+    options?: DeleteOptions & { sortKey?: any },
+  ): Promise<T | null> {
     try {
       const tableConfig = this.getTableConfig();
       const key: Record<string, any> = { [tableConfig.primaryKey]: id };
-      
+
       if (tableConfig.sortKey && options?.sortKey !== undefined) {
         key[tableConfig.sortKey] = options.sortKey;
       }
@@ -165,8 +178,12 @@ export abstract class BaseRepository<T> {
         returnValues: (options?.returnDeletedItem ? 'ALL_OLD' : 'NONE') as any,
       };
 
-      const result = await this.dynamoService.deleteItem(tableConfig, key, deleteOptions);
-      
+      const result = await this.dynamoService.deleteItem(
+        tableConfig,
+        key,
+        deleteOptions,
+      );
+
       this.logger.log(`Deleted item with key: ${JSON.stringify(key)}`);
       return result as T | null;
     } catch (error) {
@@ -178,7 +195,9 @@ export abstract class BaseRepository<T> {
   /**
    * List items with pagination
    */
-  async list(options?: ListOptions): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
+  async list(
+    options?: ListOptions,
+  ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const tableConfig = this.getTableConfig();
 
@@ -193,9 +212,14 @@ export abstract class BaseRepository<T> {
         filterExpression: options?.filterExpression,
       };
 
-      const result = await this.dynamoService.scanItems<T>(tableConfig, scanOptions);
-      
-      this.logger.debug(`Listed ${result.count} items from table ${tableConfig.tableName}`);
+      const result = await this.dynamoService.scanItems<T>(
+        tableConfig,
+        scanOptions,
+      );
+
+      this.logger.debug(
+        `Listed ${result.count} items from table ${tableConfig.tableName}`,
+      );
       return result;
     } catch (error) {
       this.logger.error('Failed to list items:', error);
@@ -213,7 +237,7 @@ export abstract class BaseRepository<T> {
     options?: QueryOptions & {
       filterExpression?: string;
       expressionAttributeNames?: Record<string, string>;
-    }
+    },
   ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const tableConfig = this.getTableConfig();
@@ -229,10 +253,12 @@ export abstract class BaseRepository<T> {
         tableConfig,
         keyConditionExpression,
         expressionAttributeValues,
-        queryOptions
+        queryOptions,
       );
 
-      this.logger.debug(`Queried ${result.count} items from index ${indexName}`);
+      this.logger.debug(
+        `Queried ${result.count} items from index ${indexName}`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Failed to query index ${indexName}:`, error);
@@ -302,7 +328,7 @@ export abstract class BaseRepository<T> {
       if (value !== undefined) {
         const nameKey = `#attr${index}`;
         const valueKey = `:val${index}`;
-        
+
         setExpressions.push(`${nameKey} = ${valueKey}`);
         expressionAttributeNames[nameKey] = key;
         expressionAttributeValues[valueKey] = value;
@@ -329,9 +355,11 @@ export abstract class BaseRepository<T> {
   protected getItemKey(item: T): string {
     const tableConfig = this.getTableConfig();
     const primaryKeyValue = (item as any)[tableConfig.primaryKey];
-    const sortKeyValue = tableConfig.sortKey ? (item as any)[tableConfig.sortKey] : null;
-    
-    return sortKeyValue 
+    const sortKeyValue = tableConfig.sortKey
+      ? (item as any)[tableConfig.sortKey]
+      : null;
+
+    return sortKeyValue
       ? `${primaryKeyValue}#${sortKeyValue}`
       : `${primaryKeyValue}`;
   }

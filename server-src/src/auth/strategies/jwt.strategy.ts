@@ -20,18 +20,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload || !payload.sub || !payload.username) {
       throw new UnauthorizedException('Invalid token payload');
     }
-    
+
     // Check token expiration (double check, should be handled by passport but better safe)
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       throw new UnauthorizedException('Token has expired');
     }
-    
-    return { 
-      id: payload.sub, 
+
+    return {
+      id: payload.sub,
       username: payload.username,
       email: payload.email,
       iat: payload.iat,
-      exp: payload.exp
+      exp: payload.exp,
     };
   }
 }

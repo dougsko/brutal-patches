@@ -6,7 +6,7 @@ import { Patch, PatchHistory } from '../interfaces/patch.interface';
 @Injectable()
 export class PatchCacheService {
   private readonly logger = new Logger(PatchCacheService.name);
-  
+
   constructor(
     private cacheService: CacheService,
     private patchRepository: PatchRepository,
@@ -17,11 +17,11 @@ export class PatchCacheService {
    */
   async getPatch(id: number): Promise<Patch | null> {
     const cacheKey = `patch:${id}`;
-    
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findPatchById(id),
-      { ttl: 1800 } // 30 minutes
+      { ttl: 1800 }, // 30 minutes
     );
   }
 
@@ -30,14 +30,16 @@ export class PatchCacheService {
    */
   async getPatchesByUser(
     username: string,
-    options?: { limit?: number; offset?: number }
+    options?: { limit?: number; offset?: number },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
-    const cacheKey = `patches:user:${username}:${JSON.stringify(options || {})}`;
-    
+    const cacheKey = `patches:user:${username}:${JSON.stringify(
+      options || {},
+    )}`;
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findPatchesByUser(username, options),
-      { ttl: 900 } // 15 minutes
+      { ttl: 900 }, // 15 minutes
     );
   }
 
@@ -46,14 +48,16 @@ export class PatchCacheService {
    */
   async getLatestPatches(
     limit?: number,
-    exclusiveStartKey?: any
+    exclusiveStartKey?: any,
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
-    const cacheKey = `patches:latest:${limit || 'all'}:${exclusiveStartKey || 'start'}`;
-    
+    const cacheKey = `patches:latest:${limit || 'all'}:${
+      exclusiveStartKey || 'start'
+    }`;
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findLatestPatches(limit, exclusiveStartKey),
-      { ttl: 600 } // 10 minutes
+      { ttl: 600 }, // 10 minutes
     );
   }
 
@@ -62,14 +66,16 @@ export class PatchCacheService {
    */
   async getPatchesByCategory(
     category: string,
-    options?: { limit?: number; offset?: number }
+    options?: { limit?: number; offset?: number },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
-    const cacheKey = `patches:category:${category}:${JSON.stringify(options || {})}`;
-    
+    const cacheKey = `patches:category:${category}:${JSON.stringify(
+      options || {},
+    )}`;
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findPatchesByCategory(category, options),
-      { ttl: 1800 } // 30 minutes
+      { ttl: 1800 }, // 30 minutes
     );
   }
 
@@ -78,14 +84,14 @@ export class PatchCacheService {
    */
   async getPatchesByTag(
     tag: string,
-    options?: { limit?: number; offset?: number }
+    options?: { limit?: number; offset?: number },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     const cacheKey = `patches:tag:${tag}:${JSON.stringify(options || {})}`;
-    
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findPatchesByTag(tag, options),
-      { ttl: 1800 } // 30 minutes
+      { ttl: 1800 }, // 30 minutes
     );
   }
 
@@ -94,14 +100,16 @@ export class PatchCacheService {
    */
   async searchPatches(
     searchTerm: string,
-    options?: { limit?: number; offset?: number }
+    options?: { limit?: number; offset?: number },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
-    const cacheKey = `patches:search:${searchTerm}:${JSON.stringify(options || {})}`;
-    
+    const cacheKey = `patches:search:${searchTerm}:${JSON.stringify(
+      options || {},
+    )}`;
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.searchPatches(searchTerm, options),
-      { ttl: 600 } // 10 minutes (search results change more frequently)
+      { ttl: 600 }, // 10 minutes (search results change more frequently)
     );
   }
 
@@ -109,15 +117,17 @@ export class PatchCacheService {
    * Get top rated patches with caching
    */
   async getTopRatedPatches(
-    minRating: number = 4,
-    options?: { limit?: number; offset?: number }
+    minRating = 4,
+    options?: { limit?: number; offset?: number },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
-    const cacheKey = `patches:top-rated:${minRating}:${JSON.stringify(options || {})}`;
-    
+    const cacheKey = `patches:top-rated:${minRating}:${JSON.stringify(
+      options || {},
+    )}`;
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.findTopRatedPatches(minRating, options),
-      { ttl: 3600 } // 1 hour
+      { ttl: 3600 }, // 1 hour
     );
   }
 
@@ -130,11 +140,11 @@ export class PatchCacheService {
     topCategories: Array<{ category: string; count: number }>;
   }> {
     const cacheKey = 'patches:stats';
-    
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.getPatchStats(),
-      { ttl: 1800 } // 30 minutes
+      { ttl: 1800 }, // 30 minutes
     );
   }
 
@@ -143,11 +153,11 @@ export class PatchCacheService {
    */
   async getUserPatchCount(username: string): Promise<number> {
     const cacheKey = `patches:count:user:${username}`;
-    
+
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.patchRepository.getUserPatchCount(username),
-      { ttl: 900 } // 15 minutes
+      { ttl: 900 }, // 15 minutes
     );
   }
 
@@ -158,13 +168,15 @@ export class PatchCacheService {
     // Invalidate relevant caches
     this.cacheService.clearByPattern(/^patches:latest:/);
     this.cacheService.clearByPattern(/^patches:stats/);
-    
+
     if (patch.category) {
-      this.cacheService.clearByPattern(new RegExp(`^patches:category:${patch.category}:`));
+      this.cacheService.clearByPattern(
+        new RegExp(`^patches:category:${patch.category}:`),
+      );
     }
-    
+
     if (patch.tags && patch.tags.length > 0) {
-      patch.tags.forEach(tag => {
+      patch.tags.forEach((tag) => {
         this.cacheService.clearByPattern(new RegExp(`^patches:tag:${tag}:`));
       });
     }
@@ -178,39 +190,43 @@ export class PatchCacheService {
   async invalidatePatchUpdate(oldPatch: Patch, newPatch: Patch): Promise<void> {
     // Invalidate specific patch cache
     this.cacheService.delete(`patch:${newPatch.id}`);
-    
+
     // Invalidate user patches cache
     // Note: we'd need to get the username from somewhere
     // this.cacheService.clearByPattern(new RegExp(`^patches:user:${username}:`));
-    
+
     // Invalidate category caches if category changed
     if (oldPatch.category !== newPatch.category) {
       if (oldPatch.category) {
-        this.cacheService.clearByPattern(new RegExp(`^patches:category:${oldPatch.category}:`));
+        this.cacheService.clearByPattern(
+          new RegExp(`^patches:category:${oldPatch.category}:`),
+        );
       }
       if (newPatch.category) {
-        this.cacheService.clearByPattern(new RegExp(`^patches:category:${newPatch.category}:`));
+        this.cacheService.clearByPattern(
+          new RegExp(`^patches:category:${newPatch.category}:`),
+        );
       }
     }
-    
+
     // Invalidate tag caches if tags changed
     const oldTags = new Set(oldPatch.tags || []);
     const newTags = new Set(newPatch.tags || []);
-    
+
     // Find removed tags
-    oldTags.forEach(tag => {
+    oldTags.forEach((tag) => {
       if (!newTags.has(tag)) {
         this.cacheService.clearByPattern(new RegExp(`^patches:tag:${tag}:`));
       }
     });
-    
+
     // Find added tags
-    newTags.forEach(tag => {
+    newTags.forEach((tag) => {
       if (!oldTags.has(tag)) {
         this.cacheService.clearByPattern(new RegExp(`^patches:tag:${tag}:`));
       }
     });
-    
+
     // Always invalidate stats and search caches
     this.cacheService.clearByPattern(/^patches:stats/);
     this.cacheService.clearByPattern(/^patches:search:/);
@@ -224,18 +240,20 @@ export class PatchCacheService {
   async invalidatePatchDeletion(patch: Patch): Promise<void> {
     // Remove specific patch cache
     this.cacheService.delete(`patch:${patch.id}`);
-    
+
     // Invalidate broad caches
     this.cacheService.clearByPattern(/^patches:latest:/);
     this.cacheService.clearByPattern(/^patches:stats/);
     this.cacheService.clearByPattern(/^patches:search:/);
-    
+
     if (patch.category) {
-      this.cacheService.clearByPattern(new RegExp(`^patches:category:${patch.category}:`));
+      this.cacheService.clearByPattern(
+        new RegExp(`^patches:category:${patch.category}:`),
+      );
     }
-    
+
     if (patch.tags && patch.tags.length > 0) {
-      patch.tags.forEach(tag => {
+      patch.tags.forEach((tag) => {
         this.cacheService.clearByPattern(new RegExp(`^patches:tag:${tag}:`));
       });
     }
@@ -251,16 +269,16 @@ export class PatchCacheService {
       // Preload popular patches
       await this.getLatestPatches(50);
       await this.getTopRatedPatches(4.0, { limit: 20 });
-      
+
       // Preload statistics
       await this.getPatchStats();
-      
+
       // Preload popular categories
       const categories = ['bass', 'lead', 'pad', 'arp', 'pluck'];
       await Promise.all(
-        categories.map(category => 
-          this.getPatchesByCategory(category, { limit: 20 })
-        )
+        categories.map((category) =>
+          this.getPatchesByCategory(category, { limit: 20 }),
+        ),
       );
 
       this.logger.log('Cache warmup completed successfully');

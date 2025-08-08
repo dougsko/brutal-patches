@@ -28,11 +28,15 @@ describe('PatchCollectionRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<PatchCollectionRepository>(PatchCollectionRepository);
-    dynamoService = module.get<DynamoDBService>(DynamoDBService) as jest.Mocked<DynamoDBService>;
+    repository = module.get<PatchCollectionRepository>(
+      PatchCollectionRepository,
+    );
+    dynamoService = module.get<DynamoDBService>(
+      DynamoDBService,
+    ) as jest.Mocked<DynamoDBService>;
 
     // Reset mocks before each test
-    Object.values(mockDynamoService).forEach(mock => mock.mockReset());
+    Object.values(mockDynamoService).forEach((mock) => mock.mockReset());
   });
 
   describe('createCollection', () => {
@@ -40,7 +44,7 @@ describe('PatchCollectionRepository', () => {
       const collectionData = {
         name: 'My Bass Collection',
         description: 'Collection of bass patches',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         tags: ['bass', 'electronic'],
@@ -56,18 +60,18 @@ describe('PatchCollectionRepository', () => {
         created_at: expect.any(String),
         updated_at: expect.any(String),
       });
-      
+
       expect(mockDynamoService.putItem).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining(collectionData),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
 
   describe('getUserCollections', () => {
     it('should retrieve user collections successfully', async () => {
-      const userId = 123;
+      const userId = '123';
       const mockCollections: PatchCollection[] = [
         {
           id: 1,
@@ -115,12 +119,12 @@ describe('PatchCollectionRepository', () => {
         { ':userId': userId },
         expect.objectContaining({
           scanIndexForward: false,
-        })
+        }),
       );
     });
 
     it('should filter private collections when includePrivate is false', async () => {
-      const userId = 123;
+      const userId = '123';
       const mockCollections: PatchCollection[] = [
         {
           id: 1,
@@ -153,7 +157,7 @@ describe('PatchCollectionRepository', () => {
         }),
         expect.objectContaining({
           filterExpression: 'isPublic = :isPublic',
-        })
+        }),
       );
     });
   });
@@ -165,7 +169,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Community Bass Collection',
           description: 'Best bass patches',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -194,7 +198,7 @@ describe('PatchCollectionRepository', () => {
         { ':isPublic': true },
         expect.objectContaining({
           scanIndexForward: false,
-        })
+        }),
       );
     });
   });
@@ -207,7 +211,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -222,13 +226,15 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
       jest.spyOn(repository, 'update').mockResolvedValueOnce(updatedCollection);
 
-      const result = await repository.addPatchToCollection(collectionId, patchId);
+      const result = await repository.addPatchToCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(updatedCollection);
-      expect(repository.update).toHaveBeenCalledWith(
-        collectionId,
-        { patchIds: [1, 2, 3, 10] }
-      );
+      expect(repository.update).toHaveBeenCalledWith(collectionId, {
+        patchIds: [1, 2, 3, 10],
+      });
     });
 
     it('should not add duplicate patch to collection', async () => {
@@ -238,7 +244,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -246,11 +252,15 @@ describe('PatchCollectionRepository', () => {
       };
 
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
+      const updateSpy = jest.spyOn(repository, 'update').mockImplementation();
 
-      const result = await repository.addPatchToCollection(collectionId, patchId);
+      const result = await repository.addPatchToCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(mockCollection);
-      expect(repository.update).not.toHaveBeenCalled();
+      expect(updateSpy).not.toHaveBeenCalled();
     });
 
     it('should throw error when collection not found', async () => {
@@ -260,7 +270,7 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(null);
 
       await expect(
-        repository.addPatchToCollection(collectionId, patchId)
+        repository.addPatchToCollection(collectionId, patchId),
       ).rejects.toThrow('Collection not found');
     });
   });
@@ -273,7 +283,7 @@ describe('PatchCollectionRepository', () => {
         id: collectionId,
         name: 'Test Collection',
         description: 'Test description',
-        userId: 123,
+        userId: '123',
         patchIds: [1, 2, 3],
         isPublic: true,
         created_at: '2023-01-01T00:00:00Z',
@@ -288,13 +298,15 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
       jest.spyOn(repository, 'update').mockResolvedValueOnce(updatedCollection);
 
-      const result = await repository.removePatchFromCollection(collectionId, patchId);
+      const result = await repository.removePatchFromCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(updatedCollection);
-      expect(repository.update).toHaveBeenCalledWith(
-        collectionId,
-        { patchIds: [1, 3] }
-      );
+      expect(repository.update).toHaveBeenCalledWith(collectionId, {
+        patchIds: [1, 3],
+      });
     });
   });
 
@@ -306,7 +318,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Bass Collection',
           description: 'Collection of bass patches',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -334,7 +346,9 @@ describe('PatchCollectionRepository', () => {
       expect(mockDynamoService.scanItems).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
-          filterExpression: expect.stringContaining('contains(#name, :searchTerm)'),
+          filterExpression: expect.stringContaining(
+            'contains(#name, :searchTerm)',
+          ),
           expressionAttributeNames: {
             '#name': 'name',
             '#description': 'description',
@@ -343,7 +357,7 @@ describe('PatchCollectionRepository', () => {
             ':searchTerm': 'bass',
             ':isPublic': true,
           }),
-        })
+        }),
       );
     });
   });
@@ -355,7 +369,7 @@ describe('PatchCollectionRepository', () => {
           id: 1,
           name: 'Public Collection 1',
           description: 'Test',
-          userId: 123,
+          userId: '123',
           patchIds: [1, 2, 3],
           isPublic: true,
           created_at: '2023-01-01T00:00:00Z',
@@ -365,7 +379,7 @@ describe('PatchCollectionRepository', () => {
           id: 2,
           name: 'Private Collection 1',
           description: 'Test',
-          userId: 123,
+          userId: '123',
           patchIds: [4, 5],
           isPublic: false,
           created_at: '2023-01-02T00:00:00Z',
@@ -375,7 +389,7 @@ describe('PatchCollectionRepository', () => {
           id: 3,
           name: 'Public Collection 2',
           description: 'Test',
-          userId: 456,
+          userId: '456',
           patchIds: [6, 7, 8, 9],
           isPublic: true,
           created_at: '2023-01-03T00:00:00Z',

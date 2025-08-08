@@ -33,7 +33,7 @@ export class CacheService {
    */
   get<T>(key: string): T | null {
     const item = this.cache.get(key);
-    
+
     if (!item) {
       return null;
     }
@@ -48,7 +48,7 @@ export class CacheService {
     // Update access statistics
     item.accessCount++;
     item.lastAccessed = Date.now();
-    
+
     this.logger.debug(`Cache hit: ${key}`);
     return item.data;
   }
@@ -59,7 +59,7 @@ export class CacheService {
   set<T>(key: string, data: T, options?: CacheOptions): void {
     const ttl = (options?.ttl || this.defaultTTL) * 1000; // Convert to milliseconds
     const now = Date.now();
-    
+
     const item: CacheItem<T> = {
       data,
       expiresAt: now + ttl,
@@ -119,7 +119,7 @@ export class CacheService {
    */
   clearByPattern(pattern: RegExp): number {
     let cleared = 0;
-    
+
     for (const key of this.cache.keys()) {
       if (pattern.test(key)) {
         this.cache.delete(key);
@@ -154,8 +154,14 @@ export class CacheService {
     }));
 
     // Calculate hit rate (simplified - would need to track misses in real implementation)
-    const totalAccesses = items.reduce((sum, item) => sum + item.accessCount, 0);
-    const hitRate = totalAccesses > 0 ? (totalAccesses / (totalAccesses + items.length)) * 100 : 0;
+    const totalAccesses = items.reduce(
+      (sum, item) => sum + item.accessCount,
+      0,
+    );
+    const hitRate =
+      totalAccesses > 0
+        ? (totalAccesses / (totalAccesses + items.length)) * 100
+        : 0;
 
     return {
       size: this.cache.size,
@@ -171,7 +177,7 @@ export class CacheService {
   async getOrSet<T>(
     key: string,
     factory: () => Promise<T> | T,
-    options?: CacheOptions
+    options?: CacheOptions,
   ): Promise<T> {
     // Try to get from cache first
     const cached = this.get<T>(key);
@@ -197,14 +203,14 @@ export class CacheService {
   memoize<TArgs extends any[], TReturn>(
     fn: (...args: TArgs) => Promise<TReturn> | TReturn,
     keyGenerator?: (...args: TArgs) => string,
-    options?: CacheOptions
+    options?: CacheOptions,
   ) {
     const defaultKeyGen = (...args: TArgs) => JSON.stringify(args);
     const generateKey = keyGenerator || defaultKeyGen;
 
     return async (...args: TArgs): Promise<TReturn> => {
       const key = `memoized:${fn.name}:${generateKey(...args)}`;
-      
+
       return this.getOrSet(key, () => fn(...args), options);
     };
   }
@@ -214,11 +220,16 @@ export class CacheService {
    */
   private tags = new Map<string, Set<string>>(); // tag -> set of cache keys
 
-  setWithTags<T>(key: string, data: T, tags: string[], options?: CacheOptions): void {
+  setWithTags<T>(
+    key: string,
+    data: T,
+    tags: string[],
+    options?: CacheOptions,
+  ): void {
     this.set(key, data, options);
-    
+
     // Associate cache key with tags
-    tags.forEach(tag => {
+    tags.forEach((tag) => {
       if (!this.tags.has(tag)) {
         this.tags.set(tag, new Set());
       }
@@ -233,7 +244,7 @@ export class CacheService {
     }
 
     let invalidated = 0;
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (this.cache.delete(key)) {
         invalidated++;
       }
@@ -242,7 +253,9 @@ export class CacheService {
     // Remove the tag
     this.tags.delete(tag);
 
-    this.logger.log(`Cache tag invalidation: ${invalidated} items removed for tag '${tag}'`);
+    this.logger.log(
+      `Cache tag invalidation: ${invalidated} items removed for tag '${tag}'`,
+    );
     return invalidated;
   }
 

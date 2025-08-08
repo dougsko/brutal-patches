@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { 
-  DynamoDBDocumentClient, 
-  GetCommand, 
-  PutCommand, 
-  UpdateCommand, 
-  DeleteCommand, 
-  ScanCommand, 
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  UpdateCommand,
+  DeleteCommand,
+  ScanCommand,
   QueryCommand,
   BatchGetCommand,
   BatchWriteCommand,
@@ -17,7 +17,7 @@ import {
   ScanCommandInput,
   QueryCommandInput,
   BatchGetCommandInput,
-  BatchWriteCommandInput
+  BatchWriteCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 
 export interface DynamoDBConfig {
@@ -113,7 +113,7 @@ export class DynamoDBService implements OnModuleInit {
   async getItem<T = any>(
     tableConfig: TableConfig,
     key: Record<string, any>,
-    options?: { consistentRead?: boolean; projectionExpression?: string }
+    options?: { consistentRead?: boolean; projectionExpression?: string },
   ): Promise<T | null> {
     const params: GetCommandInput = {
       TableName: tableConfig.tableName,
@@ -144,7 +144,11 @@ export class DynamoDBService implements OnModuleInit {
   async putItem<T = any>(
     tableConfig: TableConfig,
     item: T,
-    options?: { conditionExpression?: string; expressionAttributeNames?: Record<string, string>; expressionAttributeValues?: Record<string, any> }
+    options?: {
+      conditionExpression?: string;
+      expressionAttributeNames?: Record<string, string>;
+      expressionAttributeValues?: Record<string, any>;
+    },
   ): Promise<void> {
     const params: PutCommandInput = {
       TableName: tableConfig.tableName,
@@ -182,8 +186,13 @@ export class DynamoDBService implements OnModuleInit {
       conditionExpression?: string;
       expressionAttributeNames?: Record<string, string>;
       expressionAttributeValues?: Record<string, any>;
-      returnValues?: 'NONE' | 'ALL_OLD' | 'UPDATED_OLD' | 'ALL_NEW' | 'UPDATED_NEW';
-    }
+      returnValues?:
+        | 'NONE'
+        | 'ALL_OLD'
+        | 'UPDATED_OLD'
+        | 'ALL_NEW'
+        | 'UPDATED_NEW';
+    },
   ): Promise<T | null> {
     const params: UpdateCommandInput = {
       TableName: tableConfig.tableName,
@@ -223,7 +232,7 @@ export class DynamoDBService implements OnModuleInit {
       expressionAttributeNames?: Record<string, string>;
       expressionAttributeValues?: Record<string, any>;
       returnValues?: 'NONE' | 'ALL_OLD';
-    }
+    },
   ): Promise<any> {
     const params: DeleteCommandInput = {
       TableName: tableConfig.tableName,
@@ -240,12 +249,14 @@ export class DynamoDBService implements OnModuleInit {
   /**
    * Query items
    */
-  async query<T = any>(params: QueryCommandInput): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
+  async query<T = any>(
+    params: QueryCommandInput,
+  ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const command = new QueryCommand(params);
       const result = await this.dynamoClient.send(command);
       return {
-        items: result.Items as T[] || [],
+        items: (result.Items as T[]) || [],
         lastEvaluatedKey: result.LastEvaluatedKey,
         count: result.Count || 0,
       };
@@ -265,7 +276,7 @@ export class DynamoDBService implements OnModuleInit {
     options?: QueryOptions & {
       filterExpression?: string;
       expressionAttributeNames?: Record<string, string>;
-    }
+    },
   ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     const params: QueryCommandInput = {
       TableName: tableConfig.tableName,
@@ -287,12 +298,14 @@ export class DynamoDBService implements OnModuleInit {
   /**
    * Scan items
    */
-  async scan<T = any>(params: ScanCommandInput): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
+  async scan<T = any>(
+    params: ScanCommandInput,
+  ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const command = new ScanCommand(params);
       const result = await this.dynamoClient.send(command);
       return {
-        items: result.Items as T[] || [],
+        items: (result.Items as T[]) || [],
         lastEvaluatedKey: result.LastEvaluatedKey,
         count: result.Count || 0,
       };
@@ -312,7 +325,7 @@ export class DynamoDBService implements OnModuleInit {
       projectionExpression?: string;
       expressionAttributeNames?: Record<string, string>;
       expressionAttributeValues?: Record<string, any>;
-    }
+    },
   ): Promise<{ items: T[]; lastEvaluatedKey?: any; count: number }> {
     const params: ScanCommandInput = {
       TableName: tableConfig.tableName,
@@ -334,11 +347,13 @@ export class DynamoDBService implements OnModuleInit {
   /**
    * Batch get items
    */
-  async batchGet<T = any>(params: BatchGetCommandInput): Promise<Record<string, T[]>> {
+  async batchGet<T = any>(
+    params: BatchGetCommandInput,
+  ): Promise<Record<string, T[]>> {
     try {
       const command = new BatchGetCommand(params);
       const result = await this.dynamoClient.send(command);
-      return result.Responses as Record<string, T[]> || {};
+      return (result.Responses as Record<string, T[]>) || {};
     } catch (error) {
       this.logger.error('DynamoDB BatchGet operation failed:', error);
       throw this.handleDynamoDBError(error);
@@ -364,7 +379,7 @@ export class DynamoDBService implements OnModuleInit {
    */
   async paginatedQuery<T = any>(
     params: QueryCommandInput,
-    maxItems?: number
+    maxItems?: number,
   ): Promise<{ items: T[]; totalCount: number }> {
     const allItems: T[] = [];
     let lastEvaluatedKey = undefined;
@@ -397,7 +412,7 @@ export class DynamoDBService implements OnModuleInit {
    */
   async paginatedScan<T = any>(
     params: ScanCommandInput,
-    maxItems?: number
+    maxItems?: number,
   ): Promise<{ items: T[]; totalCount: number }> {
     const allItems: T[] = [];
     let lastEvaluatedKey = undefined;
@@ -439,20 +454,26 @@ export class DynamoDBService implements OnModuleInit {
    */
   private handleDynamoDBError(error: any): Error {
     const errorCode = error.name || error.$metadata?.httpStatusCode;
-    
+
     switch (errorCode) {
       case 'ConditionalCheckFailedException':
-        return new Error('Conditional check failed - item may already exist or condition not met');
+        return new Error(
+          'Conditional check failed - item may already exist or condition not met',
+        );
       case 'ResourceNotFoundException':
         return new Error('Table or resource not found');
       case 'ValidationException':
         return new Error(`Validation error: ${error.message}`);
       case 'ProvisionedThroughputExceededException':
-        return new Error('Request rate too high - retry with exponential backoff');
+        return new Error(
+          'Request rate too high - retry with exponential backoff',
+        );
       case 'ItemCollectionSizeLimitExceededException':
         return new Error('Item collection size limit exceeded');
       case 'RequestLimitExceeded':
-        return new Error('Request limit exceeded - retry with exponential backoff');
+        return new Error(
+          'Request limit exceeded - retry with exponential backoff',
+        );
       case 'InternalServerError':
         return new Error('DynamoDB internal server error - retry operation');
       default:
@@ -470,7 +491,7 @@ export class DynamoDBService implements OnModuleInit {
         TableName: 'NonExistentTable',
         Limit: 1,
       });
-      
+
       await this.dynamoClient.send(command);
       return true;
     } catch (error) {

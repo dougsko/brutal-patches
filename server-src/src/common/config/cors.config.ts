@@ -34,16 +34,16 @@ export const corsConfig: CorsOptions = {
     'Authorization',
     'X-RateLimit-Limit',
     'X-RateLimit-Remaining',
-    'X-RateLimit-Reset'
+    'X-RateLimit-Reset',
   ],
   exposedHeaders: [
     'X-RateLimit-Limit',
-    'X-RateLimit-Remaining', 
-    'X-RateLimit-Reset'
+    'X-RateLimit-Remaining',
+    'X-RateLimit-Reset',
   ],
   credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204,
   // Cache preflight response for 1 hour
-  maxAge: 3600
+  maxAge: 3600,
 };

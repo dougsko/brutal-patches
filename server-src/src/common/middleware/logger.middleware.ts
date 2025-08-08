@@ -24,9 +24,9 @@ export class LoggerMiddleware implements NestMiddleware {
 
     // Override res.json to capture response data
     const originalJson = res.json;
-    res.json = function(body) {
+    res.json = function (body) {
       const responseTime = Date.now() - startTime;
-      
+
       const responseData = {
         ...requestData,
         statusCode: res.statusCode,
@@ -36,7 +36,11 @@ export class LoggerMiddleware implements NestMiddleware {
 
       // Log response with appropriate level
       if (res.statusCode >= 400) {
-        this.logger.warn('Request Completed with Error', 'LoggerMiddleware', responseData);
+        this.logger.warn(
+          'Request Completed with Error',
+          'LoggerMiddleware',
+          responseData,
+        );
       } else {
         this.logger.log('Request Completed', 'LoggerMiddleware', responseData);
       }

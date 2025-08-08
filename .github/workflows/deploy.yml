@@ -4,15 +4,71 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+      skip_tests:
+        description: 'Skip tests (emergency deployment only)'
+        required: false
+        default: false
+        type: boolean
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   AWS_REGION: 'us-east-1'
+  DEPLOYMENT_ENV: ${{ github.event.inputs.environment || 'production' }}
 
 jobs:
-  test:
-    name: Run Tests
+  pre-deployment-checks:
+    name: Pre-deployment Checks
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.skip_tests != 'true' }}
+    outputs:
+      security-passed: ${{ steps.security-check.outputs.passed }}
+      tests-passed: ${{ steps.test-check.outputs.passed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Security audit
+        id: security-check
+        run: |
+          cd server-src
+          npm ci
+          chmod +x scripts/security-audit.sh
+          ./scripts/security-audit.sh
+          echo "passed=true" >> $GITHUB_OUTPUT
+        continue-on-error: false
+
+      - name: Run tests
+        id: test-check
+        run: |
+          # Frontend tests
+          npm ci
+          npm run test:ci
+          
+          # Backend tests
+          cd server-src
+          npm test
+          npm run test:e2e
+          echo "passed=true" >> $GITHUB_OUTPUT
+
+  test:
+    name: Legacy Test Job (Compatibility)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.skip_tests == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,10 +95,95 @@ jobs:
           cd server-src
           npm test
 
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [test, pre-deployment-checks]
+    if: ${{ always() && (needs.pre-deployment-checks.result == 'success' || github.event.inputs.skip_tests == 'true') && env.DEPLOYMENT_ENV == 'staging' }}
+    environment: staging
+    outputs:
+      staging-url: ${{ steps.deploy-staging.outputs.url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install Serverless Framework
+        run: npm install -g serverless@3.38.0
+
+      - name: Deploy to staging
+        id: deploy-staging
+        run: |
+          cd server-src
+          npm install
+          npm run build
+          serverless deploy --stage staging --region ${{ env.AWS_REGION }}
+          echo "url=https://api-staging.brutalpatches.com" >> $GITHUB_OUTPUT
+
+  staging-validation:
+    name: Staging Validation Tests
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: ${{ needs.deploy-staging.result == 'success' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment to stabilize
+        run: sleep 30
+
+      - name: Health check
+        run: |
+          STAGING_URL="${{ needs.deploy-staging.outputs.staging-url }}"
+          echo "Testing staging deployment at: $STAGING_URL"
+          
+          # Basic health check
+          curl -f "$STAGING_URL/health" || (echo "Health check failed" && exit 1)
+          
+          # Detailed health check
+          curl -f "$STAGING_URL/health/detailed" || (echo "Detailed health check failed" && exit 1)
+          
+          echo "✅ Staging validation successful"
+
+      - name: API endpoint validation
+        run: |
+          STAGING_URL="${{ needs.deploy-staging.outputs.staging-url }}"
+          
+          # Test public endpoints
+          curl -f "$STAGING_URL/api/patches/total" || (echo "Patches total endpoint failed" && exit 1)
+          curl -f "$STAGING_URL/api/patches" || (echo "Patches list endpoint failed" && exit 1)
+          
+          echo "✅ API validation successful"
+
+      - name: Load test staging
+        run: |
+          STAGING_URL="${{ needs.deploy-staging.outputs.staging-url }}"
+          
+          echo "Running basic load test on staging..."
+          for i in {1..20}; do
+            curl -f "$STAGING_URL/health" &
+          done
+          wait
+          
+          echo "✅ Load test completed"
+
   deploy-backend:
     name: Deploy Backend (Lambda)
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, pre-deployment-checks, staging-validation]
+    if: ${{ always() && (needs.pre-deployment-checks.result == 'success' || github.event.inputs.skip_tests == 'true') && (needs.staging-validation.result == 'success' || env.DEPLOYMENT_ENV == 'production') }}
     environment: production
     steps:
       - name: Checkout code

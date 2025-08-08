@@ -73,7 +73,7 @@ describe('AuthService', () => {
 
   it('should throw exception for invalid credentials', async () => {
     const mockHash = require('bcryptjs').hashSync('correctpass', 10);
-    
+
     mockUsersService.getUserByUsername = jest.fn().mockResolvedValue({
       data: [
         {
@@ -84,7 +84,9 @@ describe('AuthService', () => {
       ],
     });
 
-    await expect(service.validateUser('testuser', 'wrongpass')).rejects.toThrow();
+    await expect(
+      service.validateUser('testuser', 'wrongpass'),
+    ).rejects.toThrow();
   });
 
   it('should throw exception for user not found', async () => {
@@ -92,6 +94,8 @@ describe('AuthService', () => {
       data: [],
     });
 
-    await expect(service.validateUser('nonexistent', 'password')).rejects.toThrow();
+    await expect(
+      service.validateUser('nonexistent', 'password'),
+    ).rejects.toThrow();
   });
 });

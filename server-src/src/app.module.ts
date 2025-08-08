@@ -9,15 +9,18 @@ import { HealthModule } from './health/health.module';
 import { AdminModule } from './admin/admin.module';
 import { DatabaseModule } from './common/database/database.module';
 import { CacheModule } from './common/cache/cache.module';
+import { MonitoringModule } from './common/monitoring/monitoring.module';
 import { LoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
+import { MonitoringMiddleware } from './common/monitoring/monitoring.middleware';
 
 @Module({
   imports: [
     DatabaseModule,
     CacheModule,
+    MonitoringModule,
     AuthModule,
     UsersModule,
     PatchModule,
@@ -26,7 +29,7 @@ import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     LoggerService,
     {
       provide: APP_FILTER,
@@ -37,7 +40,7 @@ import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(LoggerMiddleware, RateLimitMiddleware)
+      .apply(MonitoringMiddleware, LoggerMiddleware, RateLimitMiddleware)
       .forRoutes('*');
   }
 }

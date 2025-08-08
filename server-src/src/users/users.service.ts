@@ -17,6 +17,7 @@ export class UsersService {
   // Fallback users for development when DynamoDB is not available
   private readonly fallbackUsers: User[] = [
     {
+      id: 'user-1',
       username: 'john',
       password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
       email: 'john@gmail.com',
@@ -24,6 +25,7 @@ export class UsersService {
       patches: [567, 623, 707, 710],
     },
     {
+      id: 'user-2',
       username: 'maria',
       password: '$2a$10$.uduR30EnQScbkm3Em7Se.5AJI4zsKipYRwyi6khCkSLmHP7Br5x6', // 'guess'
       email: 'maria@gmail.com',
@@ -31,6 +33,7 @@ export class UsersService {
       patches: [],
     },
     {
+      id: 'user-3',
       username: 'dougsko',
       password: '$2a$10$8xPHnOJ/u/hTEhwUEmW6heUKAsA6o3i.lx4oLg9ylcQLALR79de6i', // 'changeme'
       email: 'dougsko@gmail.com',
@@ -55,13 +58,18 @@ export class UsersService {
       // Migrate fallback users to DynamoDB if they don't exist
       for (const user of this.fallbackUsers) {
         try {
-          const existingUser = await this.userRepository.findByUsername(user.username);
+          const existingUser = await this.userRepository.findByUsername(
+            user.username,
+          );
           if (!existingUser) {
             await this.userRepository.createUser(user);
             console.log(`Migrated user: ${user.username}`);
           }
         } catch (error) {
-          console.warn(`Failed to migrate user ${user.username}:`, error.message);
+          console.warn(
+            `Failed to migrate user ${user.username}:`,
+            error.message,
+          );
         }
       }
     } catch (error) {
@@ -98,7 +106,9 @@ export class UsersService {
       }
 
       // Check if email already exists
-      const existingEmailUser = await this.userRepository.findByEmail(createUserDto.email);
+      const existingEmailUser = await this.userRepository.findByEmail(
+        createUserDto.email,
+      );
       if (existingEmailUser) {
         throw new HttpException(
           'Email already exists.',
@@ -111,6 +121,7 @@ export class UsersService {
       const hashedPassword = bcrypt.hashSync(createUserDto.password, salt);
 
       const newUser: User = {
+        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         username: createUserDto.username,
         email: createUserDto.email,
         password: hashedPassword,
@@ -122,22 +133,27 @@ export class UsersService {
 
       // Save to DynamoDB
       await this.userRepository.createUser(newUser);
-      
-      console.log('User created successfully:', { username: newUser.username, email: newUser.email });
+
+      console.log('User created successfully:', {
+        username: newUser.username,
+        email: newUser.email,
+      });
 
       // Return user without password for security
       const { password, ...userWithoutPassword } = newUser;
       return { ok: true, data: userWithoutPassword };
-
     } catch (error) {
       console.error('Error creating user:', error);
-      
+
       if (error instanceof HttpException) {
         throw error;
       }
 
       // Fallback to in-memory for development
-      if (error.name === 'ResourceNotFoundException' || process.env.NODE_ENV === 'test') {
+      if (
+        error.name === 'ResourceNotFoundException' ||
+        process.env.NODE_ENV === 'test'
+      ) {
         console.warn('DynamoDB not available, using fallback user creation');
         return this.createUserFallback(createUserDto);
       }
@@ -147,15 +163,21 @@ export class UsersService {
   }
 
   private async createUserFallback(createUserDto: CreateUserDto) {
-    const existingUser = this.fallbackUsers.find(user => user.username === createUserDto.username);
+    const existingUser = this.fallbackUsers.find(
+      (user) => user.username === createUserDto.username,
+    );
     if (existingUser) {
-      throw new HttpException('Username already exists.', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Username already exists.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const salt = bcrypt.genSaltSync(this.saltRounds);
     const hashedPassword = bcrypt.hashSync(createUserDto.password, salt);
 
     const newUser: User = {
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       username: createUserDto.username,
       email: createUserDto.email,
       password: hashedPassword,
@@ -166,7 +188,7 @@ export class UsersService {
     };
 
     this.fallbackUsers.push(newUser);
-    
+
     const { password, ...userWithoutPassword } = newUser;
     return { ok: true, data: userWithoutPassword };
   }
@@ -176,14 +198,13 @@ export class UsersService {
   async getUserByUsername(username: string) {
     try {
       const user = await this.findOneByUsername(username);
-      
+
       if (!user) {
         return { ok: false, data: [] };
       }
 
       console.log(`Found user: ${username}`);
       return { ok: true, data: [user] };
-
     } catch (error) {
       console.error('Error getting user:', error);
       return { ok: false, data: [], error: error.message };

@@ -1,0 +1,599 @@
+# npm audit report
+
+@babel/helpers  <7.26.10
+Severity: moderate
+Babel has inefficient RegExp complexity in generated code with .replace when transpiling named capturing groups - https://github.com/advisories/GHSA-968p-4wvh-cqc8
+fix available via `npm audit fix`
+node_modules/@babel/helpers
+
+@nestjs/common  <10.4.16
+Severity: moderate
+nest allows a remote attacker to execute arbitrary code via the Content-Type header - https://github.com/advisories/GHSA-cj7v-w2c7-cp7c
+fix available via `npm audit fix --force`
+Will install @nestjs/common@11.1.6, which is a breaking change
+node_modules/@nestjs/common
+  @nestjs/core  <=10.4.1
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of @nestjs/platform-express
+  Depends on vulnerable versions of path-to-regexp
+  node_modules/@nestjs/core
+    @nestjs/platform-express  <=10.4.17 || 11.0.0-next.1 - 11.1.1
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of body-parser
+    Depends on vulnerable versions of multer
+    node_modules/@nestjs/platform-express
+      @nestjs/testing  <=9.4.3
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of @nestjs/platform-express
+      node_modules/@nestjs/testing
+    @nestjs/platform-fastify  <=10.4.4
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of fastify
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/platform-fastify
+  @nestjs/jwt  <=10.0.3
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of jsonwebtoken
+  node_modules/@nestjs/jwt
+  @nestjs/passport  <=9.0.3
+  Depends on vulnerable versions of @nestjs/common
+  node_modules/@nestjs/passport
+
+axios  <=0.29.0
+Severity: high
+Axios Cross-Site Request Forgery Vulnerability - https://github.com/advisories/GHSA-wf5p-g6vw-rhxx
+axios Requests Vulnerable To Possible SSRF and Credential Leakage via Absolute URL - https://github.com/advisories/GHSA-jr5f-v2jv-69x6
+fix available via `npm audit fix`
+node_modules/@serverless/platform-client/node_modules/axios
+  @serverless/platform-client  <=4.4.0
+  Depends on vulnerable versions of axios
+  node_modules/@serverless/platform-client
+
+body-parser  <1.20.3
+Severity: high
+body-parser vulnerable to denial of service when url encoding is enabled - https://github.com/advisories/GHSA-qwcr-r2fm-qrc7
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-express@11.1.6, which is a breaking change
+node_modules/body-parser
+  @nestjs/platform-express  <=10.4.17 || 11.0.0-next.1 - 11.1.1
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of @nestjs/core
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of multer
+  node_modules/@nestjs/platform-express
+    @nestjs/core  <=10.4.1
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/platform-express
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/core
+      @nestjs/platform-fastify  <=10.4.4
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of fastify
+      Depends on vulnerable versions of light-my-request
+      Depends on vulnerable versions of path-to-regexp
+      node_modules/@nestjs/platform-fastify
+      @nestjs/testing  <=9.4.3
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of @nestjs/platform-express
+      node_modules/@nestjs/testing
+  express  <=4.21.0 || 5.0.0-alpha.1 - 5.0.0
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of cookie
+  Depends on vulnerable versions of path-to-regexp
+  Depends on vulnerable versions of send
+  node_modules/express
+
+brace-expansion  1.0.0 - 1.1.11 || 2.0.0 - 2.0.1
+brace-expansion Regular Expression Denial of Service vulnerability - https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
+brace-expansion Regular Expression Denial of Service vulnerability - https://github.com/advisories/GHSA-v6h2-p8h4-qcjw
+fix available via `npm audit fix`
+node_modules/brace-expansion
+node_modules/readdir-glob/node_modules/brace-expansion
+
+braces  <3.0.3
+Severity: high
+Uncontrolled resource consumption in braces - https://github.com/advisories/GHSA-grv7-fg5c-xmjg
+fix available via `npm audit fix`
+node_modules/braces
+
+class-validator  <0.14.0
+Severity: critical
+SQL Injection and Cross-site Scripting in class-validator - https://github.com/advisories/GHSA-fj58-h2fr-3pp2
+fix available via `npm audit fix --force`
+Will install class-validator@0.14.2, which is a breaking change
+node_modules/class-validator
+
+cookie  <0.7.0
+cookie accepts cookie name, path, and domain with out of bounds characters - https://github.com/advisories/GHSA-pxg6-pf52-xh8x
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-fastify@11.1.6, which is a breaking change
+node_modules/cookie
+node_modules/fastify/node_modules/cookie
+  express  <=4.21.0 || 5.0.0-alpha.1 - 5.0.0
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of cookie
+  Depends on vulnerable versions of path-to-regexp
+  Depends on vulnerable versions of send
+  node_modules/express
+  light-my-request  3.7.0 - 5.13.0 || 6.0.0-pre.fv5.1 - 6.0.0
+  Depends on vulnerable versions of cookie
+  node_modules/fastify/node_modules/light-my-request
+  node_modules/light-my-request
+    @nestjs/platform-fastify  <=10.4.4
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of fastify
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/platform-fastify
+    fastify  2.11.0 - 4.25.2
+    Depends on vulnerable versions of find-my-way
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of middie
+    node_modules/@nestjs/platform-fastify/node_modules/fastify
+    node_modules/fastify
+
+cookiejar  <2.1.4
+Severity: moderate
+cookiejar Regular Expression Denial of Service via Cookie.parse function - https://github.com/advisories/GHSA-h452-7996-h45h
+fix available via `npm audit fix`
+node_modules/cookiejar
+
+cross-spawn  <6.0.6 || >=7.0.0 <7.0.5
+Severity: high
+Regular Expression Denial of Service (ReDoS) in cross-spawn - https://github.com/advisories/GHSA-3xgq-45jj-v275
+Regular Expression Denial of Service (ReDoS) in cross-spawn - https://github.com/advisories/GHSA-3xgq-45jj-v275
+fix available via `npm audit fix`
+node_modules/child-process-ext/node_modules/cross-spawn
+node_modules/cross-spawn
+
+debug  3.2.0 - 3.2.6
+Regular Expression Denial of Service in debug - https://github.com/advisories/GHSA-gxpj-cx7g-858c
+fix available via `npm audit fix --force`
+Will install serverless-dynamodb-local@0.1.1, which is a breaking change
+node_modules/mocha/node_modules/debug
+  mocha  5.1.0 - 9.2.1
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of minimatch
+  Depends on vulnerable versions of yargs-unparser
+  node_modules/mocha
+    dynamodb-localhost  *
+    Depends on vulnerable versions of mocha
+    Depends on vulnerable versions of tar
+    node_modules/dynamodb-localhost
+      serverless-dynamodb-local  >=0.2.0
+      Depends on vulnerable versions of dynamodb-localhost
+      node_modules/serverless-dynamodb-local
+
+es5-ext  0.10.1 - 0.10.62
+es5-ext vulnerable to Regular Expression Denial of Service in `function#copy` and `function#toStringTokens` - https://github.com/advisories/GHSA-4gmj-3p3h-gm8h
+fix available via `npm audit fix`
+node_modules/es5-ext
+
+express  <=4.21.0 || 5.0.0-alpha.1 - 5.0.0
+Severity: high
+Express.js Open Redirect in malformed URLs - https://github.com/advisories/GHSA-rv95-896h-c2vc
+express vulnerable to XSS via response.redirect() - https://github.com/advisories/GHSA-qw6h-vgh9-j6wx
+Depends on vulnerable versions of body-parser
+Depends on vulnerable versions of cookie
+Depends on vulnerable versions of path-to-regexp
+Depends on vulnerable versions of send
+fix available via `npm audit fix`
+node_modules/express
+
+fastify  2.11.0 - 4.25.2
+Severity: high
+Fastify: Incorrect Content-Type parsing can lead to CSRF attack  - https://github.com/advisories/GHSA-3fjj-p79j-c9hh
+fastify vulnerable to denial of service via malicious Content-Type - https://github.com/advisories/GHSA-455w-c45v-86rg
+Depends on vulnerable versions of find-my-way
+Depends on vulnerable versions of light-my-request
+Depends on vulnerable versions of middie
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-fastify@11.1.6, which is a breaking change
+node_modules/@nestjs/platform-fastify/node_modules/fastify
+node_modules/fastify
+  @nestjs/platform-fastify  <=10.4.4
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of @nestjs/core
+  Depends on vulnerable versions of fastify
+  Depends on vulnerable versions of light-my-request
+  Depends on vulnerable versions of path-to-regexp
+  node_modules/@nestjs/platform-fastify
+
+find-my-way  5.5.0 - 8.2.1
+Severity: high
+find-my-way has a ReDoS vulnerability in multiparametric routes - https://github.com/advisories/GHSA-rrr8-f88r-h8q6
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-fastify@11.1.6, which is a breaking change
+node_modules/@nestjs/platform-fastify/node_modules/find-my-way
+  fastify  2.11.0 - 4.25.2
+  Depends on vulnerable versions of find-my-way
+  Depends on vulnerable versions of light-my-request
+  Depends on vulnerable versions of middie
+  node_modules/@nestjs/platform-fastify/node_modules/fastify
+  node_modules/fastify
+    @nestjs/platform-fastify  <=10.4.4
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of fastify
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/platform-fastify
+
+flat  <5.0.1
+Severity: critical
+flat vulnerable to Prototype Pollution - https://github.com/advisories/GHSA-2j2x-2gpw-g8fm
+fix available via `npm audit fix --force`
+Will install serverless-dynamodb-local@0.1.1, which is a breaking change
+node_modules/yargs-unparser/node_modules/flat
+  yargs-unparser  <=1.6.3
+  Depends on vulnerable versions of flat
+  node_modules/yargs-unparser
+    mocha  5.1.0 - 9.2.1
+    Depends on vulnerable versions of debug
+    Depends on vulnerable versions of minimatch
+    Depends on vulnerable versions of yargs-unparser
+    node_modules/mocha
+      dynamodb-localhost  *
+      Depends on vulnerable versions of mocha
+      Depends on vulnerable versions of tar
+      node_modules/dynamodb-localhost
+        serverless-dynamodb-local  >=0.2.0
+        Depends on vulnerable versions of dynamodb-localhost
+        node_modules/serverless-dynamodb-local
+
+follow-redirects  <=1.15.5
+Severity: moderate
+Follow Redirects improperly handles URLs in the url.parse() function - https://github.com/advisories/GHSA-jchw-25xp-jwwc
+follow-redirects' Proxy-Authorization header kept across hosts - https://github.com/advisories/GHSA-cxjh-pqwp-8mfp
+fix available via `npm audit fix`
+node_modules/follow-redirects
+
+form-data  4.0.0 - 4.0.3
+Severity: critical
+form-data uses unsafe random function in form-data for choosing boundary - https://github.com/advisories/GHSA-fjxv-7rqg-78g4
+fix available via `npm audit fix`
+node_modules/form-data
+
+get-func-name  <2.0.1
+Severity: high
+Chaijs/get-func-name vulnerable to ReDoS - https://github.com/advisories/GHSA-4q6p-r6v2-jvc5
+fix available via `npm audit fix`
+node_modules/get-func-name
+
+http-cache-semantics  <4.1.1
+Severity: high
+http-cache-semantics vulnerable to Regular Expression Denial of Service - https://github.com/advisories/GHSA-rc47-6667-2j5j
+fix available via `npm audit fix`
+node_modules/http-cache-semantics
+
+jose  3.0.0 - 4.15.4
+Severity: moderate
+jose vulnerable to resource exhaustion via specifically crafted JWE with compressed plaintext - https://github.com/advisories/GHSA-hhhv-q57g-882q
+fix available via `npm audit fix`
+node_modules/jose
+
+json5  2.0.0 - 2.2.1
+Severity: high
+Prototype Pollution in JSON5 via Parse Method - https://github.com/advisories/GHSA-9c47-m6qq-7p4h
+fix available via `npm audit fix`
+node_modules/json5
+
+jsonpath-plus  <=10.2.0
+Severity: critical
+JSONPath Plus Remote Code Execution (RCE) Vulnerability - https://github.com/advisories/GHSA-pppg-cpfq-h7wr
+JSONPath Plus allows Remote Code Execution - https://github.com/advisories/GHSA-hw8r-x6gr-5gjp
+fix available via `npm audit fix --force`
+Will install serverless-offline@14.4.0, which is a breaking change
+node_modules/jsonpath-plus
+  serverless-offline  1.0.0-beta3 - 14.3.2
+  Depends on vulnerable versions of @serverless/utils
+  Depends on vulnerable versions of jsonpath-plus
+  Depends on vulnerable versions of serverless
+  node_modules/serverless-offline
+
+jsonwebtoken  <=8.5.1
+Severity: high
+jsonwebtoken unrestricted key type could lead to legacy keys usage  - https://github.com/advisories/GHSA-8cf7-32gw-wr33
+jsonwebtoken vulnerable to signature validation bypass due to insecure default algorithm in jwt.verify() - https://github.com/advisories/GHSA-qwph-4952-7xr6
+fix available via `npm audit fix --force`
+Will install jsonwebtoken@9.0.2, which is a breaking change
+node_modules/jsonwebtoken
+  @nestjs/jwt  <=10.0.3
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of jsonwebtoken
+  node_modules/@nestjs/jwt
+  passport-jwt  <=4.0.0
+  Depends on vulnerable versions of jsonwebtoken
+  node_modules/passport-jwt
+
+luxon  1.0.0 - 1.28.0 || 3.0.0 - 3.2.0
+Severity: high
+Luxon Inefficient Regular Expression Complexity vulnerability - https://github.com/advisories/GHSA-3xq5-wjfh-ppjc
+Luxon Inefficient Regular Expression Complexity vulnerability - https://github.com/advisories/GHSA-3xq5-wjfh-ppjc
+fix available via `npm audit fix`
+node_modules/cron-parser/node_modules/luxon
+node_modules/luxon
+
+micromatch  <4.0.8
+Severity: moderate
+Regular Expression Denial of Service (ReDoS) in micromatch - https://github.com/advisories/GHSA-952p-6rrq-rcjv
+fix available via `npm audit fix`
+node_modules/micromatch
+
+minimatch  <3.0.5
+Severity: high
+minimatch ReDoS vulnerability - https://github.com/advisories/GHSA-f8q6-p94x-37v3
+fix available via `npm audit fix --force`
+Will install serverless-dynamodb-local@0.1.1, which is a breaking change
+node_modules/mocha/node_modules/minimatch
+  mocha  5.1.0 - 9.2.1
+  Depends on vulnerable versions of debug
+  Depends on vulnerable versions of minimatch
+  Depends on vulnerable versions of yargs-unparser
+  node_modules/mocha
+    dynamodb-localhost  *
+    Depends on vulnerable versions of mocha
+    Depends on vulnerable versions of tar
+    node_modules/dynamodb-localhost
+      serverless-dynamodb-local  >=0.2.0
+      Depends on vulnerable versions of dynamodb-localhost
+      node_modules/serverless-dynamodb-local
+
+multer  1.4.4-lts.1 - 2.0.1
+Severity: high
+Multer vulnerable to Denial of Service from maliciously crafted requests - https://github.com/advisories/GHSA-4pg4-qvpc-4q3h
+Multer vulnerable to Denial of Service via unhandled exception - https://github.com/advisories/GHSA-g5hg-p3ph-g8qg
+Multer vulnerable to Denial of Service via unhandled exception from malformed request - https://github.com/advisories/GHSA-fjgf-rc76-4x9p
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-express@11.1.6, which is a breaking change
+node_modules/multer
+  @nestjs/platform-express  <=10.4.17 || 11.0.0-next.1 - 11.1.1
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of @nestjs/core
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of multer
+  node_modules/@nestjs/platform-express
+    @nestjs/core  <=10.4.1
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/platform-express
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/core
+      @nestjs/platform-fastify  <=10.4.4
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of fastify
+      Depends on vulnerable versions of light-my-request
+      Depends on vulnerable versions of path-to-regexp
+      node_modules/@nestjs/platform-fastify
+      @nestjs/testing  <=9.4.3
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of @nestjs/platform-express
+      node_modules/@nestjs/testing
+
+on-headers  <1.1.0
+on-headers is vulnerable to http response header manipulation - https://github.com/advisories/GHSA-76c9-3jph-rj3q
+fix available via `npm audit fix`
+node_modules/on-headers
+  compression  1.0.3 - 1.8.0
+  Depends on vulnerable versions of on-headers
+  node_modules/compression
+
+path-to-regexp  <=0.1.11 || 2.0.0 - 3.2.0 || 4.0.0 - 6.2.2
+Severity: high
+path-to-regexp outputs backtracking regular expressions - https://github.com/advisories/GHSA-9wv6-86v2-598j
+path-to-regexp outputs backtracking regular expressions - https://github.com/advisories/GHSA-9wv6-86v2-598j
+path-to-regexp outputs backtracking regular expressions - https://github.com/advisories/GHSA-9wv6-86v2-598j
+path-to-regexp contains a ReDoS - https://github.com/advisories/GHSA-rhx6-c78j-4q9w
+fix available via `npm audit fix --force`
+Will install @nestjs/platform-fastify@11.1.6, which is a breaking change
+node_modules/@fastify/middie/node_modules/path-to-regexp
+node_modules/express/node_modules/path-to-regexp
+node_modules/fastify/node_modules/path-to-regexp
+node_modules/path-to-regexp
+  @nestjs/core  <=10.4.1
+  Depends on vulnerable versions of @nestjs/common
+  Depends on vulnerable versions of @nestjs/platform-express
+  Depends on vulnerable versions of path-to-regexp
+  node_modules/@nestjs/core
+    @nestjs/platform-express  <=10.4.17 || 11.0.0-next.1 - 11.1.1
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of body-parser
+    Depends on vulnerable versions of multer
+    node_modules/@nestjs/platform-express
+      @nestjs/testing  <=9.4.3
+      Depends on vulnerable versions of @nestjs/common
+      Depends on vulnerable versions of @nestjs/core
+      Depends on vulnerable versions of @nestjs/platform-express
+      node_modules/@nestjs/testing
+    @nestjs/platform-fastify  <=10.4.4
+    Depends on vulnerable versions of @nestjs/common
+    Depends on vulnerable versions of @nestjs/core
+    Depends on vulnerable versions of fastify
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of path-to-regexp
+    node_modules/@nestjs/platform-fastify
+  express  <=4.21.0 || 5.0.0-alpha.1 - 5.0.0
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of cookie
+  Depends on vulnerable versions of path-to-regexp
+  Depends on vulnerable versions of send
+  node_modules/express
+  middie  4.1.0
+  Depends on vulnerable versions of path-to-regexp
+  node_modules/fastify/node_modules/middie
+    fastify  2.11.0 - 4.25.2
+    Depends on vulnerable versions of find-my-way
+    Depends on vulnerable versions of light-my-request
+    Depends on vulnerable versions of middie
+    node_modules/@nestjs/platform-fastify/node_modules/fastify
+    node_modules/fastify
+
+qs  6.9.0 - 6.9.6
+Severity: high
+qs vulnerable to Prototype Pollution - https://github.com/advisories/GHSA-hrpp-h998-j3pp
+fix available via `npm audit fix`
+node_modules/formidable/node_modules/qs
+  formidable  2.0.0-canary.20200129.2 - 2.0.1
+  Depends on vulnerable versions of qs
+  node_modules/formidable
+
+semver  <=5.7.1 || 6.0.0 - 6.3.0 || 7.0.0 - 7.5.1
+Severity: high
+semver vulnerable to Regular Expression Denial of Service - https://github.com/advisories/GHSA-c2qf-rxjj-qqgw
+semver vulnerable to Regular Expression Denial of Service - https://github.com/advisories/GHSA-c2qf-rxjj-qqgw
+semver vulnerable to Regular Expression Denial of Service - https://github.com/advisories/GHSA-c2qf-rxjj-qqgw
+fix available via `npm audit fix`
+node_modules/@babel/core/node_modules/semver
+node_modules/child-process-ext/node_modules/semver
+node_modules/istanbul-lib-instrument/node_modules/semver
+node_modules/jsonwebtoken/node_modules/semver
+node_modules/make-dir/node_modules/semver
+node_modules/node-environment-flags/node_modules/semver
+node_modules/semver
+
+send  <0.19.0
+send vulnerable to template injection that can lead to XSS - https://github.com/advisories/GHSA-m6fv-jmcg-4jfg
+fix available via `npm audit fix`
+node_modules/send
+  express  <=4.21.0 || 5.0.0-alpha.1 - 5.0.0
+  Depends on vulnerable versions of body-parser
+  Depends on vulnerable versions of cookie
+  Depends on vulnerable versions of path-to-regexp
+  Depends on vulnerable versions of send
+  node_modules/express
+  serve-static  <=1.16.0
+  Depends on vulnerable versions of send
+  node_modules/serve-static
+
+serialize-javascript  6.0.0 - 6.0.1
+Severity: moderate
+Cross-site Scripting (XSS) in serialize-javascript - https://github.com/advisories/GHSA-76p7-773f-r4q5
+fix available via `npm audit fix`
+node_modules/serialize-javascript
+
+serve-static  <=1.16.0
+serve-static vulnerable to template injection that can lead to XSS - https://github.com/advisories/GHSA-cm22-4g7w-348p
+Depends on vulnerable versions of send
+fix available via `npm audit fix`
+node_modules/serve-static
+
+simple-git  <=3.15.1
+Severity: critical
+simple-git vulnerable to Remote Code Execution when enabling the ext transport protocol - https://github.com/advisories/GHSA-9p95-fxvg-qgq2
+Remote code execution in simple-git - https://github.com/advisories/GHSA-9w5j-4mwv-2wj8
+fix available via `npm audit fix`
+node_modules/simple-git
+
+tar  <6.2.1
+Severity: moderate
+Denial of service while parsing a tar file due to lack of folders count validation - https://github.com/advisories/GHSA-f5x3-32g6-xq36
+fix available via `npm audit fix --force`
+Will install serverless-dynamodb-local@0.1.1, which is a breaking change
+node_modules/dynamodb-localhost/node_modules/tar
+node_modules/tar
+  dynamodb-localhost  *
+  Depends on vulnerable versions of mocha
+  Depends on vulnerable versions of tar
+  node_modules/dynamodb-localhost
+    serverless-dynamodb-local  >=0.2.0
+    Depends on vulnerable versions of dynamodb-localhost
+    node_modules/serverless-dynamodb-local
+
+tmp  <=0.2.3
+tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter - https://github.com/advisories/GHSA-52f5-9888-hmc6
+fix available via `npm audit fix --force`
+Will install serverless-offline@14.4.0, which is a breaking change
+node_modules/tmp
+  external-editor  >=1.1.1
+  Depends on vulnerable versions of tmp
+  node_modules/external-editor
+    inquirer  3.0.0 - 9.3.7
+    Depends on vulnerable versions of external-editor
+    node_modules/@angular-devkit/schematics-cli/node_modules/inquirer
+    node_modules/@serverless/utils/node_modules/inquirer
+    node_modules/inquirer
+      @angular-devkit/schematics-cli  0.12.0-beta.0 - 18.1.0-rc.1
+      Depends on vulnerable versions of inquirer
+      node_modules/@angular-devkit/schematics-cli
+        @nestjs/cli  2.0.0-rc.1 - 10.4.9
+        Depends on vulnerable versions of @angular-devkit/schematics-cli
+        Depends on vulnerable versions of inquirer
+        Depends on vulnerable versions of webpack
+        node_modules/@nestjs/cli
+      @serverless/utils  >=2.0.0
+      Depends on vulnerable versions of inquirer
+      node_modules/@serverless/utils
+        @serverless/dashboard-plugin  *
+        Depends on vulnerable versions of @serverless/utils
+        node_modules/@serverless/dashboard-plugin
+          serverless  2.2.0-05d703e6 - 3.40.0
+          Depends on vulnerable versions of @serverless/dashboard-plugin
+          Depends on vulnerable versions of @serverless/utils
+          node_modules/serverless
+            serverless-offline  1.0.0-beta3 - 14.3.2
+            Depends on vulnerable versions of @serverless/utils
+            Depends on vulnerable versions of jsonpath-plus
+            Depends on vulnerable versions of serverless
+            node_modules/serverless-offline
+
+underscore  1.3.2 - 1.12.0
+Severity: critical
+Arbitrary Code Execution in underscore - https://github.com/advisories/GHSA-cf4h-3jhx-xvhq
+fix available via `npm audit fix --force`
+Will install plugin@0.0.15, which is a breaking change
+node_modules/underscore
+  plugin  >=0.1.0
+  Depends on vulnerable versions of underscore
+  node_modules/plugin
+
+webpack  5.0.0-alpha.0 - 5.93.0
+Severity: critical
+Cross-realm object access in Webpack 5 - https://github.com/advisories/GHSA-hc6q-2mpp-qw7j
+Webpack's AutoPublicPathRuntimeModule has a DOM Clobbering Gadget that leads to XSS - https://github.com/advisories/GHSA-4vvj-4cpr-p986
+fix available via `npm audit fix`
+node_modules/webpack
+  @nestjs/cli  2.0.0-rc.1 - 10.4.9
+  Depends on vulnerable versions of @angular-devkit/schematics-cli
+  Depends on vulnerable versions of inquirer
+  Depends on vulnerable versions of webpack
+  node_modules/@nestjs/cli
+
+word-wrap  <1.2.4
+Severity: moderate
+word-wrap vulnerable to Regular Expression Denial of Service - https://github.com/advisories/GHSA-j8xg-fqg3-53r7
+fix available via `npm audit fix`
+node_modules/word-wrap
+
+ws  7.0.0 - 7.5.9 || 8.0.0 - 8.17.0
+Severity: high
+ws affected by a DoS when handling a request with many HTTP headers - https://github.com/advisories/GHSA-3h5v-q93c-6h6q
+ws affected by a DoS when handling a request with many HTTP headers - https://github.com/advisories/GHSA-3h5v-q93c-6h6q
+fix available via `npm audit fix`
+node_modules/serverless-offline/node_modules/ws
+node_modules/ws
+
+xml2js  <0.5.0
+Severity: moderate
+xml2js is vulnerable to prototype pollution - https://github.com/advisories/GHSA-776f-qx25-q3cc
+fix available via `npm audit fix`
+node_modules/xml2js
+  aws-sdk  <=2.1353.0
+  Depends on vulnerable versions of xml2js
+  node_modules/aws-sdk
+
+69 vulnerabilities (16 low, 16 moderate, 25 high, 12 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force

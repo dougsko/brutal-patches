@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PatchService } from './patch.service';
 import { UsersService } from '../users/users.service';
+import { PatchRepository } from './patch.repository';
+import { PatchVersionRepository } from './patch-version.repository';
+import { PatchCollectionRepository } from './patch-collection.repository';
 
 describe('PatchService', () => {
   let service: PatchService;
@@ -15,10 +18,38 @@ describe('PatchService', () => {
       findOneByUsername: jest.fn(),
     };
 
+    const mockPatchRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const mockPatchVersionRepository = {
+      createVersion: jest.fn(),
+      getPatchHistory: jest.fn(),
+    };
+
+    const mockPatchCollectionRepository = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      getUserCollections: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PatchService,
         { provide: UsersService, useValue: mockUsersService },
+        { provide: PatchRepository, useValue: mockPatchRepository },
+        {
+          provide: PatchVersionRepository,
+          useValue: mockPatchVersionRepository,
+        },
+        {
+          provide: PatchCollectionRepository,
+          useValue: mockPatchCollectionRepository,
+        },
       ],
     }).compile();
 
@@ -96,7 +127,9 @@ describe('PatchService', () => {
         tags: [],
       };
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
       const result = await service.createPatch(username, patchData);
 
@@ -113,8 +146,9 @@ describe('PatchService', () => {
 
       mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(null);
 
-      await expect(service.createPatch(username, patchData))
-        .rejects.toThrow(new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND));
+      await expect(service.createPatch(username, patchData)).rejects.toThrow(
+        new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND),
+      );
     });
 
     it('should throw error if patch title is empty', async () => {
@@ -122,10 +156,13 @@ describe('PatchService', () => {
       const mockUser = { username, patches: [] };
       const patchData = { title: '' } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
-      await expect(service.createPatch(username, patchData))
-        .rejects.toThrow(new HttpException('Patch title is required', HttpStatus.BAD_REQUEST));
+      await expect(service.createPatch(username, patchData)).rejects.toThrow(
+        new HttpException('Patch title is required', HttpStatus.BAD_REQUEST),
+      );
     });
 
     it('should throw error if patch title is null', async () => {
@@ -133,21 +170,24 @@ describe('PatchService', () => {
       const mockUser = { username, patches: [] };
       const patchData = { title: null } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
-      await expect(service.createPatch(username, patchData))
-        .rejects.toThrow(new HttpException('Patch title is required', HttpStatus.BAD_REQUEST));
+      await expect(service.createPatch(username, patchData)).rejects.toThrow(
+        new HttpException('Patch title is required', HttpStatus.BAD_REQUEST),
+      );
     });
   });
 
   describe('updatePatch', () => {
     it('should update an existing patch successfully', async () => {
       const username = 'testuser';
-      
+
       // Get existing patches to find a valid ID
       const existingPatches = await service.getAllPatches();
       expect(existingPatches.length).toBeGreaterThan(0);
-      
+
       const firstPatch = existingPatches[0];
       const patchId = firstPatch.id.toString();
       const mockUser = {
@@ -162,7 +202,9 @@ describe('PatchService', () => {
         description: 'Updated description',
       } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
       const result = await service.updatePatch(username, patchId, updateData);
 
@@ -180,8 +222,11 @@ describe('PatchService', () => {
 
       mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(null);
 
-      await expect(service.updatePatch(username, patchId, updateData))
-        .rejects.toThrow(new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND));
+      await expect(
+        service.updatePatch(username, patchId, updateData),
+      ).rejects.toThrow(
+        new HttpException(`User '${username}' not found`, HttpStatus.NOT_FOUND),
+      );
     });
 
     it('should throw error if patch not found', async () => {
@@ -190,19 +235,24 @@ describe('PatchService', () => {
       const mockUser = { username, patches: [1, 2] };
       const updateData = { title: 'Updated Patch' } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
-      await expect(service.updatePatch(username, patchId, updateData))
-        .rejects.toThrow(new HttpException('Patch not found', HttpStatus.NOT_FOUND));
+      await expect(
+        service.updatePatch(username, patchId, updateData),
+      ).rejects.toThrow(
+        new HttpException('Patch not found', HttpStatus.NOT_FOUND),
+      );
     });
 
     it('should throw error if user does not own the patch', async () => {
       const username = 'testuser';
-      
+
       // Get existing patches to find a valid ID
       const existingPatches = await service.getAllPatches();
       expect(existingPatches.length).toBeGreaterThan(0);
-      
+
       const firstPatch = existingPatches[0];
       const patchId = firstPatch.id.toString();
       const mockUser = {
@@ -211,28 +261,41 @@ describe('PatchService', () => {
       };
       const updateData = { title: 'Updated Patch' } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
-      await expect(service.updatePatch(username, patchId, updateData))
-        .rejects.toThrow(new HttpException('Unauthorized to modify this patch', HttpStatus.FORBIDDEN));
+      await expect(
+        service.updatePatch(username, patchId, updateData),
+      ).rejects.toThrow(
+        new HttpException(
+          'Unauthorized to modify this patch',
+          HttpStatus.FORBIDDEN,
+        ),
+      );
     });
 
     it('should throw error if updated title is empty', async () => {
       const username = 'testuser';
-      
+
       // Get existing patches to find a valid ID
       const existingPatches = await service.getAllPatches();
       expect(existingPatches.length).toBeGreaterThan(0);
-      
+
       const firstPatch = existingPatches[0];
       const patchId = firstPatch.id.toString();
       const mockUser = { username, patches: [firstPatch.id] };
       const updateData = { title: '' } as any;
 
-      mockUsersService.findOneByUsername = jest.fn().mockResolvedValue(mockUser);
+      mockUsersService.findOneByUsername = jest
+        .fn()
+        .mockResolvedValue(mockUser);
 
-      await expect(service.updatePatch(username, patchId, updateData))
-        .rejects.toThrow(new HttpException('Patch title is required', HttpStatus.BAD_REQUEST));
+      await expect(
+        service.updatePatch(username, patchId, updateData),
+      ).rejects.toThrow(
+        new HttpException('Patch title is required', HttpStatus.BAD_REQUEST),
+      );
     });
   });
 });

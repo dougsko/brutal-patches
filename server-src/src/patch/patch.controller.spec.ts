@@ -94,22 +94,30 @@ describe('PatchController', () => {
       };
       const expectedResult = { ...mockPatchData, id: 123 };
 
-      mockPatchService.createPatch = jest.fn().mockResolvedValue(expectedResult);
+      mockPatchService.createPatch = jest
+        .fn()
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.create({ user: mockUser }, mockPatchData);
 
       expect(result).toEqual(expectedResult);
-      expect(mockPatchService.createPatch).toHaveBeenCalledWith('testuser', mockPatchData);
+      expect(mockPatchService.createPatch).toHaveBeenCalledWith(
+        'testuser',
+        mockPatchData,
+      );
     });
 
     it('should handle patch creation errors', async () => {
       const mockUser = { username: 'testuser' };
       const mockPatchData = { title: '' }; // Invalid patch data
 
-      mockPatchService.createPatch = jest.fn().mockRejectedValue(new Error('Patch title is required'));
+      mockPatchService.createPatch = jest
+        .fn()
+        .mockRejectedValue(new Error('Patch title is required'));
 
-      await expect(controller.create({ user: mockUser }, mockPatchData as any))
-        .rejects.toThrow('Patch title is required');
+      await expect(
+        controller.create({ user: mockUser }, mockPatchData as any),
+      ).rejects.toThrow('Patch title is required');
     });
   });
 
@@ -122,14 +130,27 @@ describe('PatchController', () => {
         title: 'Updated Patch',
         description: 'Updated description',
       };
-      const expectedResult = { ...mockPatchData, updated_at: new Date().toISOString() };
+      const expectedResult = {
+        ...mockPatchData,
+        updated_at: new Date().toISOString(),
+      };
 
-      mockPatchService.updatePatch = jest.fn().mockResolvedValue(expectedResult);
+      mockPatchService.updatePatch = jest
+        .fn()
+        .mockResolvedValue(expectedResult);
 
-      const result = await controller.update({ user: mockUser }, patchId, mockPatchData as any);
+      const result = await controller.update(
+        { user: mockUser },
+        patchId,
+        mockPatchData as any,
+      );
 
       expect(result).toEqual(expectedResult);
-      expect(mockPatchService.updatePatch).toHaveBeenCalledWith('testuser', patchId, mockPatchData);
+      expect(mockPatchService.updatePatch).toHaveBeenCalledWith(
+        'testuser',
+        patchId,
+        mockPatchData,
+      );
     });
 
     it('should handle patch update errors', async () => {
@@ -137,10 +158,13 @@ describe('PatchController', () => {
       const patchId = '999';
       const mockPatchData = { title: 'Updated Patch' };
 
-      mockPatchService.updatePatch = jest.fn().mockRejectedValue(new Error('Patch not found'));
+      mockPatchService.updatePatch = jest
+        .fn()
+        .mockRejectedValue(new Error('Patch not found'));
 
-      await expect(controller.update({ user: mockUser }, patchId, mockPatchData as any))
-        .rejects.toThrow('Patch not found');
+      await expect(
+        controller.update({ user: mockUser }, patchId, mockPatchData as any),
+      ).rejects.toThrow('Patch not found');
     });
 
     it('should handle unauthorized update attempts', async () => {
@@ -148,10 +172,13 @@ describe('PatchController', () => {
       const patchId = '123';
       const mockPatchData = { title: 'Updated Patch' };
 
-      mockPatchService.updatePatch = jest.fn().mockRejectedValue(new Error('Unauthorized to modify this patch'));
+      mockPatchService.updatePatch = jest
+        .fn()
+        .mockRejectedValue(new Error('Unauthorized to modify this patch'));
 
-      await expect(controller.update({ user: mockUser }, patchId, mockPatchData as any))
-        .rejects.toThrow('Unauthorized to modify this patch');
+      await expect(
+        controller.update({ user: mockUser }, patchId, mockPatchData as any),
+      ).rejects.toThrow('Unauthorized to modify this patch');
     });
   });
 });
