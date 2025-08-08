@@ -196,6 +196,7 @@ jobs:
           retention-days: 7
 
       - name: Validate serverless configuration
+        working-directory: server-src
         run: |
           NODE_NO_WARNINGS=1 npx serverless print --stage dev > /dev/null
           echo "✅ Serverless configuration is valid"
