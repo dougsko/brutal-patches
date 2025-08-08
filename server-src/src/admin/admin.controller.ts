@@ -11,9 +11,83 @@ import {
   HttpException,
   HttpStatus
 } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiParam,
+  ApiQuery,
+  ApiProperty,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AdminService, AdminStats, SystemHealth, ContentModerationItem } from './admin.service';
 
+// Response DTOs for documentation
+class AdminUserResponse {
+  @ApiProperty({ description: 'User ID' })
+  id: number;
+
+  @ApiProperty({ description: 'Username' })
+  username: string;
+
+  @ApiProperty({ description: 'Email address' })
+  email: string;
+
+  @ApiProperty({ description: 'Account creation date' })
+  created_at: string;
+
+  @ApiProperty({ description: 'Number of user patches' })
+  patchCount: number;
+
+  @ApiProperty({ description: 'Account active status' })
+  isActive: boolean;
+}
+
+class UserManagementResponse {
+  @ApiProperty({ description: 'Array of users', type: [AdminUserResponse] })
+  users: AdminUserResponse[];
+
+  @ApiProperty({ description: 'Total count of users' })
+  total: number;
+}
+
+class BulkOperationRequest {
+  @ApiProperty({ description: 'Operation type', enum: ['delete', 'export', 'moderate'] })
+  operation: 'delete' | 'export' | 'moderate';
+
+  @ApiProperty({ description: 'Array of patch IDs', type: [Number] })
+  patchIds: number[];
+
+  @ApiProperty({ description: 'Additional parameters', required: false })
+  params?: any;
+}
+
+class SuccessResponse {
+  @ApiProperty({ description: 'Operation success status' })
+  success: boolean;
+
+  @ApiProperty({ description: 'Result message' })
+  message: string;
+}
+
+class ErrorResponse {
+  @ApiProperty({ description: 'HTTP status code' })
+  statusCode: number;
+
+  @ApiProperty({ description: 'Error message' })
+  message: string;
+
+  @ApiProperty({ description: 'Error details', required: false })
+  error?: string;
+}
+
+@ApiTags('Admin')
+@ApiBearerAuth('JWT-auth')
 @Controller('api/admin')
 @UseGuards(JwtAuthGuard) // All admin endpoints require authentication
 export class AdminController {
@@ -22,6 +96,25 @@ export class AdminController {
   /**
    * Get comprehensive admin dashboard statistics
    */
+  @ApiOperation({
+    summary: 'Get admin dashboard statistics',
+    description: 'Retrieve comprehensive statistics for the admin dashboard (admin only)'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Admin statistics retrieved successfully',
+    type: AdminStats
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Admin privileges required',
+    type: ErrorResponse
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Authentication required',
+    type: ErrorResponse
+  })
   @Get('stats')
   async getAdminStats(@Request() req): Promise<AdminStats> {
     this.checkAdminPermissions(req.user);
@@ -31,6 +124,20 @@ export class AdminController {
   /**
    * Get system health metrics
    */
+  @ApiOperation({
+    summary: 'Get system health metrics',
+    description: 'Retrieve detailed system health information (admin only)'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'System health retrieved successfully',
+    type: SystemHealth
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Admin privileges required',
+    type: ErrorResponse
+  })
   @Get('health')
   async getSystemHealth(@Request() req): Promise<SystemHealth> {
     this.checkAdminPermissions(req.user);
@@ -71,6 +178,25 @@ export class AdminController {
   /**
    * Get user management data
    */
+  @ApiOperation({
+    summary: 'Get user management data',
+    description: 'Retrieve paginated user list with search and sorting options (admin only)'
+  })
+  @ApiQuery({ name: 'search', description: 'Search term for users', required: false })
+  @ApiQuery({ name: 'sortBy', description: 'Sort by field', required: false, enum: ['username', 'created_at', 'patch_count'] })
+  @ApiQuery({ name: 'sortOrder', description: 'Sort order', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({ name: 'limit', description: 'Results limit', required: false })
+  @ApiQuery({ name: 'offset', description: 'Results offset', required: false })
+  @ApiResponse({
+    status: 200,
+    description: 'User management data retrieved successfully',
+    type: UserManagementResponse
+  })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Admin privileges required',
+    type: ErrorResponse
+  })
   @Get('users')
   async getUserManagement(
     @Request() req,
