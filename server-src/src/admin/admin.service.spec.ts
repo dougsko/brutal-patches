@@ -38,10 +38,15 @@ const mockBulkOperationsService = {
 
 describe('AdminService', () => {
   let service: AdminService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let usersService: jest.Mocked<UsersService>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let patchService: jest.Mocked<PatchService>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let patchRepository: jest.Mocked<PatchRepository>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let collectionRepository: jest.Mocked<PatchCollectionRepository>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let bulkOperationsService: jest.Mocked<BulkOperationsService>;
 
   beforeEach(async () => {
@@ -220,15 +225,37 @@ describe('AdminService', () => {
     });
 
     it('should return warning status for slow database response', async () => {
-      // Mock a slow response (over 1000ms)
-      mockPatchRepository.count.mockImplementationOnce(
-        () => new Promise((resolve) => setTimeout(() => resolve(100), 1100)),
-      );
+      // Mock Date.now to simulate slow response
+      let callCount = 0;
+      jest.spyOn(Date, 'now').mockImplementation(() => {
+        callCount++;
+        if (callCount === 1) return 1000; // startTime
+        if (callCount === 2) return 1000; // testStart
+        if (callCount === 3) return 2500; // testEnd (1500ms later, > 1000ms threshold)
+        return 1000; // fallback
+      });
+
+      // Mock memory usage to ensure we don't hit critical thresholds
+      const mockMemoryUsage = jest
+        .spyOn(process, 'memoryUsage')
+        .mockReturnValue({
+          rss: 50 * 1024 * 1024,
+          heapTotal: 100 * 1024 * 1024,
+          heapUsed: 50 * 1024 * 1024, // 50% usage, not critical
+          external: 5 * 1024 * 1024,
+          arrayBuffers: 0,
+        });
+
+      mockPatchRepository.count.mockResolvedValueOnce(100);
 
       const result = await service.getSystemHealth();
 
       expect(result.database.status).toBe('slow');
       expect(result.status).toBe('warning');
+
+      // Restore mocks
+      (Date.now as jest.Mock).mockRestore();
+      mockMemoryUsage.mockRestore();
     });
   });
 

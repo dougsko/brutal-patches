@@ -11,6 +11,7 @@ import {
   PutMetricDataCommand,
 } from '@aws-sdk/client-cloudwatch';
 // X-Ray SDK with type assertions for compatibility
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AWSXRay = require('aws-xray-sdk-node');
 import { LoggerService } from '../logger.service';
 

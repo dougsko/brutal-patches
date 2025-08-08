@@ -15,12 +15,9 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBody,
   ApiBearerAuth,
   ApiUnauthorizedResponse,
-  ApiBadRequestResponse,
   ApiForbiddenResponse,
-  ApiParam,
   ApiQuery,
   ApiProperty,
 } from '@nestjs/swagger';
@@ -59,28 +56,6 @@ class UserManagementResponse {
 
   @ApiProperty({ description: 'Total count of users' })
   total: number;
-}
-
-class BulkOperationRequest {
-  @ApiProperty({
-    description: 'Operation type',
-    enum: ['delete', 'export', 'moderate'],
-  })
-  operation: 'delete' | 'export' | 'moderate';
-
-  @ApiProperty({ description: 'Array of patch IDs', type: [Number] })
-  patchIds: number[];
-
-  @ApiProperty({ description: 'Additional parameters', required: false })
-  params?: any;
-}
-
-class SuccessResponse {
-  @ApiProperty({ description: 'Operation success status' })
-  success: boolean;
-
-  @ApiProperty({ description: 'Result message' })
-  message: string;
 }
 
 class ErrorResponse {
@@ -411,8 +386,8 @@ export class AdminController {
   async getAdminLogs(
     @Request() req,
     @Query('type') type?: 'action' | 'system' | 'error',
-    @Query('limit') limit = 100,
-    @Query('offset') offset = 0,
+    @Query('limit') _limit = 100,
+    @Query('offset') _offset = 0,
   ): Promise<{
     logs: Array<{
       id: string;
@@ -441,7 +416,7 @@ export class AdminController {
   async updateSystemSettings(
     @Request() req,
     @Body()
-    settings: {
+    _settings: {
       maintenanceMode?: boolean;
       registrationEnabled?: boolean;
       maxUploadSize?: number;
