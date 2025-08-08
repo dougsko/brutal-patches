@@ -10,7 +10,7 @@ describe('CacheService', () => {
 
   beforeEach(async () => {
     jest.useRealTimers();
-    
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [CacheService],
     }).compile();
@@ -50,7 +50,7 @@ describe('CacheService', () => {
       const value = 'test-value';
 
       expect(service.has(key)).toBe(false);
-      
+
       service.set(key, value);
       expect(service.has(key)).toBe(true);
     });
@@ -114,14 +114,14 @@ describe('CacheService', () => {
       const value = 'tracked-value';
 
       service.set(key, value);
-      
+
       // Access the item multiple times
       service.get(key);
       service.get(key);
       service.get(key);
 
       const stats = service.getStats();
-      const item = stats.items.find(item => item.key === key);
+      const item = stats.items.find((item) => item.key === key);
 
       expect(item).toBeDefined();
       expect(item!.accessCount).toBe(3);
@@ -159,14 +159,18 @@ describe('CacheService', () => {
       const error = new Error('Factory error');
       const factoryMock = jest.fn().mockRejectedValue(error);
 
-      await expect(service.getOrSet(key, factoryMock)).rejects.toThrow('Factory error');
+      await expect(service.getOrSet(key, factoryMock)).rejects.toThrow(
+        'Factory error',
+      );
       expect(service.has(key)).toBe(false);
     });
   });
 
   describe('memoization', () => {
     it('should memoize function calls', async () => {
-      const originalFunction = jest.fn().mockImplementation((a: number, b: number) => a + b);
+      const originalFunction = jest
+        .fn()
+        .mockImplementation((a: number, b: number) => a + b);
       const memoizedFunction = service.memoize(originalFunction);
 
       const result1 = await memoizedFunction(1, 2);
@@ -181,8 +185,11 @@ describe('CacheService', () => {
     });
 
     it('should use custom key generator for memoization', async () => {
-      const originalFunction = jest.fn().mockImplementation((obj: { id: number; name: string }) => obj.name);
-      const keyGenerator = (obj: { id: number; name: string }) => `user-${obj.id}`;
+      const originalFunction = jest
+        .fn()
+        .mockImplementation((obj: { id: number; name: string }) => obj.name);
+      const keyGenerator = (obj: { id: number; name: string }) =>
+        `user-${obj.id}`;
       const memoizedFunction = service.memoize(originalFunction, keyGenerator);
 
       const user1 = { id: 1, name: 'Alice' };
@@ -216,7 +223,10 @@ describe('CacheService', () => {
 
   describe('tag-based invalidation', () => {
     it('should associate cache items with tags', () => {
-      service.setWithTags('user:1', { name: 'Alice' }, ['users', 'active-users']);
+      service.setWithTags('user:1', { name: 'Alice' }, [
+        'users',
+        'active-users',
+      ]);
       service.setWithTags('user:2', { name: 'Bob' }, ['users']);
       service.setWithTags('product:1', { name: 'Product A' }, ['products']);
 
@@ -226,7 +236,10 @@ describe('CacheService', () => {
     });
 
     it('should invalidate cache items by tag', () => {
-      service.setWithTags('user:1', { name: 'Alice' }, ['users', 'active-users']);
+      service.setWithTags('user:1', { name: 'Alice' }, [
+        'users',
+        'active-users',
+      ]);
       service.setWithTags('user:2', { name: 'Bob' }, ['users']);
       service.setWithTags('product:1', { name: 'Product A' }, ['products']);
 
@@ -255,9 +268,21 @@ describe('CacheService', () => {
       expect(stats.size).toBe(3);
       expect(stats.maxSize).toBeGreaterThan(0);
       expect(stats.items).toHaveLength(3);
-      expect(stats.items.some(item => item.key === 'key1' && item.accessCount === 2)).toBe(true);
-      expect(stats.items.some(item => item.key === 'key2' && item.accessCount === 1)).toBe(true);
-      expect(stats.items.some(item => item.key === 'key3' && item.accessCount === 0)).toBe(true);
+      expect(
+        stats.items.some(
+          (item) => item.key === 'key1' && item.accessCount === 2,
+        ),
+      ).toBe(true);
+      expect(
+        stats.items.some(
+          (item) => item.key === 'key2' && item.accessCount === 1,
+        ),
+      ).toBe(true);
+      expect(
+        stats.items.some(
+          (item) => item.key === 'key3' && item.accessCount === 0,
+        ),
+      ).toBe(true);
     });
   });
 

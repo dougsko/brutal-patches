@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository, RepositoryConfig } from '../common/database/base-repository';
+import {
+  BaseRepository,
+  RepositoryConfig,
+} from '../common/database/base-repository';
 import { DynamoDBService } from '../common/database/dynamodb.service';
 import { User } from '../interfaces/user.interface';
 
@@ -35,13 +38,16 @@ export class UserRepository extends BaseRepository<User> {
         'EmailIndex',
         'email = :email',
         { ':email': email },
-        { limit: 1 }
+        { limit: 1 },
       );
 
       return result.items.length > 0 ? result.items[0] : null;
     } catch (error) {
-      this.logger.warn('Email GSI query failed, falling back to scan:', error.message);
-      
+      this.logger.warn(
+        'Email GSI query failed, falling back to scan:',
+        error.message,
+      );
+
       // Fallback to scan if GSI is not available
       try {
         const scanResult = await this.dynamoService.scanItems<User>(
@@ -50,12 +56,15 @@ export class UserRepository extends BaseRepository<User> {
             filterExpression: 'email = :email',
             expressionAttributeValues: { ':email': email },
             limit: 1,
-          }
+          },
         );
 
         return scanResult.items.length > 0 ? scanResult.items[0] : null;
       } catch (scanError) {
-        this.logger.error('Failed to find user by email (scan fallback):', scanError);
+        this.logger.error(
+          'Failed to find user by email (scan fallback):',
+          scanError,
+        );
         throw scanError;
       }
     }
@@ -89,7 +98,10 @@ export class UserRepository extends BaseRepository<User> {
   /**
    * Update user profile
    */
-  async updateUser(username: string, updates: Partial<User>): Promise<User | null> {
+  async updateUser(
+    username: string,
+    updates: Partial<User>,
+  ): Promise<User | null> {
     // Remove fields that shouldn't be updated directly
     const { username: _, createdAt, ...allowedUpdates } = updates;
 
@@ -99,10 +111,13 @@ export class UserRepository extends BaseRepository<User> {
   /**
    * Add patch to user's patch list
    */
-  async addPatchToUser(username: string, patchId: number): Promise<User | null> {
+  async addPatchToUser(
+    username: string,
+    patchId: number,
+  ): Promise<User | null> {
     try {
       const tableConfig = this.getTableConfig();
-      
+
       const result = await this.dynamoService.updateItem<User>(
         tableConfig,
         { username },
@@ -113,13 +128,16 @@ export class UserRepository extends BaseRepository<User> {
             ':patch_id': [patchId],
           },
           conditionExpression: 'attribute_exists(username)', // User must exist
-        }
+        },
       );
 
       this.logger.log(`Added patch ${patchId} to user ${username}`);
       return result;
     } catch (error) {
-      this.logger.error(`Failed to add patch ${patchId} to user ${username}:`, error);
+      this.logger.error(
+        `Failed to add patch ${patchId} to user ${username}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -127,7 +145,10 @@ export class UserRepository extends BaseRepository<User> {
   /**
    * Remove patch from user's patch list
    */
-  async removePatchFromUser(username: string, patchId: number): Promise<User | null> {
+  async removePatchFromUser(
+    username: string,
+    patchId: number,
+  ): Promise<User | null> {
     try {
       // First get the user to find the patch index
       const user = await this.findByUsername(username);
@@ -137,7 +158,7 @@ export class UserRepository extends BaseRepository<User> {
 
       const patchIndex = user.patches.indexOf(patchId);
       if (patchIndex === -1) {
-        throw new Error('Patch not found in user\'s patches');
+        throw new Error("Patch not found in user's patches");
       }
 
       // Remove the patch by index
@@ -148,13 +169,16 @@ export class UserRepository extends BaseRepository<User> {
         `REMOVE patches[${patchIndex}]`,
         {
           conditionExpression: 'attribute_exists(username)',
-        }
+        },
       );
 
       this.logger.log(`Removed patch ${patchId} from user ${username}`);
       return result;
     } catch (error) {
-      this.logger.error(`Failed to remove patch ${patchId} from user ${username}:`, error);
+      this.logger.error(
+        `Failed to remove patch ${patchId} from user ${username}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -174,7 +198,7 @@ export class UserRepository extends BaseRepository<User> {
           expressionAttributeValues: {
             ':role': role,
           },
-        }
+        },
       );
 
       return result.items;
@@ -221,13 +245,13 @@ export class UserRepository extends BaseRepository<User> {
       const batchGetParams = {
         RequestItems: {
           [this.config.tableName]: {
-            Keys: usernames.map(username => ({ username })),
+            Keys: usernames.map((username) => ({ username })),
           },
         },
       };
 
       const result = await this.dynamoService.batchGet(batchGetParams);
-      return result[this.config.tableName] as User[] || [];
+      return (result[this.config.tableName] as User[]) || [];
     } catch (error) {
       this.logger.error('Failed to batch get users:', error);
       throw error;
@@ -242,7 +266,10 @@ export class UserRepository extends BaseRepository<User> {
       const user = await this.findByUsername(username);
       return user === null;
     } catch (error) {
-      this.logger.error(`Failed to check username availability for ${username}:`, error);
+      this.logger.error(
+        `Failed to check username availability for ${username}:`,
+        error,
+      );
       return false;
     }
   }
@@ -255,7 +282,10 @@ export class UserRepository extends BaseRepository<User> {
       const user = await this.findByEmail(email);
       return user === null;
     } catch (error) {
-      this.logger.error(`Failed to check email availability for ${email}:`, error);
+      this.logger.error(
+        `Failed to check email availability for ${email}:`,
+        error,
+      );
       return false;
     }
   }

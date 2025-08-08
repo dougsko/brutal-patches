@@ -85,7 +85,7 @@ export class UsersController {
 
   @ApiOperation({
     summary: 'Test endpoint',
-    description: 'Development-only endpoint for testing authentication'
+    description: 'Development-only endpoint for testing authentication',
   })
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({
@@ -96,19 +96,19 @@ export class UsersController {
       properties: {
         message: { type: 'string' },
         user: { type: 'string' },
-        environment: { type: 'string' }
-      }
-    }
+        environment: { type: 'string' },
+      },
+    },
   })
   @ApiResponse({
     status: 403,
     description: 'Forbidden in production',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Get('/test')
@@ -116,32 +116,32 @@ export class UsersController {
     if (process.env.NODE_ENV === 'production') {
       throw new ForbiddenException('Test endpoint disabled in production');
     }
-    return { 
-      message: 'Users controller is working!', 
+    return {
+      message: 'Users controller is working!',
       user: req.user.username,
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     };
   }
 
   @ApiOperation({
     summary: 'Create new user',
-    description: 'Register a new user account in the system'
+    description: 'Register a new user account in the system',
   })
   @ApiBody({ type: CreateUserDto, description: 'User registration data' })
   @ApiResponse({
     status: 201,
     description: 'User created successfully',
-    type: CreateUserResponse
+    type: CreateUserResponse,
   })
   @ApiBadRequestResponse({
     status: 400,
     description: 'Invalid registration data',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiResponse({
     status: 409,
     description: 'Username or email already exists',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @Post('/create')
   async createUser(@Body() createUserDto: CreateUserDto) {
@@ -155,20 +155,23 @@ export class UsersController {
       };
     } catch (error) {
       console.error('Controller error:', error);
-      
+
       // Re-throw HttpExceptions as-is (like "Username already exists")
       if (error instanceof HttpException) {
         throw error;
       }
-      
+
       // For other errors, throw a generic 500 error
-      throw new HttpException('Failed to create user', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to create user',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
   @ApiOperation({
     summary: 'Get user profile',
-    description: 'Get the authenticated user\'s complete profile information'
+    description: "Get the authenticated user's complete profile information",
   })
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({
@@ -178,25 +181,27 @@ export class UsersController {
       type: 'object',
       properties: {
         ok: { type: 'boolean' },
-        user: { $ref: '#/components/schemas/UserResponse' }
-      }
-    }
+        user: { $ref: '#/components/schemas/UserResponse' },
+      },
+    },
   })
   @ApiNotFoundResponse({
     status: 404,
     description: 'User profile not found',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
   async getProfile(@Request() req, @Res() res: any) {
     try {
-      const user: any = await this.userService.getUserByUsername(req.user.username);
+      const user: any = await this.userService.getUserByUsername(
+        req.user.username,
+      );
       if (user.ok && user.data.length > 0) {
         // Return user's own profile with all details
         const { password, ...userWithoutPassword } = user.data[0];
@@ -222,7 +227,7 @@ export class UsersController {
 
   @ApiOperation({
     summary: 'Get public user profile',
-    description: 'Get public profile information for any user by username'
+    description: 'Get public profile information for any user by username',
   })
   @ApiParam({ name: 'username', description: 'Username to look up' })
   @ApiResponse({
@@ -232,17 +237,20 @@ export class UsersController {
       type: 'object',
       properties: {
         ok: { type: 'boolean' },
-        user: { $ref: '#/components/schemas/PublicUserResponse' }
-      }
-    }
+        user: { $ref: '#/components/schemas/PublicUserResponse' },
+      },
+    },
   })
   @ApiNotFoundResponse({
     status: 404,
     description: 'User not found',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @Get('/getUserByUsername/:username')
-  async getPublicUserProfile(@Param('username') username: string, @Res() res: any) {
+  async getPublicUserProfile(
+    @Param('username') username: string,
+    @Res() res: any,
+  ) {
     try {
       const user: any = await this.userService.getUserByUsername(username);
       if (user.ok && user.data.length > 0) {

@@ -122,7 +122,7 @@ describe('Patch API (e2e)', () => {
 
     // Note: For full e2e testing with authentication, we would need to:
     // 1. Create a test user
-    // 2. Login to get JWT token  
+    // 2. Login to get JWT token
     // 3. Include token in Authorization header
     // This requires additional setup for authentication testing
 
@@ -174,9 +174,7 @@ describe('Patch API (e2e)', () => {
     });
 
     it('should return 404 for non-existent endpoints', () => {
-      return request(app.getHttpServer())
-        .get('/api/nonexistent')
-        .expect(404);
+      return request(app.getHttpServer()).get('/api/nonexistent').expect(404);
     });
   });
 });

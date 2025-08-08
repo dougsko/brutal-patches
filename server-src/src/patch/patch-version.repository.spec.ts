@@ -31,10 +31,12 @@ describe('PatchVersionRepository', () => {
     }).compile();
 
     repository = module.get<PatchVersionRepository>(PatchVersionRepository);
-    dynamoService = module.get<DynamoDBService>(DynamoDBService) as jest.Mocked<DynamoDBService>;
+    dynamoService = module.get<DynamoDBService>(
+      DynamoDBService,
+    ) as jest.Mocked<DynamoDBService>;
 
     // Reset mocks before each test
-    Object.values(mockDynamoService).forEach(mock => mock.mockReset());
+    Object.values(mockDynamoService).forEach((mock) => mock.mockReset());
   });
 
   describe('createVersion', () => {
@@ -69,7 +71,7 @@ describe('PatchVersionRepository', () => {
           ...versionData,
           id: expect.any(Number),
         }),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -85,9 +87,13 @@ describe('PatchVersionRepository', () => {
         created_by: 'testuser',
       };
 
-      mockDynamoService.putItem.mockRejectedValueOnce(new Error('DynamoDB error'));
+      mockDynamoService.putItem.mockRejectedValueOnce(
+        new Error('DynamoDB error'),
+      );
 
-      await expect(repository.createVersion(versionData)).rejects.toThrow('DynamoDB error');
+      await expect(repository.createVersion(versionData)).rejects.toThrow(
+        'DynamoDB error',
+      );
     });
   });
 
@@ -139,7 +145,7 @@ describe('PatchVersionRepository', () => {
         { ':patchId': patchId },
         expect.objectContaining({
           scanIndexForward: false,
-        })
+        }),
       );
     });
   });
@@ -174,8 +180,8 @@ describe('PatchVersionRepository', () => {
         'patchId = :patchId AND version = :version',
         { ':patchId': patchId, ':version': version },
         expect.objectContaining({
-          indexName: 'PatchIndex'
-        })
+          indexName: 'PatchIndex',
+        }),
       );
     });
 
@@ -227,7 +233,7 @@ describe('PatchVersionRepository', () => {
           scanIndexForward: false,
           limit: 1,
           projectionExpression: 'version',
-        })
+        }),
       );
     });
 
@@ -251,7 +257,7 @@ describe('PatchVersionRepository', () => {
       const patchId = 123;
       const version1 = 1;
       const version2 = 2;
-      
+
       const mockVersion1: PatchVersion = {
         id: 1,
         patchId,
@@ -285,11 +291,16 @@ describe('PatchVersionRepository', () => {
       };
 
       // Mock two separate calls to getPatchVersion
-      jest.spyOn(repository, 'getPatchVersion')
+      jest
+        .spyOn(repository, 'getPatchVersion')
         .mockResolvedValueOnce(mockVersion1)
         .mockResolvedValueOnce(mockVersion2);
 
-      const result = await repository.compareVersions(patchId, version1, version2);
+      const result = await repository.compareVersions(
+        patchId,
+        version1,
+        version2,
+      );
 
       expect(result).toEqual({
         version1: mockVersion1,
@@ -316,11 +327,16 @@ describe('PatchVersionRepository', () => {
       const version1 = 1;
       const version2 = 999;
 
-      jest.spyOn(repository, 'getPatchVersion')
+      jest
+        .spyOn(repository, 'getPatchVersion')
         .mockResolvedValueOnce({} as PatchVersion)
         .mockResolvedValueOnce(null);
 
-      const result = await repository.compareVersions(patchId, version1, version2);
+      const result = await repository.compareVersions(
+        patchId,
+        version1,
+        version2,
+      );
 
       expect(result.differences).toEqual([]);
     });

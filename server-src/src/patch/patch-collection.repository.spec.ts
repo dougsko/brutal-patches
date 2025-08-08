@@ -28,11 +28,15 @@ describe('PatchCollectionRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<PatchCollectionRepository>(PatchCollectionRepository);
-    dynamoService = module.get<DynamoDBService>(DynamoDBService) as jest.Mocked<DynamoDBService>;
+    repository = module.get<PatchCollectionRepository>(
+      PatchCollectionRepository,
+    );
+    dynamoService = module.get<DynamoDBService>(
+      DynamoDBService,
+    ) as jest.Mocked<DynamoDBService>;
 
     // Reset mocks before each test
-    Object.values(mockDynamoService).forEach(mock => mock.mockReset());
+    Object.values(mockDynamoService).forEach((mock) => mock.mockReset());
   });
 
   describe('createCollection', () => {
@@ -56,11 +60,11 @@ describe('PatchCollectionRepository', () => {
         created_at: expect.any(String),
         updated_at: expect.any(String),
       });
-      
+
       expect(mockDynamoService.putItem).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining(collectionData),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -115,7 +119,7 @@ describe('PatchCollectionRepository', () => {
         { ':userId': userId },
         expect.objectContaining({
           scanIndexForward: false,
-        })
+        }),
       );
     });
 
@@ -153,7 +157,7 @@ describe('PatchCollectionRepository', () => {
         }),
         expect.objectContaining({
           filterExpression: 'isPublic = :isPublic',
-        })
+        }),
       );
     });
   });
@@ -194,7 +198,7 @@ describe('PatchCollectionRepository', () => {
         { ':isPublic': true },
         expect.objectContaining({
           scanIndexForward: false,
-        })
+        }),
       );
     });
   });
@@ -222,13 +226,15 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
       jest.spyOn(repository, 'update').mockResolvedValueOnce(updatedCollection);
 
-      const result = await repository.addPatchToCollection(collectionId, patchId);
+      const result = await repository.addPatchToCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(updatedCollection);
-      expect(repository.update).toHaveBeenCalledWith(
-        collectionId,
-        { patchIds: [1, 2, 3, 10] }
-      );
+      expect(repository.update).toHaveBeenCalledWith(collectionId, {
+        patchIds: [1, 2, 3, 10],
+      });
     });
 
     it('should not add duplicate patch to collection', async () => {
@@ -246,11 +252,15 @@ describe('PatchCollectionRepository', () => {
       };
 
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
+      const updateSpy = jest.spyOn(repository, 'update').mockImplementation();
 
-      const result = await repository.addPatchToCollection(collectionId, patchId);
+      const result = await repository.addPatchToCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(mockCollection);
-      expect(repository.update).not.toHaveBeenCalled();
+      expect(updateSpy).not.toHaveBeenCalled();
     });
 
     it('should throw error when collection not found', async () => {
@@ -260,7 +270,7 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(null);
 
       await expect(
-        repository.addPatchToCollection(collectionId, patchId)
+        repository.addPatchToCollection(collectionId, patchId),
       ).rejects.toThrow('Collection not found');
     });
   });
@@ -288,13 +298,15 @@ describe('PatchCollectionRepository', () => {
       jest.spyOn(repository, 'findById').mockResolvedValueOnce(mockCollection);
       jest.spyOn(repository, 'update').mockResolvedValueOnce(updatedCollection);
 
-      const result = await repository.removePatchFromCollection(collectionId, patchId);
+      const result = await repository.removePatchFromCollection(
+        collectionId,
+        patchId,
+      );
 
       expect(result).toEqual(updatedCollection);
-      expect(repository.update).toHaveBeenCalledWith(
-        collectionId,
-        { patchIds: [1, 3] }
-      );
+      expect(repository.update).toHaveBeenCalledWith(collectionId, {
+        patchIds: [1, 3],
+      });
     });
   });
 
@@ -334,7 +346,9 @@ describe('PatchCollectionRepository', () => {
       expect(mockDynamoService.scanItems).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
-          filterExpression: expect.stringContaining('contains(#name, :searchTerm)'),
+          filterExpression: expect.stringContaining(
+            'contains(#name, :searchTerm)',
+          ),
           expressionAttributeNames: {
             '#name': 'name',
             '#description': 'description',
@@ -343,7 +357,7 @@ describe('PatchCollectionRepository', () => {
             ':searchTerm': 'bass',
             ':isPublic': true,
           }),
-        })
+        }),
       );
     });
   });

@@ -1,6 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { register, Counter, Histogram, Gauge, collectDefaultMetrics } from 'prom-client';
-import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+import {
+  register,
+  Counter,
+  Histogram,
+  Gauge,
+  collectDefaultMetrics,
+} from 'prom-client';
+import {
+  CloudWatchClient,
+  PutMetricDataCommand,
+} from '@aws-sdk/client-cloudwatch';
 // X-Ray SDK with type assertions for compatibility
 const AWSXRay = require('aws-xray-sdk-node');
 import { LoggerService } from '../logger.service';
@@ -9,7 +18,7 @@ import { LoggerService } from '../logger.service';
 export class MonitoringService implements OnModuleInit {
   private cloudWatch: CloudWatchClient;
   private readonly namespace = 'BrutalPatches/API';
-  
+
   // Prometheus metrics
   private readonly httpRequestsTotal: Counter<string>;
   private readonly httpRequestDuration: Histogram<string>;
@@ -104,7 +113,7 @@ export class MonitoringService implements OnModuleInit {
   onModuleInit() {
     // Collect default metrics (CPU, memory, etc.)
     collectDefaultMetrics({ register });
-    
+
     // Setup AWS X-Ray if in production
     if (process.env.NODE_ENV === 'production') {
       AWSXRay.config([AWSXRay.plugins.ECSPlugin]);
@@ -115,10 +124,19 @@ export class MonitoringService implements OnModuleInit {
   }
 
   // HTTP Request Metrics
-  recordHttpRequest(method: string, route: string, statusCode: number, duration: number) {
-    this.httpRequestsTotal.inc({ method, route, status_code: statusCode.toString() });
+  recordHttpRequest(
+    method: string,
+    route: string,
+    statusCode: number,
+    duration: number,
+  ) {
+    this.httpRequestsTotal.inc({
+      method,
+      route,
+      status_code: statusCode.toString(),
+    });
     this.httpRequestDuration.observe({ method, route }, duration / 1000);
-    
+
     // Send to CloudWatch
     this.sendToCloudWatch('HttpRequests', 1, 'Count', {
       Method: method,
@@ -128,10 +146,15 @@ export class MonitoringService implements OnModuleInit {
   }
 
   // Database Metrics
-  recordDatabaseOperation(operation: string, table: string, duration: number, success: boolean) {
+  recordDatabaseOperation(
+    operation: string,
+    table: string,
+    duration: number,
+    success: boolean,
+  ) {
     this.databaseConnectionsTotal.inc({ operation, table });
     this.databaseQueryDuration.observe({ operation, table }, duration / 1000);
-    
+
     if (!success) {
       this.errorRate.inc({ type: 'database', severity: 'error' });
     }
@@ -146,7 +169,7 @@ export class MonitoringService implements OnModuleInit {
   // Cache Metrics
   recordCacheOperation(operation: string, result: 'hit' | 'miss' | 'error') {
     this.cacheOperationsTotal.inc({ operation, result });
-    
+
     this.sendToCloudWatch('CacheOperations', 1, 'Count', {
       Operation: operation,
       Result: result,
@@ -156,7 +179,7 @@ export class MonitoringService implements OnModuleInit {
   // Patch Operations Metrics
   recordPatchOperation(operation: string, userRole: string) {
     this.patchOperationsTotal.inc({ operation, user_role: userRole });
-    
+
     this.sendToCloudWatch('PatchOperations', 1, 'Count', {
       Operation: operation,
       UserRole: userRole,
@@ -166,7 +189,7 @@ export class MonitoringService implements OnModuleInit {
   // User Operations Metrics
   recordUserOperation(operation: string) {
     this.userOperationsTotal.inc({ operation });
-    
+
     this.sendToCloudWatch('UserOperations', 1, 'Count', {
       Operation: operation,
     });
@@ -175,27 +198,40 @@ export class MonitoringService implements OnModuleInit {
   // Authentication Metrics
   recordJWTToken(type: 'login' | 'refresh') {
     this.jwtTokensIssued.inc({ type });
-    
+
     this.sendToCloudWatch('AuthenticationEvents', 1, 'Count', {
       Type: type,
     });
   }
 
   // Error Tracking
-  recordError(type: string, severity: 'warning' | 'error' | 'critical', metadata?: Record<string, any>) {
+  recordError(
+    type: string,
+    severity: 'warning' | 'error' | 'critical',
+    metadata?: Record<string, any>,
+  ) {
     this.errorRate.inc({ type, severity });
-    
+
     this.sendToCloudWatch('Errors', 1, 'Count', {
       Type: type,
       Severity: severity,
       ...metadata,
     });
 
-    this.logger.error(`Error recorded: ${type}`, JSON.stringify(metadata), 'MonitoringService');
+    this.logger.error(
+      `Error recorded: ${type}`,
+      JSON.stringify(metadata),
+      'MonitoringService',
+    );
   }
 
   // Business Metrics
-  recordBusinessMetric(metricName: string, value: number, unit: 'Count' | 'Seconds' | 'Percent' | 'Bytes', dimensions?: Record<string, string>) {
+  recordBusinessMetric(
+    metricName: string,
+    value: number,
+    unit: 'Count' | 'Seconds' | 'Percent' | 'Bytes',
+    dimensions?: Record<string, string>,
+  ) {
     this.sendToCloudWatch(metricName, value, unit, dimensions);
   }
 
@@ -205,7 +241,10 @@ export class MonitoringService implements OnModuleInit {
   }
 
   // Performance monitoring with X-Ray
-  createXRaySegment(name: string, callback: (segment: any) => Promise<any>): Promise<any> {
+  createXRaySegment(
+    name: string,
+    callback: (segment: any) => Promise<any>,
+  ): Promise<any> {
     if (process.env.NODE_ENV !== 'production') {
       return callback(null);
     }
@@ -232,16 +271,30 @@ export class MonitoringService implements OnModuleInit {
 
   // Custom dashboard metrics
   async getDashboardMetrics(): Promise<any> {
-    const metrics = await register.getSingleMetricAsString('http_requests_total');
-    
+    const metrics = await register.getSingleMetricAsString(
+      'http_requests_total',
+    );
+
     return {
-      httpRequests: await register.getSingleMetricAsString('http_requests_total'),
-      httpDuration: await register.getSingleMetricAsString('http_request_duration_seconds'),
-      databaseOperations: await register.getSingleMetricAsString('database_connections_total'),
-      cacheOperations: await register.getSingleMetricAsString('cache_operations_total'),
+      httpRequests: await register.getSingleMetricAsString(
+        'http_requests_total',
+      ),
+      httpDuration: await register.getSingleMetricAsString(
+        'http_request_duration_seconds',
+      ),
+      databaseOperations: await register.getSingleMetricAsString(
+        'database_connections_total',
+      ),
+      cacheOperations: await register.getSingleMetricAsString(
+        'cache_operations_total',
+      ),
       errors: await register.getSingleMetricAsString('errors_total'),
-      patchOperations: await register.getSingleMetricAsString('patch_operations_total'),
-      userOperations: await register.getSingleMetricAsString('user_operations_total'),
+      patchOperations: await register.getSingleMetricAsString(
+        'patch_operations_total',
+      ),
+      userOperations: await register.getSingleMetricAsString(
+        'user_operations_total',
+      ),
     };
   }
 
@@ -250,7 +303,7 @@ export class MonitoringService implements OnModuleInit {
     metricName: string,
     value: number,
     unit: 'Count' | 'Seconds' | 'Percent' | 'Bytes',
-    dimensions?: Record<string, string>
+    dimensions?: Record<string, string>,
   ) {
     if (process.env.NODE_ENV !== 'production') {
       return; // Skip CloudWatch in development
@@ -276,7 +329,11 @@ export class MonitoringService implements OnModuleInit {
 
       await this.cloudWatch.send(command);
     } catch (error) {
-      this.logger.error(`Failed to send metric to CloudWatch: ${metricName}`, error.message, 'MonitoringService');
+      this.logger.error(
+        `Failed to send metric to CloudWatch: ${metricName}`,
+        error.message,
+        'MonitoringService',
+      );
     }
   }
 

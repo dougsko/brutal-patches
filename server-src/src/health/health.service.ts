@@ -9,9 +9,9 @@ export class HealthService {
   async checkHealth() {
     const status = 'ok';
     const timestamp = new Date().toISOString();
-    
+
     this.logger.log('Health check requested', 'HealthService');
-    
+
     return {
       status,
       timestamp,
@@ -23,7 +23,7 @@ export class HealthService {
 
   async checkDetailedHealth() {
     const basicHealth = await this.checkHealth();
-    
+
     // Check database connectivity
     let databaseStatus = 'unknown';
     try {
@@ -31,7 +31,11 @@ export class HealthService {
       databaseStatus = 'ok';
     } catch (error) {
       databaseStatus = 'error';
-      this.logger.error('Database health check failed', error.message, 'HealthService');
+      this.logger.error(
+        'Database health check failed',
+        error.message,
+        'HealthService',
+      );
     }
 
     // System information

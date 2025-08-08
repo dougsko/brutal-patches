@@ -72,24 +72,36 @@ describe('AdminService', () => {
     }).compile();
 
     service = module.get<AdminService>(AdminService);
-    usersService = module.get<UsersService>(UsersService) as jest.Mocked<UsersService>;
-    patchService = module.get<PatchService>(PatchService) as jest.Mocked<PatchService>;
-    patchRepository = module.get<PatchRepository>(PatchRepository) as jest.Mocked<PatchRepository>;
-    collectionRepository = module.get<PatchCollectionRepository>(PatchCollectionRepository) as jest.Mocked<PatchCollectionRepository>;
-    bulkOperationsService = module.get<BulkOperationsService>(BulkOperationsService) as jest.Mocked<BulkOperationsService>;
+    usersService = module.get<UsersService>(
+      UsersService,
+    ) as jest.Mocked<UsersService>;
+    patchService = module.get<PatchService>(
+      PatchService,
+    ) as jest.Mocked<PatchService>;
+    patchRepository = module.get<PatchRepository>(
+      PatchRepository,
+    ) as jest.Mocked<PatchRepository>;
+    collectionRepository = module.get<PatchCollectionRepository>(
+      PatchCollectionRepository,
+    ) as jest.Mocked<PatchCollectionRepository>;
+    bulkOperationsService = module.get<BulkOperationsService>(
+      BulkOperationsService,
+    ) as jest.Mocked<BulkOperationsService>;
 
     // Reset mocks before each test
-    Object.values(mockUsersService).forEach(mock => mock.mockReset());
-    Object.values(mockPatchService).forEach(mock => mock.mockReset());
-    Object.values(mockPatchRepository).forEach(mock => mock.mockReset());
-    Object.values(mockCollectionRepository).forEach(mock => mock.mockReset());
-    Object.values(mockBulkOperationsService).forEach(mock => mock.mockReset());
+    Object.values(mockUsersService).forEach((mock) => mock.mockReset());
+    Object.values(mockPatchService).forEach((mock) => mock.mockReset());
+    Object.values(mockPatchRepository).forEach((mock) => mock.mockReset());
+    Object.values(mockCollectionRepository).forEach((mock) => mock.mockReset());
+    Object.values(mockBulkOperationsService).forEach((mock) =>
+      mock.mockReset(),
+    );
   });
 
   describe('getAdminStats', () => {
     it('should return comprehensive admin statistics', async () => {
       const mockPatchStats = {
-        total: 150,
+        totalPatches: 150,
         averageRating: 4.2,
         topCategories: [
           { category: 'bass', count: 45 },
@@ -114,7 +126,9 @@ describe('AdminService', () => {
       });
 
       mockPatchRepository.getPatchStats.mockResolvedValueOnce(mockPatchStats);
-      mockCollectionRepository.getCollectionStats.mockResolvedValueOnce(mockCollectionStats);
+      mockCollectionRepository.getCollectionStats.mockResolvedValueOnce(
+        mockCollectionStats,
+      );
 
       const result = await service.getAdminStats();
 
@@ -125,8 +139,23 @@ describe('AdminService', () => {
           newUsersThisWeek: 5,
           newUsersThisMonth: 12,
         },
-        patches: mockPatchStats,
-        collections: mockCollectionStats,
+        patches: {
+          total: 150,
+          newPatchesThisWeek: 0,
+          newPatchesThisMonth: 0,
+          averageRating: 4.2,
+          topCategories: [
+            { category: 'bass', count: 45 },
+            { category: 'lead', count: 35 },
+            { category: 'pad', count: 25 },
+          ],
+        },
+        collections: {
+          total: 25,
+          publicCollections: 15,
+          privateCollections: 10,
+          averagePatchCount: 6.2,
+        },
         activity: {
           dailyActiveUsers: 0,
           weeklyActiveUsers: 0,
@@ -135,13 +164,19 @@ describe('AdminService', () => {
       });
 
       expect(mockPatchRepository.getPatchStats).toHaveBeenCalledTimes(1);
-      expect(mockCollectionRepository.getCollectionStats).toHaveBeenCalledTimes(1);
+      expect(mockCollectionRepository.getCollectionStats).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
     it('should handle errors when getting statistics', async () => {
-      jest.spyOn(service as any, 'getUserStats').mockRejectedValueOnce(new Error('User stats error'));
+      jest
+        .spyOn(service as any, 'getUserStats')
+        .mockRejectedValueOnce(new Error('User stats error'));
 
-      await expect(service.getAdminStats()).rejects.toThrow('Failed to get admin statistics');
+      await expect(service.getAdminStats()).rejects.toThrow(
+        'Failed to get admin statistics',
+      );
     });
   });
 
@@ -174,7 +209,9 @@ describe('AdminService', () => {
     });
 
     it('should return critical status when database is disconnected', async () => {
-      mockPatchRepository.count.mockRejectedValueOnce(new Error('Database connection failed'));
+      mockPatchRepository.count.mockRejectedValueOnce(
+        new Error('Database connection failed'),
+      );
 
       const result = await service.getSystemHealth();
 
@@ -185,7 +222,7 @@ describe('AdminService', () => {
     it('should return warning status for slow database response', async () => {
       // Mock a slow response (over 1000ms)
       mockPatchRepository.count.mockImplementationOnce(
-        () => new Promise(resolve => setTimeout(() => resolve(100), 1100))
+        () => new Promise((resolve) => setTimeout(() => resolve(100), 1100)),
       );
 
       const result = await service.getSystemHealth();
@@ -210,7 +247,12 @@ describe('AdminService', () => {
       const moderatorUsername = 'admin';
       const notes = 'Content looks good';
 
-      const result = await service.moderateContent(itemId, action, moderatorUsername, notes);
+      const result = await service.moderateContent(
+        itemId,
+        action,
+        moderatorUsername,
+        notes,
+      );
 
       expect(result).toEqual({
         success: true,
@@ -223,7 +265,11 @@ describe('AdminService', () => {
       const action = 'reject';
       const moderatorUsername = 'admin';
 
-      const result = await service.moderateContent(itemId, action, moderatorUsername);
+      const result = await service.moderateContent(
+        itemId,
+        action,
+        moderatorUsername,
+      );
 
       expect(result).toEqual({
         success: true,
@@ -256,7 +302,12 @@ describe('AdminService', () => {
       const moderatorUsername = 'admin';
       const reason = 'Violation of terms of service';
 
-      const result = await service.moderateUser(userId, action, moderatorUsername, reason);
+      const result = await service.moderateUser(
+        userId,
+        action,
+        moderatorUsername,
+        reason,
+      );
 
       expect(result).toEqual({
         success: true,
@@ -269,7 +320,11 @@ describe('AdminService', () => {
       const action = 'activate';
       const moderatorUsername = 'admin';
 
-      const result = await service.moderateUser(userId, action, moderatorUsername);
+      const result = await service.moderateUser(
+        userId,
+        action,
+        moderatorUsername,
+      );
 
       expect(result).toEqual({
         success: true,
@@ -281,8 +336,18 @@ describe('AdminService', () => {
   describe('getAnalytics', () => {
     it('should return analytics data for 30 day period', async () => {
       mockPatchService.getPatchCategories.mockResolvedValueOnce([
-        { id: 'bass', name: 'Bass', description: 'Bass patches', color: '#ff0000' },
-        { id: 'lead', name: 'Lead', description: 'Lead patches', color: '#00ff00' },
+        {
+          id: 'bass',
+          name: 'Bass',
+          description: 'Bass patches',
+          color: '#ff0000',
+        },
+        {
+          id: 'lead',
+          name: 'Lead',
+          description: 'Lead patches',
+          color: '#00ff00',
+        },
       ]);
 
       const result = await service.getAnalytics('30d');
@@ -361,7 +426,9 @@ describe('AdminService', () => {
         ],
       };
 
-      mockCollectionRepository.getPublicCollections.mockResolvedValueOnce(mockCollections);
+      mockCollectionRepository.getPublicCollections.mockResolvedValueOnce(
+        mockCollections,
+      );
 
       const result = await service.exportData('collections', 'json');
 
@@ -377,7 +444,9 @@ describe('AdminService', () => {
       const mockCollections = { items: [{ id: 1, name: 'Collection 1' }] };
 
       mockPatchService.getAllPatches.mockResolvedValueOnce(mockPatches);
-      mockCollectionRepository.getPublicCollections.mockResolvedValueOnce(mockCollections);
+      mockCollectionRepository.getPublicCollections.mockResolvedValueOnce(
+        mockCollections,
+      );
 
       const result = await service.exportData('all', 'json');
 
@@ -400,7 +469,11 @@ describe('AdminService', () => {
       ];
 
       mockPatchService.getAllPatches.mockResolvedValueOnce(mockPatches);
-      jest.spyOn(service as any, 'convertToCSV').mockReturnValueOnce('id,title,description\n1,Patch 1,Test patch 1\n2,Patch 2,Test patch 2');
+      jest
+        .spyOn(service as any, 'convertToCSV')
+        .mockReturnValueOnce(
+          'id,title,description\n1,Patch 1,Test patch 1\n2,Patch 2,Test patch 2',
+        );
 
       const result = await service.exportData('patches', 'csv');
 
@@ -413,7 +486,7 @@ describe('AdminService', () => {
 
     it('should handle invalid export type', async () => {
       await expect(
-        service.exportData('invalid' as any, 'json')
+        service.exportData('invalid' as any, 'json'),
       ).rejects.toThrow('Invalid export type');
     });
   });

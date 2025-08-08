@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository, RepositoryConfig } from '../common/database/base-repository';
+import {
+  BaseRepository,
+  RepositoryConfig,
+} from '../common/database/base-repository';
 import { DynamoDBService } from '../common/database/dynamodb.service';
 import { Patch } from '../interfaces/patch.interface';
 
@@ -34,17 +37,19 @@ export class PatchRepository extends BaseRepository<Patch> {
   /**
    * Create a new patch with auto-generated ID
    */
-  async createPatch(patchData: Partial<Patch> & Pick<Patch, 'title' | 'description'>): Promise<Patch> {
+  async createPatch(
+    patchData: Partial<Patch> & Pick<Patch, 'title' | 'description'>,
+  ): Promise<Patch> {
     try {
       // Generate a unique ID (in production, you might want to use UUID or a more sophisticated approach)
       const id = await this.generatePatchId();
-      
+
       // Create patch with defaults for all required fields
       const patch: Patch = {
         // Required fields
         title: patchData.title,
         description: patchData.description,
-        
+
         // Synthesizer parameters with defaults
         sub_fifth: patchData.sub_fifth || 0,
         overtone: patchData.overtone || 0,
@@ -78,14 +83,14 @@ export class PatchRepository extends BaseRepository<Patch> {
         pattern: patchData.pattern || 0,
         play: patchData.play || 0,
         rate_2: patchData.rate_2 || 0.5,
-        
+
         // System fields
         id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         average_rating: patchData.average_rating || '0',
         tags: patchData.tags || [],
-        
+
         // Copy any additional properties
         ...patchData,
       };
@@ -107,7 +112,10 @@ export class PatchRepository extends BaseRepository<Patch> {
   /**
    * Update patch
    */
-  async updatePatch(id: number, updates: Partial<Patch>): Promise<Patch | null> {
+  async updatePatch(
+    id: number,
+    updates: Partial<Patch>,
+  ): Promise<Patch | null> {
     // Remove fields that shouldn't be updated directly
     const { id: _, created_at, ...allowedUpdates } = updates;
 
@@ -118,12 +126,12 @@ export class PatchRepository extends BaseRepository<Patch> {
    * Get patches by user
    */
   async findPatchesByUser(
-    username: string, 
+    username: string,
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
       sortOrder?: 'asc' | 'desc';
-    }
+    },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const result = await this.queryByIndex(
@@ -134,7 +142,7 @@ export class PatchRepository extends BaseRepository<Patch> {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: options?.sortOrder !== 'desc',
-        }
+        },
       );
 
       this.logger.debug(`Found ${result.count} patches for user ${username}`);
@@ -154,7 +162,7 @@ export class PatchRepository extends BaseRepository<Patch> {
       limit?: number;
       exclusiveStartKey?: any;
       sortOrder?: 'asc' | 'desc';
-    }
+    },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const result = await this.queryByIndex(
@@ -165,12 +173,15 @@ export class PatchRepository extends BaseRepository<Patch> {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: options?.sortOrder !== 'desc',
-        }
+        },
       );
 
       return result;
     } catch (error) {
-      this.logger.error(`Failed to find patches by category ${category}:`, error);
+      this.logger.error(
+        `Failed to find patches by category ${category}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -180,7 +191,7 @@ export class PatchRepository extends BaseRepository<Patch> {
    */
   async findLatestPatches(
     limit?: number,
-    exclusiveStartKey?: any
+    exclusiveStartKey?: any,
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       // Use scan with sorting by created_at
@@ -191,12 +202,13 @@ export class PatchRepository extends BaseRepository<Patch> {
           exclusiveStartKey,
           // Note: DynamoDB scan doesn't support sorting, so we'll need to sort client-side
           // In production, consider using a GSI with a static partition key for this
-        }
+        },
       );
 
       // Sort by created_at descending (newest first)
-      result.items.sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      result.items.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       return result;
@@ -210,11 +222,11 @@ export class PatchRepository extends BaseRepository<Patch> {
    * Get patches with high ratings
    */
   async findTopRatedPatches(
-    minRating: number = 4,
+    minRating = 4,
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
-    }
+    },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const result = await this.dynamoService.scanItems<Patch>(
@@ -224,7 +236,7 @@ export class PatchRepository extends BaseRepository<Patch> {
           expressionAttributeValues: { ':minRating': minRating },
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
-        }
+        },
       );
 
       // Sort by rating descending
@@ -245,15 +257,16 @@ export class PatchRepository extends BaseRepository<Patch> {
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
-    }
+    },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const searchTermLower = searchTerm.toLowerCase();
-      
+
       const result = await this.dynamoService.scanItems<Patch>(
         this.getTableConfig(),
         {
-          filterExpression: 'contains(#title, :searchTerm) OR contains(#description, :searchTerm) OR contains(#tags, :searchTerm)',
+          filterExpression:
+            'contains(#title, :searchTerm) OR contains(#description, :searchTerm) OR contains(#tags, :searchTerm)',
           expressionAttributeNames: {
             '#title': 'title',
             '#description': 'description',
@@ -264,12 +277,15 @@ export class PatchRepository extends BaseRepository<Patch> {
           },
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
-        }
+        },
       );
 
       return result;
     } catch (error) {
-      this.logger.error(`Failed to search patches for term "${searchTerm}":`, error);
+      this.logger.error(
+        `Failed to search patches for term "${searchTerm}":`,
+        error,
+      );
       throw error;
     }
   }
@@ -282,7 +298,7 @@ export class PatchRepository extends BaseRepository<Patch> {
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
-    }
+    },
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const result = await this.dynamoService.scanItems<Patch>(
@@ -292,7 +308,7 @@ export class PatchRepository extends BaseRepository<Patch> {
           expressionAttributeValues: { ':tag': tag },
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
-        }
+        },
       );
 
       return result;
@@ -305,14 +321,20 @@ export class PatchRepository extends BaseRepository<Patch> {
   /**
    * Update patch rating
    */
-  async updatePatchRating(id: number, rating: number, averageRating: string): Promise<Patch | null> {
+  async updatePatchRating(
+    id: number,
+    rating: number,
+    averageRating: string,
+  ): Promise<Patch | null> {
     try {
       const result = await this.update(id, {
         rating,
         average_rating: averageRating,
       });
 
-      this.logger.log(`Updated rating for patch ${id} to ${rating} (avg: ${averageRating})`);
+      this.logger.log(
+        `Updated rating for patch ${id} to ${rating} (avg: ${averageRating})`,
+      );
       return result;
     } catch (error) {
       this.logger.error(`Failed to update rating for patch ${id}:`, error);
@@ -337,18 +359,20 @@ export class PatchRepository extends BaseRepository<Patch> {
 
       const totalPatches = result.totalCount;
       const ratings = result.items
-        .filter(p => p.rating && p.rating > 0)
-        .map(p => p.rating!);
-      
-      const averageRating = ratings.length > 0 
-        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
-        : 0;
+        .filter((p) => p.rating && p.rating > 0)
+        .map((p) => p.rating!);
+
+      const averageRating =
+        ratings.length > 0
+          ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+          : 0;
 
       // Count categories
       const categoryCount: Record<string, number> = {};
-      result.items.forEach(patch => {
+      result.items.forEach((patch) => {
         if (patch.category) {
-          categoryCount[patch.category] = (categoryCount[patch.category] || 0) + 1;
+          categoryCount[patch.category] =
+            (categoryCount[patch.category] || 0) + 1;
         }
       });
 
@@ -380,13 +404,13 @@ export class PatchRepository extends BaseRepository<Patch> {
       const batchGetParams = {
         RequestItems: {
           [this.config.tableName]: {
-            Keys: patchIds.map(id => ({ id })),
+            Keys: patchIds.map((id) => ({ id })),
           },
         },
       };
 
       const result = await this.dynamoService.batchGet(batchGetParams);
-      return result[this.config.tableName] as Patch[] || [];
+      return (result[this.config.tableName] as Patch[]) || [];
     } catch (error) {
       this.logger.error('Failed to batch get patches:', error);
       throw error;
@@ -416,12 +440,15 @@ export class PatchRepository extends BaseRepository<Patch> {
         {
           // Only get the count, not the actual items
           projectionExpression: 'id',
-        }
+        },
       );
 
       return result.count;
     } catch (error) {
-      this.logger.error(`Failed to get patch count for user ${username}:`, error);
+      this.logger.error(
+        `Failed to get patch count for user ${username}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -433,13 +460,13 @@ export class PatchRepository extends BaseRepository<Patch> {
     try {
       // First get all patches by user
       const userPatches = await this.findPatchesByUser(username);
-      
+
       if (userPatches.items.length === 0) {
         return 0;
       }
 
       // Prepare batch delete
-      const deleteRequests = userPatches.items.map(patch => ({
+      const deleteRequests = userPatches.items.map((patch) => ({
         DeleteRequest: {
           Key: { id: patch.id },
         },
@@ -451,7 +478,7 @@ export class PatchRepository extends BaseRepository<Patch> {
 
       for (let i = 0; i < deleteRequests.length; i += batchSize) {
         const batch = deleteRequests.slice(i, i + batchSize);
-        
+
         await this.dynamoService.batchWrite({
           RequestItems: {
             [this.config.tableName]: batch,
@@ -464,7 +491,10 @@ export class PatchRepository extends BaseRepository<Patch> {
       this.logger.log(`Deleted ${deletedCount} patches for user ${username}`);
       return deletedCount;
     } catch (error) {
-      this.logger.error(`Failed to delete patches for user ${username}:`, error);
+      this.logger.error(
+        `Failed to delete patches for user ${username}:`,
+        error,
+      );
       throw error;
     }
   }

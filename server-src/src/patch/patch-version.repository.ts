@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository, RepositoryConfig } from '../common/database/base-repository';
+import {
+  BaseRepository,
+  RepositoryConfig,
+} from '../common/database/base-repository';
 import { DynamoDBService } from '../common/database/dynamodb.service';
 import { PatchVersion, PatchHistory } from '../interfaces/patch.interface';
 
 @Injectable()
 export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   protected readonly config: RepositoryConfig = {
-    tableName: process.env.PATCH_VERSIONS_TABLE_NAME || 'PatchVersionsTable-dev',
+    tableName:
+      process.env.PATCH_VERSIONS_TABLE_NAME || 'PatchVersionsTable-dev',
     primaryKey: 'id',
     sortKey: 'version',
     indexes: {
@@ -28,7 +32,9 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   /**
    * Create a new patch version
    */
-  async createVersion(versionData: Omit<PatchVersion, 'id'>): Promise<PatchVersion> {
+  async createVersion(
+    versionData: Omit<PatchVersion, 'id'>,
+  ): Promise<PatchVersion> {
     try {
       const id = await this.generateVersionId();
       const version: PatchVersion = {
@@ -55,7 +61,7 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
         { ':patchId': patchId },
         {
           scanIndexForward: false, // Get newest first
-        }
+        },
       );
 
       return {
@@ -64,7 +70,10 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
         totalVersions: result.count,
       };
     } catch (error) {
-      this.logger.error(`Failed to get patch history for patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to get patch history for patch ${patchId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -72,21 +81,27 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   /**
    * Get specific version of a patch
    */
-  async getPatchVersion(patchId: number, version: number): Promise<PatchVersion | null> {
+  async getPatchVersion(
+    patchId: number,
+    version: number,
+  ): Promise<PatchVersion | null> {
     try {
       // For composite key (patchId + version), we need to use query
       const result = await this.queryByIndex(
         'PatchIndex',
         'patchId = :patchId AND version = :version',
-        { 
+        {
           ':patchId': patchId,
           ':version': version,
-        }
+        },
       );
 
       return result.items.length > 0 ? result.items[0] : null;
     } catch (error) {
-      this.logger.error(`Failed to get patch version ${version} for patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to get patch version ${version} for patch ${patchId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -104,12 +119,15 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
           scanIndexForward: false, // Get newest first
           limit: 1,
           projectionExpression: 'version',
-        }
+        },
       );
 
       return result.items.length > 0 ? result.items[0].version : 0;
     } catch (error) {
-      this.logger.error(`Failed to get latest version for patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to get latest version for patch ${patchId}:`,
+        error,
+      );
       return 0;
     }
   }
@@ -122,7 +140,7 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
     options?: {
       limit?: number;
       exclusiveStartKey?: any;
-    }
+    },
   ): Promise<{ items: PatchVersion[]; lastEvaluatedKey?: any; count: number }> {
     try {
       const result = await this.queryByIndex(
@@ -133,7 +151,7 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: false, // Newest first
-        }
+        },
       );
 
       return result;
@@ -146,7 +164,11 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   /**
    * Compare two patch versions
    */
-  async compareVersions(patchId: number, version1: number, version2: number): Promise<{
+  async compareVersions(
+    patchId: number,
+    version1: number,
+    version2: number,
+  ): Promise<{
     version1: PatchVersion | null;
     version2: PatchVersion | null;
     differences: Array<{
@@ -178,7 +200,10 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
         differences,
       };
     } catch (error) {
-      this.logger.error(`Failed to compare versions ${version1} and ${version2} for patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to compare versions ${version1} and ${version2} for patch ${patchId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -189,7 +214,7 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   async deleteVersionsForPatch(patchId: number): Promise<number> {
     try {
       const history = await this.getPatchHistory(patchId);
-      
+
       if (history.versions.length === 0) {
         return 0;
       }
@@ -203,7 +228,10 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
       this.logger.log(`Deleted ${deletedCount} versions for patch ${patchId}`);
       return deletedCount;
     } catch (error) {
-      this.logger.error(`Failed to delete versions for patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to delete versions for patch ${patchId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -211,7 +239,10 @@ export class PatchVersionRepository extends BaseRepository<PatchVersion> {
   /**
    * Calculate differences between two patch data objects
    */
-  private calculateDifferences(data1: any, data2: any): Array<{
+  private calculateDifferences(
+    data1: any,
+    data2: any,
+  ): Array<{
     field: string;
     value1: any;
     value2: any;

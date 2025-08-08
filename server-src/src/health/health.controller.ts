@@ -1,5 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiProperty } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiProperty,
+} from '@nestjs/swagger';
 import { HealthService } from './health.service';
 
 // Response DTOs for documentation
@@ -40,28 +45,29 @@ class DetailedHealthResponse extends HealthResponse {
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 
-  @ApiOperation({ 
-    summary: 'Basic health check', 
-    description: 'Returns basic health status of the API' 
+  @ApiOperation({
+    summary: 'Basic health check',
+    description: 'Returns basic health status of the API',
   })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Health check successful', 
-    type: HealthResponse 
+  @ApiResponse({
+    status: 200,
+    description: 'Health check successful',
+    type: HealthResponse,
   })
   @Get()
   async getHealth() {
     return this.healthService.checkHealth();
   }
 
-  @ApiOperation({ 
-    summary: 'Detailed health check', 
-    description: 'Returns detailed health status including database, cache, and memory information' 
+  @ApiOperation({
+    summary: 'Detailed health check',
+    description:
+      'Returns detailed health status including database, cache, and memory information',
   })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Detailed health check successful', 
-    type: DetailedHealthResponse 
+  @ApiResponse({
+    status: 200,
+    description: 'Detailed health check successful',
+    type: DetailedHealthResponse,
   })
   @Get('detailed')
   async getDetailedHealth() {

@@ -10,19 +10,19 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [UsersModule],
   providers: [
-    PatchService, 
-    PatchRepository, 
-    PatchVersionRepository, 
+    PatchService,
+    PatchRepository,
+    PatchVersionRepository,
     PatchCollectionRepository,
-    PatchCacheService
+    PatchCacheService,
   ],
   controllers: [PatchController],
   exports: [
-    PatchService, 
-    PatchRepository, 
-    PatchVersionRepository, 
+    PatchService,
+    PatchRepository,
+    PatchVersionRepository,
     PatchCollectionRepository,
-    PatchCacheService
+    PatchCacheService,
   ],
 })
 export class PatchModule {}

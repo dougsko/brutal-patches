@@ -19,7 +19,12 @@ export class MonitoringMiddleware implements NestMiddleware {
       const statusCode = res.statusCode;
 
       // Record HTTP request metrics
-      this.monitoringService.recordHttpRequest(method, route, statusCode, duration);
+      this.monitoringService.recordHttpRequest(
+        method,
+        route,
+        statusCode,
+        duration,
+      );
 
       // Record errors for 4xx and 5xx responses
       if (statusCode >= 400) {
@@ -50,10 +55,10 @@ export class MonitoringMiddleware implements NestMiddleware {
 
     // Fallback to URL pathname with parameter normalization
     let route = req.url.split('?')[0]; // Remove query string
-    
+
     // Normalize common patterns
     route = route
-      .replace(/\/\d+/g, '/:id')           // Replace numeric IDs
+      .replace(/\/\d+/g, '/:id') // Replace numeric IDs
       .replace(/\/[a-f0-9-]{36}/g, '/:uuid') // Replace UUIDs
       .replace(/\/[a-f0-9]{24}/g, '/:objectId'); // Replace MongoDB ObjectIds
 

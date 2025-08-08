@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { BaseRepository, RepositoryConfig } from '../common/database/base-repository';
+import {
+  BaseRepository,
+  RepositoryConfig,
+} from '../common/database/base-repository';
 import { DynamoDBService } from '../common/database/dynamodb.service';
 import { PatchCollection } from '../interfaces/patch.interface';
 
 @Injectable()
 export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   protected readonly config: RepositoryConfig = {
-    tableName: process.env.PATCH_COLLECTIONS_TABLE_NAME || 'PatchCollectionsTable-dev',
+    tableName:
+      process.env.PATCH_COLLECTIONS_TABLE_NAME || 'PatchCollectionsTable-dev',
     primaryKey: 'id',
     indexes: {
       UserIndex: {
@@ -27,11 +31,13 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   /**
    * Create a new patch collection
    */
-  async createCollection(collectionData: Omit<PatchCollection, 'id' | 'created_at' | 'updated_at'>): Promise<PatchCollection> {
+  async createCollection(
+    collectionData: Omit<PatchCollection, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<PatchCollection> {
     try {
       const id = await this.generateCollectionId();
       const now = new Date().toISOString();
-      
+
       const collection: PatchCollection = {
         ...collectionData,
         id,
@@ -56,12 +62,16 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
       limit?: number;
       exclusiveStartKey?: any;
       includePrivate?: boolean;
-    }
-  ): Promise<{ items: PatchCollection[]; lastEvaluatedKey?: any; count: number }> {
+    },
+  ): Promise<{
+    items: PatchCollection[];
+    lastEvaluatedKey?: any;
+    count: number;
+  }> {
     try {
-      const expressionAttributeValues = !options?.includePrivate ? 
-        { ':userId': userId, ':isPublic': true } : 
-        { ':userId': userId };
+      const expressionAttributeValues = !options?.includePrivate
+        ? { ':userId': userId, ':isPublic': true }
+        : { ':userId': userId };
 
       const result = await this.queryByIndex(
         'UserIndex',
@@ -71,8 +81,10 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: false, // Newest first
-          filterExpression: !options?.includePrivate ? 'isPublic = :isPublic' : undefined,
-        }
+          filterExpression: !options?.includePrivate
+            ? 'isPublic = :isPublic'
+            : undefined,
+        },
       );
 
       return result;
@@ -85,12 +97,14 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   /**
    * Get public collections
    */
-  async getPublicCollections(
-    options?: {
-      limit?: number;
-      exclusiveStartKey?: any;
-    }
-  ): Promise<{ items: PatchCollection[]; lastEvaluatedKey?: any; count: number }> {
+  async getPublicCollections(options?: {
+    limit?: number;
+    exclusiveStartKey?: any;
+  }): Promise<{
+    items: PatchCollection[];
+    lastEvaluatedKey?: any;
+    count: number;
+  }> {
     try {
       const result = await this.queryByIndex(
         'PublicIndex',
@@ -100,7 +114,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
           scanIndexForward: false, // Newest first
-        }
+        },
       );
 
       return result;
@@ -113,7 +127,10 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   /**
    * Add patch to collection
    */
-  async addPatchToCollection(collectionId: number, patchId: number): Promise<PatchCollection | null> {
+  async addPatchToCollection(
+    collectionId: number,
+    patchId: number,
+  ): Promise<PatchCollection | null> {
     try {
       const collection = await this.findById(collectionId);
       if (!collection) {
@@ -127,7 +144,10 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
 
       return collection;
     } catch (error) {
-      this.logger.error(`Failed to add patch ${patchId} to collection ${collectionId}:`, error);
+      this.logger.error(
+        `Failed to add patch ${patchId} to collection ${collectionId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -135,17 +155,25 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
   /**
    * Remove patch from collection
    */
-  async removePatchFromCollection(collectionId: number, patchId: number): Promise<PatchCollection | null> {
+  async removePatchFromCollection(
+    collectionId: number,
+    patchId: number,
+  ): Promise<PatchCollection | null> {
     try {
       const collection = await this.findById(collectionId);
       if (!collection) {
         throw new Error('Collection not found');
       }
 
-      const updatedPatchIds = collection.patchIds.filter(id => id !== patchId);
+      const updatedPatchIds = collection.patchIds.filter(
+        (id) => id !== patchId,
+      );
       return this.update(collectionId, { patchIds: updatedPatchIds });
     } catch (error) {
-      this.logger.error(`Failed to remove patch ${patchId} from collection ${collectionId}:`, error);
+      this.logger.error(
+        `Failed to remove patch ${patchId} from collection ${collectionId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -154,8 +182,8 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
    * Update collection
    */
   async updateCollection(
-    collectionId: number, 
-    updates: Partial<Omit<PatchCollection, 'id' | 'created_at'>>
+    collectionId: number,
+    updates: Partial<Omit<PatchCollection, 'id' | 'created_at'>>,
   ): Promise<PatchCollection | null> {
     try {
       return this.update(collectionId, updates);
@@ -175,12 +203,17 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
       publicOnly?: boolean;
       limit?: number;
       exclusiveStartKey?: any;
-    }
-  ): Promise<{ items: PatchCollection[]; lastEvaluatedKey?: any; count: number }> {
+    },
+  ): Promise<{
+    items: PatchCollection[];
+    lastEvaluatedKey?: any;
+    count: number;
+  }> {
     try {
       const searchTermLower = searchTerm.toLowerCase();
-      
-      let filterExpression = 'contains(#name, :searchTerm) OR contains(#description, :searchTerm)';
+
+      let filterExpression =
+        'contains(#name, :searchTerm) OR contains(#description, :searchTerm)';
       const expressionAttributeNames = {
         '#name': 'name',
         '#description': 'description',
@@ -207,12 +240,15 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
           expressionAttributeValues,
           limit: options?.limit,
           exclusiveStartKey: options?.exclusiveStartKey,
-        }
+        },
       );
 
       return result;
     } catch (error) {
-      this.logger.error(`Failed to search collections for term "${searchTerm}":`, error);
+      this.logger.error(
+        `Failed to search collections for term "${searchTerm}":`,
+        error,
+      );
       throw error;
     }
   }
@@ -233,13 +269,17 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
       });
 
       const totalCollections = result.totalCount;
-      const publicCollections = result.items.filter(c => c.isPublic).length;
+      const publicCollections = result.items.filter((c) => c.isPublic).length;
       const privateCollections = totalCollections - publicCollections;
-      
-      const totalPatches = result.items.reduce((sum, collection) => 
-        sum + (collection.patchIds?.length || 0), 0);
-      const averagePatchCount = totalCollections > 0 ? 
-        Math.round((totalPatches / totalCollections) * 100) / 100 : 0;
+
+      const totalPatches = result.items.reduce(
+        (sum, collection) => sum + (collection.patchIds?.length || 0),
+        0,
+      );
+      const averagePatchCount =
+        totalCollections > 0
+          ? Math.round((totalPatches / totalCollections) * 100) / 100
+          : 0;
 
       return {
         totalCollections,
@@ -262,7 +302,7 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
       userId?: string;
       publicOnly?: boolean;
       limit?: number;
-    }
+    },
   ): Promise<{ items: PatchCollection[]; count: number }> {
     try {
       let filterExpression = 'contains(patchIds, :patchId)';
@@ -286,12 +326,15 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
           filterExpression,
           expressionAttributeValues,
           limit: options?.limit,
-        }
+        },
       );
 
       return result;
     } catch (error) {
-      this.logger.error(`Failed to find collections containing patch ${patchId}:`, error);
+      this.logger.error(
+        `Failed to find collections containing patch ${patchId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -340,12 +383,14 @@ export class PatchCollectionRepository extends BaseRepository<PatchCollection> {
     options?: {
       name?: string;
       isPublic?: boolean;
-    }
+    },
   ): Promise<PatchCollection> {
     try {
       const collectionData = {
-        name: options?.name || importData.collection?.name || 'Imported Collection',
-        description: importData.collection?.description || 'Imported patch collection',
+        name:
+          options?.name || importData.collection?.name || 'Imported Collection',
+        description:
+          importData.collection?.description || 'Imported patch collection',
         userId,
         patchIds: importData.patchIds || [],
         isPublic: options?.isPublic || false,

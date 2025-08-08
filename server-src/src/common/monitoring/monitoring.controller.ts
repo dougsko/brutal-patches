@@ -1,5 +1,11 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiProperty } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiProperty,
+} from '@nestjs/swagger';
 import { MonitoringService } from './monitoring.service';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -40,7 +46,8 @@ export class MonitoringController {
 
   @ApiOperation({
     summary: 'Get Prometheus metrics',
-    description: 'Returns application metrics in Prometheus format for scraping',
+    description:
+      'Returns application metrics in Prometheus format for scraping',
   })
   @ApiResponse({
     status: 200,
@@ -48,7 +55,8 @@ export class MonitoringController {
     type: String,
     schema: {
       type: 'string',
-      example: '# HELP http_requests_total Total number of HTTP requests\\n# TYPE http_requests_total counter\\nhttp_requests_total{method="GET",route="/api/patches",status_code="200"} 42',
+      example:
+        '# HELP http_requests_total Total number of HTTP requests\\n# TYPE http_requests_total counter\\nhttp_requests_total{method="GET",route="/api/patches",status_code="200"} 42',
     },
   })
   @Get('metrics')
@@ -102,7 +110,7 @@ export class MonitoringController {
   async getHealthWithMetrics() {
     const startTime = process.uptime();
     const metrics = await this.monitoringService.getDashboardMetrics();
-    
+
     return {
       status: 'healthy',
       timestamp: new Date().toISOString(),

@@ -29,7 +29,7 @@ import { MonitoringMiddleware } from './common/monitoring/monitoring.middleware'
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     LoggerService,
     {
       provide: APP_FILTER,

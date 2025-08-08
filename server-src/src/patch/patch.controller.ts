@@ -1,4 +1,15 @@
-import { Body, Controller, ForbiddenException, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -13,21 +24,25 @@ import {
   ApiProperty,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { 
-  Patch, 
-  PatchVersion, 
-  PatchHistory, 
+import {
+  Patch,
+  PatchVersion,
+  PatchHistory,
   PatchCollection,
   PatchSearchFilters,
   PatchComparison,
-  PatchCategory
+  PatchCategory,
 } from 'src/interfaces/patch.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
 
 // Response DTOs for documentation
 class PatchSearchResponse {
-  @ApiProperty({ description: 'Array of patches', type: [Patch] })
+  @ApiProperty({
+    description: 'Array of patches',
+    type: 'array',
+    items: { type: 'object' },
+  })
   patches: Patch[];
 
   @ApiProperty({ description: 'Total count of matching patches' })
@@ -35,10 +50,10 @@ class PatchSearchResponse {
 }
 
 class PatchVersionResponse {
-  @ApiProperty({ description: 'Updated patch', type: Patch })
+  @ApiProperty({ description: 'Updated patch', type: 'object' })
   patch: Patch;
 
-  @ApiProperty({ description: 'Version information', type: PatchVersion })
+  @ApiProperty({ description: 'Version information', type: 'object' })
   version: PatchVersion;
 }
 
@@ -60,12 +75,12 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get all patches',
-    description: 'Retrieve all patches from the database'
+    description: 'Retrieve all patches from the database',
   })
   @ApiResponse({
     status: 200,
     description: 'List of patches retrieved successfully',
-    type: [Patch]
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @Get()
   async findAll(): Promise<Patch[]> {
@@ -75,12 +90,12 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get total patch count',
-    description: 'Get the total number of patches in the database'
+    description: 'Get the total number of patches in the database',
   })
   @ApiResponse({
     status: 200,
     description: 'Total patch count',
-    schema: { type: 'number' }
+    schema: { type: 'number' },
   })
   @Get('/total')
   async getTotal(): Promise<number> {
@@ -89,24 +104,28 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get user patch count',
-    description: 'Get the total number of patches for a specific user (authenticated users only)'
+    description:
+      'Get the total number of patches for a specific user (authenticated users only)',
   })
   @ApiBearerAuth('JWT-auth')
-  @ApiParam({ name: 'username', description: 'Username to get patch count for' })
+  @ApiParam({
+    name: 'username',
+    description: 'Username to get patch count for',
+  })
   @ApiResponse({
     status: 200,
     description: 'User patch count',
-    schema: { type: 'number' }
+    schema: { type: 'number' },
   })
   @ApiForbiddenResponse({
     status: 403,
     description: 'Access denied - users can only view their own statistics',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Get('/:username/total')
@@ -116,14 +135,17 @@ export class PatchController {
   ): Promise<number> {
     // Users can only access their own patch totals
     if (req.user.username !== username) {
-      throw new ForbiddenException('Access denied: You can only view your own patch statistics');
+      throw new ForbiddenException(
+        'Access denied: You can only view your own patch statistics',
+      );
     }
     return this.patchService.getUserPatchTotal(username);
   }
 
   @ApiOperation({
     summary: 'Get user patches with pagination',
-    description: 'Get patches for a specific user with pagination (authenticated users only)'
+    description:
+      'Get patches for a specific user with pagination (authenticated users only)',
   })
   @ApiBearerAuth('JWT-auth')
   @ApiParam({ name: 'username', description: 'Username to get patches for' })
@@ -132,17 +154,17 @@ export class PatchController {
   @ApiResponse({
     status: 200,
     description: 'User patches retrieved successfully',
-    type: [Patch]
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @ApiForbiddenResponse({
     status: 403,
     description: 'Access denied - users can only view their own patches',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Get('/:username/:first/:last')
@@ -154,21 +176,23 @@ export class PatchController {
   ): Promise<Patch[]> {
     // Users can only access their own patches through this endpoint
     if (req.user.username !== username) {
-      throw new ForbiddenException('Access denied: You can only view your own patches');
+      throw new ForbiddenException(
+        'Access denied: You can only view your own patches',
+      );
     }
     return this.patchService.getPatchesByUser(username, first, last);
   }
 
   @ApiOperation({
     summary: 'Get latest patches with pagination',
-    description: 'Get the most recent patches with pagination'
+    description: 'Get the most recent patches with pagination',
   })
   @ApiParam({ name: 'first', description: 'First item index for pagination' })
   @ApiParam({ name: 'last', description: 'Last item index for pagination' })
   @ApiResponse({
     status: 200,
     description: 'Latest patches retrieved successfully',
-    type: [Patch]
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @Get('/:first/:last')
   async findLatestPatches(
@@ -181,18 +205,18 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get patch by ID',
-    description: 'Retrieve a specific patch by its ID'
+    description: 'Retrieve a specific patch by its ID',
   })
   @ApiParam({ name: 'id', description: 'Patch ID' })
   @ApiResponse({
     status: 200,
     description: 'Patch retrieved successfully',
-    type: Patch
+    schema: { type: 'object' },
   })
   @ApiNotFoundResponse({
     status: 404,
     description: 'Patch not found',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Patch> {
@@ -202,24 +226,24 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Create new patch',
-    description: 'Create a new synthesizer patch'
+    description: 'Create a new synthesizer patch',
   })
   @ApiBearerAuth('JWT-auth')
-  @ApiBody({ type: Patch, description: 'Patch data to create' })
+  @ApiBody({ description: 'Patch data to create', schema: { type: 'object' } })
   @ApiResponse({
     status: 201,
     description: 'Patch created successfully',
-    type: Patch
+    schema: { type: 'object' },
   })
   @ApiBadRequestResponse({
     status: 400,
     description: 'Invalid patch data',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -229,35 +253,35 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Update patch',
-    description: 'Update an existing patch (owner only)'
+    description: 'Update an existing patch (owner only)',
   })
   @ApiBearerAuth('JWT-auth')
   @ApiParam({ name: 'id', description: 'Patch ID to update' })
-  @ApiBody({ type: Patch, description: 'Updated patch data' })
+  @ApiBody({ description: 'Updated patch data', schema: { type: 'object' } })
   @ApiResponse({
     status: 200,
     description: 'Patch updated successfully',
-    type: Patch
+    schema: { type: 'object' },
   })
   @ApiBadRequestResponse({
     status: 400,
     description: 'Invalid patch data',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Authentication required',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiForbiddenResponse({
     status: 403,
     description: 'Access denied - only patch owner can update',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @ApiNotFoundResponse({
     status: 404,
     description: 'Patch not found',
-    type: ErrorResponse
+    type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
   @Put(':id')
@@ -279,10 +303,10 @@ export class PatchController {
     @Body() body: { patch: Patch; changes?: string },
   ): Promise<{ patch: Patch; version: PatchVersion }> {
     return this.patchService.updatePatchWithVersioning(
-      req.user.username, 
-      id, 
+      req.user.username,
+      id,
       body.patch,
-      body.changes
+      body.changes,
     );
   }
 
@@ -330,9 +354,16 @@ export class PatchController {
   @Post('collections')
   async createCollection(
     @Request() req,
-    @Body() collectionData: Omit<PatchCollection, 'id' | 'userId' | 'created_at' | 'updated_at'>,
+    @Body()
+    collectionData: Omit<
+      PatchCollection,
+      'id' | 'userId' | 'created_at' | 'updated_at'
+    >,
   ): Promise<PatchCollection> {
-    return this.patchService.createCollection(req.user.username, collectionData);
+    return this.patchService.createCollection(
+      req.user.username,
+      collectionData,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -354,9 +385,9 @@ export class PatchController {
     @Param('patchId') patchId: number,
   ): Promise<PatchCollection> {
     return this.patchService.addPatchToCollection(
-      req.user.username, 
-      collectionId, 
-      patchId
+      req.user.username,
+      collectionId,
+      patchId,
     );
   }
 
@@ -364,24 +395,58 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Search patches',
-    description: 'Search for patches with various filters and sorting options'
+    description: 'Search for patches with various filters and sorting options',
   })
   @ApiQuery({ name: 'q', description: 'Search term', required: false })
-  @ApiQuery({ name: 'category', description: 'Filter by category', required: false })
-  @ApiQuery({ name: 'tags', description: 'Filter by tags (comma-separated)', required: false })
-  @ApiQuery({ name: 'minRating', description: 'Minimum rating filter', required: false })
-  @ApiQuery({ name: 'maxRating', description: 'Maximum rating filter', required: false })
-  @ApiQuery({ name: 'dateFrom', description: 'Date range start', required: false })
+  @ApiQuery({
+    name: 'category',
+    description: 'Filter by category',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'tags',
+    description: 'Filter by tags (comma-separated)',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'minRating',
+    description: 'Minimum rating filter',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'maxRating',
+    description: 'Maximum rating filter',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'dateFrom',
+    description: 'Date range start',
+    required: false,
+  })
   @ApiQuery({ name: 'dateTo', description: 'Date range end', required: false })
-  @ApiQuery({ name: 'username', description: 'Filter by username', required: false })
+  @ApiQuery({
+    name: 'username',
+    description: 'Filter by username',
+    required: false,
+  })
   @ApiQuery({ name: 'limit', description: 'Results limit', required: false })
   @ApiQuery({ name: 'offset', description: 'Results offset', required: false })
-  @ApiQuery({ name: 'sortBy', description: 'Sort by field', required: false, enum: ['created_at', 'updated_at', 'rating', 'title'] })
-  @ApiQuery({ name: 'sortOrder', description: 'Sort order', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({
+    name: 'sortBy',
+    description: 'Sort by field',
+    required: false,
+    enum: ['created_at', 'updated_at', 'rating', 'title'],
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    description: 'Sort order',
+    required: false,
+    enum: ['asc', 'desc'],
+  })
   @ApiResponse({
     status: 200,
     description: 'Search results',
-    type: PatchSearchResponse
+    type: PatchSearchResponse,
   })
   @Get('search')
   async searchPatches(
@@ -399,7 +464,7 @@ export class PatchController {
     @Query('sortOrder') sortOrder?: 'asc' | 'desc',
   ): Promise<{ patches: Patch[]; total: number }> {
     const filters: PatchSearchFilters = {};
-    
+
     if (category) filters.category = category;
     if (tags) filters.tags = tags.split(',');
     if (minRating !== undefined) filters.minRating = minRating;

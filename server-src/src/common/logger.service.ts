@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as winston from 'winston';
-import { CloudWatchLogsClient, CreateLogStreamCommand, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs';
+import {
+  CloudWatchLogsClient,
+  CreateLogStreamCommand,
+  PutLogEventsCommand,
+} from '@aws-sdk/client-cloudwatch-logs';
 
 @Injectable()
 export class LoggerService {
@@ -15,10 +19,12 @@ export class LoggerService {
     this.cloudWatchLogs = new CloudWatchLogsClient({
       region: process.env.AWS_REGION || 'us-east-1',
     });
-    
+
     this.logGroupName = '/aws/brutal-patches/api';
-    this.logStreamName = `api-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+    this.logStreamName = `api-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
     // Initialize CloudWatch log stream in production
     if (process.env.NODE_ENV === 'production') {
       this.initializeCloudWatchStream();
@@ -27,7 +33,7 @@ export class LoggerService {
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       winston.format.errors({ stack: true }),
       winston.format.json(),
-      winston.format.prettyPrint()
+      winston.format.prettyPrint(),
     );
 
     // Different log levels for different environments
@@ -39,14 +45,14 @@ export class LoggerService {
       defaultMeta: { service: 'brutal-patches-api' },
       transports: [
         // Write errors to error.log
-        new winston.transports.File({ 
-          filename: 'logs/error.log', 
+        new winston.transports.File({
+          filename: 'logs/error.log',
           level: 'error',
           maxsize: 5242880, // 5MB
           maxFiles: 5,
         }),
         // Write all logs to combined.log
-        new winston.transports.File({ 
+        new winston.transports.File({
           filename: 'logs/combined.log',
           maxsize: 5242880, // 5MB
           maxFiles: 10,
@@ -54,28 +60,32 @@ export class LoggerService {
       ],
       // Handle exceptions and rejections
       exceptionHandlers: [
-        new winston.transports.File({ filename: 'logs/exceptions.log' })
+        new winston.transports.File({ filename: 'logs/exceptions.log' }),
       ],
       rejectionHandlers: [
-        new winston.transports.File({ filename: 'logs/rejections.log' })
-      ]
+        new winston.transports.File({ filename: 'logs/rejections.log' }),
+      ],
     });
 
     // In development, also log to console
     if (process.env.NODE_ENV !== 'production') {
-      this.logger.add(new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          winston.format.simple()
-        )
-      }));
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple(),
+          ),
+        }),
+      );
     }
 
     // In AWS Lambda, log to CloudWatch (console)
     if (process.env.AWS_EXECUTION_ENV) {
-      this.logger.add(new winston.transports.Console({
-        format: winston.format.json()
-      }));
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.json(),
+        }),
+      );
     }
   }
 
@@ -108,7 +118,7 @@ export class LoggerService {
       ip: req.ip,
       statusCode: res.statusCode,
       responseTime: responseTime || 0,
-      userId: req.user?.username || 'anonymous'
+      userId: req.user?.username || 'anonymous',
     };
 
     this.logger.info('HTTP Request', logData);
@@ -121,7 +131,7 @@ export class LoggerService {
       context,
       url: request?.url,
       method: request?.method,
-      userId: request?.user?.username || 'anonymous'
+      userId: request?.user?.username || 'anonymous',
     };
 
     this.logger.error('Application Error', logData);
@@ -132,12 +142,17 @@ export class LoggerService {
       event,
       username: username || 'unknown',
       success,
-      ...details
+      ...details,
     });
   }
 
   // Enhanced logging methods with CloudWatch integration
-  async logWithMetrics(level: string, message: string, context?: string, meta?: any) {
+  async logWithMetrics(
+    level: string,
+    message: string,
+    context?: string,
+    meta?: any,
+  ) {
     const logEntry = {
       level,
       message,
@@ -168,7 +183,7 @@ export class LoggerService {
     };
 
     this.logger.warn(`Security Event: ${event}`, securityLog);
-    
+
     if (process.env.NODE_ENV === 'production') {
       await this.sendToCloudWatch(securityLog);
     }
@@ -184,10 +199,17 @@ export class LoggerService {
       ...metadata,
     };
 
-    if (duration > 1000) { // Log slow operations
-      this.logger.warn(`Slow Operation: ${operation} took ${duration}ms`, performanceLog);
+    if (duration > 1000) {
+      // Log slow operations
+      this.logger.warn(
+        `Slow Operation: ${operation} took ${duration}ms`,
+        performanceLog,
+      );
     } else {
-      this.logger.info(`Performance: ${operation} completed in ${duration}ms`, performanceLog);
+      this.logger.info(
+        `Performance: ${operation} completed in ${duration}ms`,
+        performanceLog,
+      );
     }
 
     if (process.env.NODE_ENV === 'production') {
@@ -206,7 +228,7 @@ export class LoggerService {
     };
 
     this.logger.info(`Business Event: ${event}`, businessLog);
-    
+
     if (process.env.NODE_ENV === 'production') {
       await this.sendToCloudWatch(businessLog);
     }
@@ -219,11 +241,14 @@ export class LoggerService {
         logGroupName: this.logGroupName,
         logStreamName: this.logStreamName,
       });
-      
+
       await this.cloudWatchLogs.send(command);
     } catch (error) {
       // Stream might already exist or log group doesn't exist
-      console.warn('Could not initialize CloudWatch log stream:', error.message);
+      console.warn(
+        'Could not initialize CloudWatch log stream:',
+        error.message,
+      );
     }
   }
 
