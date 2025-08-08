@@ -3,10 +3,10 @@ import { APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { PatchController } from './patch/patch.controller';
-import { PatchService } from './patch/patch.service';
+import { PatchModule } from './patch/patch.module';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
+import { DatabaseModule } from './common/database/database.module';
 import { LoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -14,14 +14,15 @@ import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 
 @Module({
   imports: [
+    DatabaseModule,
     AuthModule,
     UsersModule,
+    PatchModule,
     HealthModule,
   ],
-  controllers: [AppController, PatchController],
+  controllers: [AppController],
   providers: [
     AppService, 
-    PatchService,
     LoggerService,
     {
       provide: APP_FILTER,
