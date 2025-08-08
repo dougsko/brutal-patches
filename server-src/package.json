@@ -43,7 +43,7 @@
     "aws-sdk": "^2.1034.0",
     "aws-serverless-express": "^3.4.0",
     "aws-serverless-fastify": "^1.0.28",
-    "aws-xray-sdk-node": "^0.0.1-security",
+    "aws-xray-sdk": "^3.10.3",
     "bcryptjs": "^2.4.3",
     "cache-manager": "^5.0.1",
     "class-transformer": "^0.5.1",

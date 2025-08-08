@@ -97,7 +97,7 @@ export class PatchController {
     description: 'Total patch count',
     schema: { type: 'number' },
   })
-  @Get('/total')
+  @Get('total')
   async getTotal(): Promise<number> {
     return await this.patchService.getPatchTotal();
   }
@@ -128,7 +128,7 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/:username/total')
+  @Get('user/:username/total')
   getMyTotal(
     @Request() req,
     @Param('username') username: string,
@@ -167,7 +167,7 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/:username/:first/:last')
+  @Get('user/:username/:first/:last')
   getMyPatches(
     @Request() req,
     @Param('username') username: string,
@@ -184,6 +184,111 @@ export class PatchController {
   }
 
   @ApiOperation({
+    summary: 'Search patches',
+    description: 'Search for patches with various filters and sorting options',
+  })
+  @ApiQuery({ name: 'q', description: 'Search term', required: false })
+  @ApiQuery({
+    name: 'category',
+    description: 'Filter by category',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'tags',
+    description: 'Filter by tags (comma-separated)',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'minRating',
+    description: 'Minimum rating filter',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'maxRating',
+    description: 'Maximum rating filter',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'dateFrom',
+    description: 'Date range start',
+    required: false,
+  })
+  @ApiQuery({ name: 'dateTo', description: 'Date range end', required: false })
+  @ApiQuery({
+    name: 'username',
+    description: 'Filter by username',
+    required: false,
+  })
+  @ApiQuery({ name: 'limit', description: 'Results limit', required: false })
+  @ApiQuery({ name: 'offset', description: 'Results offset', required: false })
+  @ApiQuery({
+    name: 'sortBy',
+    description: 'Sort by field',
+    required: false,
+    enum: ['created_at', 'updated_at', 'rating', 'title'],
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    description: 'Sort order',
+    required: false,
+    enum: ['asc', 'desc'],
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Search results',
+    type: PatchSearchResponse,
+  })
+  @Get('search')
+  async searchPatches(
+    @Query('q') searchTerm?: string,
+    @Query('category') category?: string,
+    @Query('tags') tags?: string,
+    @Query('minRating') minRating?: number,
+    @Query('maxRating') maxRating?: number,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('username') username?: string,
+    @Query('limit') limit?: number,
+    @Query('offset') offset?: number,
+    @Query('sortBy') sortBy?: 'created_at' | 'updated_at' | 'rating' | 'title',
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+  ): Promise<{ patches: Patch[]; total: number }> {
+    const filters: PatchSearchFilters = {};
+
+    if (category) filters.category = category;
+    if (tags) filters.tags = tags.split(',');
+    if (minRating !== undefined) filters.minRating = minRating;
+    if (maxRating !== undefined) filters.maxRating = maxRating;
+    if (dateFrom) filters.dateFrom = dateFrom;
+    if (dateTo) filters.dateTo = dateTo;
+    if (username) filters.username = username;
+
+    const options = {
+      limit,
+      offset,
+      sortBy,
+      sortOrder,
+    };
+
+    return this.patchService.searchPatches(searchTerm, filters, options);
+  }
+
+  @Get('categories')
+  async getPatchCategories(): Promise<PatchCategory[]> {
+    return this.patchService.getPatchCategories();
+  }
+
+  @Get('trending')
+  async getTrendingPatches(@Query('limit') limit?: number): Promise<Patch[]> {
+    return this.patchService.getTrendingPatches(limit || 10);
+  }
+
+  @Get('featured')
+  async getFeaturedPatches(@Query('limit') limit?: number): Promise<Patch[]> {
+    return this.patchService.getFeaturedPatches(limit || 5);
+  }
+
+  @ApiOperation({
     summary: 'Get latest patches with pagination',
     description: 'Get the most recent patches with pagination',
   })
@@ -194,7 +299,7 @@ export class PatchController {
     description: 'Latest patches retrieved successfully',
     schema: { type: 'array', items: { type: 'object' } },
   })
-  @Get('/:first/:last')
+  @Get(':first/:last')
   async findLatestPatches(
     @Param('first') first: number,
     @Param('last') last: number,
@@ -392,109 +497,5 @@ export class PatchController {
   }
 
   // ====== SEARCH AND DISCOVERY ENDPOINTS ======
-
-  @ApiOperation({
-    summary: 'Search patches',
-    description: 'Search for patches with various filters and sorting options',
-  })
-  @ApiQuery({ name: 'q', description: 'Search term', required: false })
-  @ApiQuery({
-    name: 'category',
-    description: 'Filter by category',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'tags',
-    description: 'Filter by tags (comma-separated)',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'minRating',
-    description: 'Minimum rating filter',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'maxRating',
-    description: 'Maximum rating filter',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'dateFrom',
-    description: 'Date range start',
-    required: false,
-  })
-  @ApiQuery({ name: 'dateTo', description: 'Date range end', required: false })
-  @ApiQuery({
-    name: 'username',
-    description: 'Filter by username',
-    required: false,
-  })
-  @ApiQuery({ name: 'limit', description: 'Results limit', required: false })
-  @ApiQuery({ name: 'offset', description: 'Results offset', required: false })
-  @ApiQuery({
-    name: 'sortBy',
-    description: 'Sort by field',
-    required: false,
-    enum: ['created_at', 'updated_at', 'rating', 'title'],
-  })
-  @ApiQuery({
-    name: 'sortOrder',
-    description: 'Sort order',
-    required: false,
-    enum: ['asc', 'desc'],
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Search results',
-    type: PatchSearchResponse,
-  })
-  @Get('search')
-  async searchPatches(
-    @Query('q') searchTerm?: string,
-    @Query('category') category?: string,
-    @Query('tags') tags?: string,
-    @Query('minRating') minRating?: number,
-    @Query('maxRating') maxRating?: number,
-    @Query('dateFrom') dateFrom?: string,
-    @Query('dateTo') dateTo?: string,
-    @Query('username') username?: string,
-    @Query('limit') limit?: number,
-    @Query('offset') offset?: number,
-    @Query('sortBy') sortBy?: 'created_at' | 'updated_at' | 'rating' | 'title',
-    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
-  ): Promise<{ patches: Patch[]; total: number }> {
-    const filters: PatchSearchFilters = {};
-
-    if (category) filters.category = category;
-    if (tags) filters.tags = tags.split(',');
-    if (minRating !== undefined) filters.minRating = minRating;
-    if (maxRating !== undefined) filters.maxRating = maxRating;
-    if (dateFrom) filters.dateFrom = dateFrom;
-    if (dateTo) filters.dateTo = dateTo;
-    if (username) filters.username = username;
-
-    const options = {
-      limit,
-      offset,
-      sortBy,
-      sortOrder,
-    };
-
-    return this.patchService.searchPatches(searchTerm, filters, options);
-  }
-
-  @Get('categories')
-  async getPatchCategories(): Promise<PatchCategory[]> {
-    return this.patchService.getPatchCategories();
-  }
-
-  @Get('trending')
-  async getTrendingPatches(@Query('limit') limit?: number): Promise<Patch[]> {
-    return this.patchService.getTrendingPatches(limit || 10);
-  }
-
-  @Get('featured')
-  async getFeaturedPatches(@Query('limit') limit?: number): Promise<Patch[]> {
-    return this.patchService.getFeaturedPatches(limit || 5);
-  }
+  // (Moved above to prevent conflicts with :id route)
 }
