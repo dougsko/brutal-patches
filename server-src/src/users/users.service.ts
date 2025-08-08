@@ -5,16 +5,13 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
+import { UserRepository } from './user.repository';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
-  private readonly dynamoClient: DynamoDBDocumentClient;
-  private readonly tableName: string;
   private readonly saltRounds = 12; // Configurable salt rounds for bcrypt
 
   // Fallback users for development when DynamoDB is not available
@@ -42,15 +39,7 @@ export class UsersService {
     },
   ];
 
-  constructor() {
-    // Initialize DynamoDB client
-    const client = new DynamoDBClient({
-      region: process.env.AWS_REGION || 'us-east-1',
-    });
-    
-    this.dynamoClient = DynamoDBDocumentClient.from(client);
-    this.tableName = process.env.USERS_TABLE_NAME || 'UsersTable-dev';
-
+  constructor(private readonly userRepository: UserRepository) {
     // Initialize database with fallback users if needed
     this.initializeDatabase();
   }
@@ -65,10 +54,14 @@ export class UsersService {
 
       // Migrate fallback users to DynamoDB if they don't exist
       for (const user of this.fallbackUsers) {
-        const existingUser = await this.findOneByUsername(user.username);
-        if (!existingUser) {
-          await this.createUserInDatabase(user);
-          console.log(`Migrated user: ${user.username}`);
+        try {
+          const existingUser = await this.userRepository.findByUsername(user.username);
+          if (!existingUser) {
+            await this.userRepository.createUser(user);
+            console.log(`Migrated user: ${user.username}`);
+          }
+        } catch (error) {
+          console.warn(`Failed to migrate user ${user.username}:`, error.message);
         }
       }
     } catch (error) {
@@ -83,31 +76,15 @@ export class UsersService {
 
   async findOneByUsername(username: string): Promise<User | undefined> {
     try {
-      // Use GetCommand since username is now the primary key
-      const command = new GetCommand({
-        TableName: this.tableName,
-        Key: {
-          username: username,
-        },
-      });
-
-      const result = await this.dynamoClient.send(command);
-      return result.Item as User | undefined;
+      const user = await this.userRepository.findByUsername(username);
+      return user || undefined;
     } catch (error) {
-      console.warn('DynamoDB get failed, using fallback:', error.message);
+      console.warn('Repository get failed, using fallback:', error.message);
       return this.fallbackUsers.find((user) => user.username === username);
     }
   }
 
-  private async createUserInDatabase(user: User): Promise<void> {
-    const command = new PutCommand({
-      TableName: this.tableName,
-      Item: user,
-      ConditionExpression: 'attribute_not_exists(username)', // Prevent overwriting existing username
-    });
-
-    await this.dynamoClient.send(command);
-  }
+  // Removed createUserInDatabase - now handled by repository
 
   async createUser(createUserDto: CreateUserDto) {
     try {
@@ -121,7 +98,7 @@ export class UsersService {
       }
 
       // Check if email already exists
-      const existingEmailUser = await this.findUserByEmail(createUserDto.email);
+      const existingEmailUser = await this.userRepository.findByEmail(createUserDto.email);
       if (existingEmailUser) {
         throw new HttpException(
           'Email already exists.',
@@ -144,7 +121,7 @@ export class UsersService {
       };
 
       // Save to DynamoDB
-      await this.createUserInDatabase(newUser);
+      await this.userRepository.createUser(newUser);
       
       console.log('User created successfully:', { username: newUser.username, email: newUser.email });
 
@@ -194,43 +171,7 @@ export class UsersService {
     return { ok: true, data: userWithoutPassword };
   }
 
-  private async findUserByEmail(email: string): Promise<User | undefined> {
-    try {
-      // Try to use the EmailIndex GSI if it exists
-      const command = new QueryCommand({
-        TableName: this.tableName,
-        IndexName: 'EmailIndex',
-        KeyConditionExpression: 'email = :email',
-        ExpressionAttributeValues: {
-          ':email': email,
-        },
-        Limit: 1, // Only need first match since email should be unique
-      });
-
-      const result = await this.dynamoClient.send(command);
-      return result.Items && result.Items.length > 0 ? result.Items[0] as User : undefined;
-    } catch (error) {
-      console.warn('Email GSI query failed (may be during migration), using scan fallback:', error.message);
-      
-      // Fallback: scan table for email (less efficient but works during migration)
-      try {
-        const scanCommand = new ScanCommand({
-          TableName: this.tableName,
-          FilterExpression: 'email = :email',
-          ExpressionAttributeValues: {
-            ':email': email,
-          },
-          Limit: 1,
-        });
-        
-        const scanResult = await this.dynamoClient.send(scanCommand);
-        return scanResult.Items && scanResult.Items.length > 0 ? scanResult.Items[0] as User : undefined;
-      } catch (scanError) {
-        console.warn('DynamoDB scan also failed, using in-memory fallback:', scanError.message);
-        return this.fallbackUsers.find((user) => user.email === email);
-      }
-    }
-  }
+  // Removed findUserByEmail - now using userRepository.findByEmail directly
 
   async getUserByUsername(username: string) {
     try {
