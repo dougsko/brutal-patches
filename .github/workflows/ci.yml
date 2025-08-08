@@ -197,7 +197,7 @@ jobs:
 
       - name: Validate serverless configuration
         run: |
-          npx serverless print --stage dev > /dev/null
+          NODE_NO_WARNINGS=1 npx serverless print --stage dev > /dev/null
           echo "✅ Serverless configuration is valid"
 
       - name: Check for environment variables
