@@ -417,6 +417,10 @@ export class AdminService {
         contentType,
       };
     } catch (error) {
+      // Re-throw HttpExceptions to preserve specific error messages
+      if (error instanceof HttpException) {
+        throw error;
+      }
       throw new HttpException(
         'Failed to export data',
         HttpStatus.INTERNAL_SERVER_ERROR,

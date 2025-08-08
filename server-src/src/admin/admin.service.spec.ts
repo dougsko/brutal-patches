@@ -386,7 +386,10 @@ describe('AdminService', () => {
     });
 
     it('should handle different time ranges', async () => {
-      mockPatchService.getPatchCategories.mockResolvedValueOnce([]);
+      mockPatchService.getPatchCategories
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([]);
 
       const result7d = await service.getAnalytics('7d');
       const result90d = await service.getAnalytics('90d');

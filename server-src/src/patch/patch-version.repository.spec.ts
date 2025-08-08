@@ -70,8 +70,11 @@ describe('PatchVersionRepository', () => {
         expect.objectContaining({
           ...versionData,
           id: expect.any(Number),
+          created_at: expect.any(String),
         }),
-        expect.any(Object),
+        expect.objectContaining({
+          conditionExpression: expect.any(String),
+        }),
       );
     });
 
