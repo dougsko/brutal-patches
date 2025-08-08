@@ -6,7 +6,9 @@ import { AuthModule } from './auth/auth.module';
 import { PatchModule } from './patch/patch.module';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
+import { AdminModule } from './admin/admin.module';
 import { DatabaseModule } from './common/database/database.module';
+import { CacheModule } from './common/cache/cache.module';
 import { LoggerService } from './common/logger.service';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -15,10 +17,12 @@ import { RateLimitMiddleware } from './common/middleware/rate-limit.middleware';
 @Module({
   imports: [
     DatabaseModule,
+    CacheModule,
     AuthModule,
     UsersModule,
     PatchModule,
     HealthModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [
