@@ -45,8 +45,8 @@ Your GitHub Actions IAM user needs the following permissions:
         "s3:*"
       ],
       "Resource": [
-        "arn:aws:s3:::your-bucket-name/*",
-        "arn:aws:s3:::your-bucket-name"
+        "arn:aws:s3:::brutal-patches-ui/*",
+        "arn:aws:s3:::brutal-patches-ui"
       ]
     },
     {
