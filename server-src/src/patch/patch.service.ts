@@ -66,24 +66,14 @@ export class PatchService {
   public async getPatchTotal(): Promise<number> {
     try {
       // Try to get count from database first
-      console.log('Environment variables:', {
-        PATCHES_TABLE_NAME: process.env.PATCHES_TABLE_NAME,
-        NODE_ENV: process.env.NODE_ENV,
-        AWS_REGION: process.env.AWS_REGION
-      });
-      console.log('Attempting to get patches from database...');
       const result = await this.patchRepository.list();
-      console.log('Database result:', { count: result.count, itemsLength: result.items?.length });
       const dbPatches = result.items;
       if (dbPatches && dbPatches.length > 0) {
-        console.log('Returning database count:', dbPatches.length);
         return dbPatches.length;
       }
-      console.log('Database returned empty, falling back to mock data');
     } catch (error) {
-      console.error('Failed to get patch count from database, using mock data:', error);
+      console.warn('Failed to get patch count from database, using mock data:', error.message);
     }
-    console.log('Using mock data count:', this.patches.length);
     return this.patches.length;
   }
 

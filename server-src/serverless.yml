@@ -38,7 +38,7 @@ resources:
 
 functions:
   main: # The name of the lambda function
-    handler: dist/lambda.handler # The module 'handler' is exported in the compiled file 'dist/lambda'
+    handler: dist/src/lambda.handler # The module 'handler' is exported in the compiled file 'dist/src/lambda'
     events:
       - http:
           method: any
