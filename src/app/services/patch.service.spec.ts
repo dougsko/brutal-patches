@@ -51,7 +51,8 @@ describe('PatchService', () => {
       expect(patches).toEqual(mockPatches);
     });
 
-    const req = httpMock.expectOne(`${apiUrl}/${first}/${last}`);
+    const expectedUrl = `${apiUrl}/latest?offset=${first}&limit=${last - first}`;
+    const req = httpMock.expectOne(expectedUrl);
     expect(req.request.method).toBe('GET');
     req.flush(mockPatches);
   });
