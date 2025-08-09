@@ -16,11 +16,13 @@ provider:
   region: us-east-1
   environment:
     USERS_TABLE_NAME: ${self:custom.UsersTable.name}
+    PATCHES_TABLE_NAME: ${self:custom.PatchesTable.name}
     JWT_SECRET: ${env:JWT_SECRET, 'dev-secret-change-me-in-production'}
   iam:
     role:
       statements:
         - ${file(iam/UsersTableIAM.yml):UsersTableIAM}
+        - ${file(iam/PatchesTableIAM.yml):PatchesTableIAM}
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
@@ -31,7 +33,8 @@ package:
 
 resources:
   Resources:
-    UsersTable: ${file(resources/UsersTable.yml):UsersTable}  
+    UsersTable: ${file(resources/UsersTable.yml):UsersTable}
+    PatchesTable: ${file(resources/PatchesTable.yml):PatchesTable}  
 
 functions:
   main: # The name of the lambda function
@@ -47,3 +50,6 @@ custom:
   UsersTable:
     name: !Ref UsersTable
     arn: !GetAtt UsersTable.Arn
+  PatchesTable:
+    name: !Ref PatchesTable
+    arn: !GetAtt PatchesTable.Arn

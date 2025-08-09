@@ -27,10 +27,33 @@ export class PatchService {
   patches: Patch[] = PATCHES; // Keep for backward compatibility during migration
 
   public async getAllPatches(): Promise<any> {
-    return this.patches;
+    try {
+      // Try to get from database first
+      const result = await this.patchRepository.list();
+      const dbPatches = result.items;
+      if (dbPatches && dbPatches.length > 0) {
+        return dbPatches;
+      }
+      // Fallback to mock data if database is empty
+      return this.patches;
+    } catch (error) {
+      console.warn('Failed to get patches from database, using mock data:', error);
+      return this.patches;
+    }
   }
 
   public async getPatch(id: string): Promise<Patch> {
+    try {
+      // Try to get from database first
+      const dbPatch = await this.patchRepository.findPatchById(parseInt(id));
+      if (dbPatch) {
+        return dbPatch;
+      }
+    } catch (error) {
+      console.warn('Failed to get patch from database, trying mock data:', error);
+    }
+    
+    // Fallback to mock data
     const patch: Patch = this.patches.find(
       (patch) => patch.id === parseInt(id),
     );
@@ -41,6 +64,16 @@ export class PatchService {
   }
 
   public async getPatchTotal(): Promise<number> {
+    try {
+      // Try to get count from database first
+      const result = await this.patchRepository.list();
+      const dbPatches = result.items;
+      if (dbPatches) {
+        return dbPatches.length;
+      }
+    } catch (error) {
+      console.warn('Failed to get patch count from database, using mock data:', error);
+    }
     return this.patches.length;
   }
 
@@ -107,27 +140,42 @@ export class PatchService {
       );
     }
 
-    // Generate new ID (in a real app, this would be done by database)
-    const newId = Math.max(...this.patches.map((p) => p.id), 0) + 1;
-    const now = new Date().toISOString();
+    try {
+      // Use the repository to create the patch in DynamoDB
+      const newPatch = await this.patchRepository.createPatch({
+        ...patchData,
+        username: username, // Add username to patch data
+      });
 
-    const newPatch: Patch = {
-      ...patchData,
-      id: newId,
-      created_at: now,
-      updated_at: now,
-      average_rating: '0',
-    };
+      console.log('Successfully created patch in database:', newPatch.id);
+      return newPatch;
+    } catch (error) {
+      console.error('Failed to create patch in database:', error);
+      
+      // Fallback to in-memory creation for backward compatibility
+      const newId = Math.max(...this.patches.map((p) => p.id), 0) + 1;
+      const now = new Date().toISOString();
 
-    this.patches.push(newPatch);
+      const newPatch: Patch = {
+        ...patchData,
+        id: newId,
+        created_at: now,
+        updated_at: now,
+        average_rating: '0',
+        username: username,
+      };
 
-    // Add patch ID to user's patches
-    if (!user.patches) {
-      user.patches = [];
+      this.patches.push(newPatch);
+
+      // Add patch ID to user's patches
+      if (!user.patches) {
+        user.patches = [];
+      }
+      user.patches.push(newId);
+
+      console.log('Created patch in memory as fallback:', newId);
+      return newPatch;
     }
-    user.patches.push(newId);
-
-    return newPatch;
   }
 
   public async updatePatch(

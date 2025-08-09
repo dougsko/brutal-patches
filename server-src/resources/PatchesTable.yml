@@ -1,0 +1,50 @@
+PatchesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+        TableName: PatchesTable-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+            - AttributeName: id
+              AttributeType: N
+            - AttributeName: username
+              AttributeType: S
+            - AttributeName: created_at
+              AttributeType: S
+            - AttributeName: category
+              AttributeType: S
+            - AttributeName: average_rating
+              AttributeType: S
+        KeySchema:
+            - AttributeName: id
+              KeyType: HASH
+        GlobalSecondaryIndexes:
+            - IndexName: UserIndex
+              KeySchema:
+                - AttributeName: username
+                  KeyType: HASH
+                - AttributeName: created_at
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: ALL
+            - IndexName: CategoryIndex
+              KeySchema:
+                - AttributeName: category
+                  KeyType: HASH
+                - AttributeName: created_at
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: ALL
+            - IndexName: RatingIndex
+              KeySchema:
+                - AttributeName: average_rating
+                  KeyType: HASH
+                - AttributeName: created_at
+                  KeyType: RANGE
+              Projection:
+                ProjectionType: ALL
+            - IndexName: CreatedAtIndex
+              KeySchema:
+                - AttributeName: created_at
+                  KeyType: HASH
+              Projection:
+                ProjectionType: ALL

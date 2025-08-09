@@ -1,0 +1,14 @@
+PatchesTableIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:Query
+    - dynamodb:Scan
+    - dynamodb:GetItem
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:DeleteItem
+    - dynamodb:BatchGetItem
+    - dynamodb:BatchWriteItem
+  Resource:
+    - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PatchesTable}"
+    - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PatchesTable}/index/*"
