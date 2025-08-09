@@ -41,6 +41,8 @@ export interface Patch {
   updated_at: string;
   average_rating: string;
   tags?: string[];
+  username?: string; // User who created the patch
+  category?: string; // Patch category for organization
   [key: string]: any;
 }
 

@@ -22,7 +22,9 @@
     "deploy": "serverless deploy --stage prod",
     "deploy:dev": "serverless deploy --stage dev",
     "remove": "serverless remove --stage prod",
-    "logs": "serverless logs -f main --stage prod"
+    "logs": "serverless logs -f main --stage prod",
+    "seed": "ts-node scripts/seed-patches.ts",
+    "seed:prod": "NODE_ENV=production ts-node scripts/seed-patches.ts"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.863.0",
