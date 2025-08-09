@@ -43,6 +43,7 @@ export interface Patch {
   tags?: string[];
   username?: string; // User who created the patch
   category?: string; // Patch category for organization
+  isPublic?: boolean; // Visibility: true = public, false = private (default: true for backward compatibility)
   [key: string]: any;
 }
 

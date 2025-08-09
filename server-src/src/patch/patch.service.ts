@@ -26,27 +26,39 @@ export class PatchService {
 
   patches: Patch[] = PATCHES; // Keep for backward compatibility during migration
 
-  public async getAllPatches(): Promise<any> {
+  public async getAllPatches(requestingUser?: string): Promise<any> {
     try {
       // Try to get from database first
       const result = await this.patchRepository.list();
       const dbPatches = result.items;
       if (dbPatches && dbPatches.length > 0) {
-        return dbPatches;
+        // Filter private patches unless requested by owner
+        return dbPatches.filter(patch => 
+          patch.isPublic !== false || patch.username === requestingUser
+        );
       }
-      // Fallback to mock data if database is empty
-      return this.patches;
+      // Fallback to mock data if database is empty - also filtered
+      return this.patches.filter(patch => 
+        patch.isPublic !== false || patch.username === requestingUser
+      );
     } catch (error) {
       console.warn('Failed to get patches from database, using mock data:', error);
-      return this.patches;
+      // Filter private patches from mock data as well
+      return this.patches.filter(patch => 
+        patch.isPublic !== false || patch.username === requestingUser
+      );
     }
   }
 
-  public async getPatch(id: string): Promise<Patch> {
+  public async getPatch(id: string, requestingUser?: string): Promise<Patch> {
     try {
       // Try to get from database first
       const dbPatch = await this.patchRepository.findPatchById(parseInt(id));
       if (dbPatch) {
+        // Check if patch is private and user is not the owner
+        if (dbPatch.isPublic === false && dbPatch.username !== requestingUser) {
+          throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
+        }
         return dbPatch;
       }
     } catch (error) {
@@ -58,41 +70,65 @@ export class PatchService {
       (patch) => patch.id === parseInt(id),
     );
     if (!patch) {
-      throw new HttpException('Patch does not exist', HttpStatus.NOT_FOUND);
+      throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
     }
+    
+    // Check if patch is private and user is not the owner
+    if (patch.isPublic === false && patch.username !== requestingUser) {
+      throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
+    }
+    
     return patch;
   }
 
-  public async getPatchTotal(): Promise<number> {
+  public async getPatchTotal(requestingUser?: string): Promise<number> {
     try {
       // Try to get count from database first
       const result = await this.patchRepository.list();
       const dbPatches = result.items;
       if (dbPatches && dbPatches.length > 0) {
-        return dbPatches.length;
+        // Count only public patches unless user is specified
+        return dbPatches.filter(patch => 
+          patch.isPublic !== false || patch.username === requestingUser
+        ).length;
       }
     } catch (error) {
       console.warn('Failed to get patch count from database, using mock data:', error.message);
     }
-    return this.patches.length;
+    // Count only public patches from mock data
+    return this.patches.filter(patch => 
+      patch.isPublic !== false || patch.username === requestingUser
+    ).length;
   }
 
-  public async getLatestPatches(first: number, last: number): Promise<Patch[]> {
+  public async getLatestPatches(offset: number, limit: number, requestingUser?: string): Promise<Patch[]> {
+    // Filter private patches and then apply sorting and pagination
     return this.patches
-      .sort((a, b) => a.created_at.localeCompare(b.created_at))
-      .slice(first, last);
+      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at)) // Most recent first
+      .slice(offset, offset + limit);
   }
 
   public async getPatchesByUser(
     username: string,
-    first: number,
-    last: number,
-    includePrivate: boolean = false,
+    offset: number,
+    limit: number,
+    requestingUser?: string,
   ): Promise<Patch[]> {
+    // Validate input parameters
+    if (offset < 0) {
+      throw new HttpException('Offset cannot be negative', HttpStatus.BAD_REQUEST);
+    }
+    if (limit < 1 || limit > 1000) {
+      throw new HttpException('Limit must be between 1 and 1000', HttpStatus.BAD_REQUEST);
+    }
+
+    const includePrivate = requestingUser === username;
+    
     try {
-      // Try to get from database first
+      // Try to get from database first with proper pagination
       const result = await this.patchRepository.findPatchesByUser(username, {
-        limit: last - first,
+        limit: limit,
         sortOrder: 'desc', // Most recent first
       });
       
@@ -100,13 +136,12 @@ export class PatchService {
         // Filter private patches if not requested by owner
         let filteredItems = result.items;
         if (!includePrivate) {
-          // For now, all patches are considered public since we haven't added isPublic field yet
-          // This will be updated when we add the isPublic field
-          filteredItems = result.items; // TODO: filter by isPublic when field is added
+          // Filter to public patches only (default to public for backward compatibility)
+          filteredItems = result.items.filter(patch => patch.isPublic !== false);
         }
         
-        // Apply pagination on the results
-        return filteredItems.slice(first, Math.min(first + (last - first), filteredItems.length));
+        // Apply pagination on the filtered results
+        return filteredItems.slice(offset, offset + limit);
       }
     } catch (error) {
       console.warn('Failed to get user patches from database, trying fallback:', error);
@@ -123,26 +158,30 @@ export class PatchService {
       }
       this.patches.forEach((patch) => {
         if (user.patches && user.patches.includes(patch.id)) {
-          userPatches.push(patch);
+          // Apply privacy filtering to fallback data as well
+          if (includePrivate || patch.isPublic !== false) {
+            userPatches.push(patch);
+          }
         }
       });
-      return userPatches.slice(first, last);
+      return userPatches.slice(offset, offset + limit);
     });
   }
 
-  public async getUserPatchTotal(username: string, includePrivate: boolean = false): Promise<number> {
+  public async getUserPatchTotal(username: string, requestingUser?: string): Promise<number> {
+    const includePrivate = requestingUser === username;
+    
     try {
       // Try to get count from database first
       const result = await this.patchRepository.findPatchesByUser(username);
       if (result.items) {
         // Filter private patches if not requested by owner
-        let count = result.count || result.items.length;
+        let filteredItems = result.items;
         if (!includePrivate) {
-          // For now, all patches are considered public since we haven't added isPublic field yet
-          // This will be updated when we add the isPublic field
-          count = result.items.length; // TODO: filter by isPublic when field is added
+          // Filter to public patches only (default to public for backward compatibility)
+          filteredItems = result.items.filter(patch => patch.isPublic !== false);
         }
-        return count;
+        return filteredItems.length;
       }
     } catch (error) {
       console.warn('Failed to get user patch count from database, trying fallback:', error);
@@ -159,7 +198,10 @@ export class PatchService {
       }
       this.patches.forEach((patch) => {
         if (user.patches && user.patches.includes(patch.id)) {
-          userPatches.push(patch);
+          // Apply privacy filtering to fallback data as well
+          if (includePrivate || patch.isPublic !== false) {
+            userPatches.push(patch);
+          }
         }
       });
       return userPatches.length;
@@ -188,6 +230,7 @@ export class PatchService {
       const newPatch = await this.patchRepository.createPatch({
         ...patchData,
         username: username, // Add username to patch data
+        isPublic: patchData.isPublic !== undefined ? patchData.isPublic : true, // Default to public for backward compatibility
       });
 
       console.log('Successfully created patch in database:', newPatch.id);
@@ -206,6 +249,7 @@ export class PatchService {
         updated_at: now,
         average_rating: '0',
         username: username,
+        isPublic: patchData.isPublic !== undefined ? patchData.isPublic : true, // Default to public for backward compatibility
       };
 
       this.patches.push(newPatch);
@@ -336,7 +380,10 @@ export class PatchService {
   /**
    * Get patch history
    */
-  public async getPatchHistory(id: string): Promise<PatchHistory> {
+  public async getPatchHistory(id: string, requestingUser?: string): Promise<PatchHistory> {
+    // First verify user has access to the patch
+    await this.getPatch(id, requestingUser);
+    
     const patchId = parseInt(id);
     return this.versionRepository.getPatchHistory(patchId);
   }
@@ -347,7 +394,11 @@ export class PatchService {
   public async getPatchVersion(
     id: string,
     version: number,
+    requestingUser?: string,
   ): Promise<PatchVersion | null> {
+    // First verify user has access to the patch
+    await this.getPatch(id, requestingUser);
+    
     const patchId = parseInt(id);
     return this.versionRepository.getPatchVersion(patchId, version);
   }
@@ -358,10 +409,11 @@ export class PatchService {
   public async comparePatches(
     patch1Id: string,
     patch2Id: string,
+    requestingUser?: string,
   ): Promise<PatchComparison> {
     const [patch1, patch2] = await Promise.all([
-      this.getPatch(patch1Id),
-      this.getPatch(patch2Id),
+      this.getPatch(patch1Id, requestingUser),
+      this.getPatch(patch2Id, requestingUser),
     ]);
 
     const differences = this.calculatePatchDifferences(patch1, patch2);
@@ -382,7 +434,11 @@ export class PatchService {
     patchId: string,
     version1: number,
     version2: number,
+    requestingUser?: string,
   ): Promise<any> {
+    // First verify user has access to the patch
+    await this.getPatch(patchId, requestingUser);
+    
     const patchIdNum = parseInt(patchId);
     return this.versionRepository.compareVersions(
       patchIdNum,
@@ -502,11 +558,17 @@ export class PatchService {
       sortBy?: 'created_at' | 'updated_at' | 'rating' | 'title';
       sortOrder?: 'asc' | 'desc';
     },
+    requestingUser?: string,
   ): Promise<{ patches: Patch[]; total: number }> {
     try {
       // For now, implement basic search on in-memory patches
       // In production, this would use proper database queries
       let filteredPatches = [...this.patches];
+      
+      // First filter private patches unless requested by owner
+      filteredPatches = filteredPatches.filter(patch => 
+        patch.isPublic !== false || patch.username === requestingUser
+      );
 
       // Text search
       if (searchTerm) {
@@ -684,10 +746,11 @@ export class PatchService {
   /**
    * Get trending patches (most viewed/rated recently)
    */
-  public async getTrendingPatches(limit = 10): Promise<Patch[]> {
+  public async getTrendingPatches(limit = 10, requestingUser?: string): Promise<Patch[]> {
     // For now, return highest rated patches
     // In production, this would consider views, ratings, and time
     return this.patches
+      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
       .sort(
         (a, b) => parseFloat(b.average_rating) - parseFloat(a.average_rating),
       )
@@ -697,9 +760,10 @@ export class PatchService {
   /**
    * Get featured patches
    */
-  public async getFeaturedPatches(limit = 5): Promise<Patch[]> {
+  public async getFeaturedPatches(limit = 5, requestingUser?: string): Promise<Patch[]> {
     // For now, return patches with ratings > 4.0
     return this.patches
+      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
       .filter((patch) => parseFloat(patch.average_rating) >= 4.0)
       .sort(
         (a, b) => parseFloat(b.average_rating) - parseFloat(a.average_rating),
@@ -710,12 +774,13 @@ export class PatchService {
   /**
    * Get related patches based on similarity
    */
-  public async getRelatedPatches(patchId: string, limit = 5): Promise<Patch[]> {
-    const targetPatch = await this.getPatch(patchId);
+  public async getRelatedPatches(patchId: string, limit = 5, requestingUser?: string): Promise<Patch[]> {
+    const targetPatch = await this.getPatch(patchId, requestingUser);
 
     // Calculate similarity based on synthesis parameters
     const similarities = this.patches
       .filter((p) => p.id !== targetPatch.id)
+      .filter(patch => patch.isPublic !== false || patch.username === requestingUser) // Privacy filtering
       .map((patch) => ({
         patch,
         similarity: this.calculateSimilarity(targetPatch, patch),

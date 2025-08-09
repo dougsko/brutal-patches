@@ -83,8 +83,9 @@ export class PatchController {
     schema: { type: 'array', items: { type: 'object' } },
   })
   @Get()
-  async findAll(): Promise<Patch[]> {
-    const patches = await this.patchService.getAllPatches();
+  async findAll(@Request() req?): Promise<Patch[]> {
+    const requestingUser = req?.user?.username;
+    const patches = await this.patchService.getAllPatches(requestingUser);
     return patches;
   }
 
@@ -98,8 +99,9 @@ export class PatchController {
     schema: { type: 'number' },
   })
   @Get('total')
-  async getTotal(): Promise<number> {
-    return await this.patchService.getPatchTotal();
+  async getTotal(@Request() req?): Promise<number> {
+    const requestingUser = req?.user?.username;
+    return await this.patchService.getPatchTotal(requestingUser);
   }
 
   @ApiOperation({
@@ -116,8 +118,9 @@ export class PatchController {
     schema: { type: 'number' },
   })
   @Get('users/:username/total')
-  getUserTotal(@Param('username') username: string): Promise<number> {
-    return this.patchService.getUserPatchTotal(username);
+  getUserTotal(@Request() req, @Param('username') username: string): Promise<number> {
+    const requestingUser = req?.user?.username;
+    return this.patchService.getUserPatchTotal(username, requestingUser);
   }
 
   @ApiOperation({
@@ -140,7 +143,7 @@ export class PatchController {
   ): Promise<Patch[]> {
     const offset = parseInt(offsetParam || '0', 10);
     const limit = parseInt(limitParam || '100', 10);
-    return this.patchService.getPatchesByUser(username, offset, offset + limit);
+    return this.patchService.getPatchesByUser(username, offset, limit);
   }
 
   @ApiOperation({
@@ -169,7 +172,7 @@ export class PatchController {
   ): Promise<Patch[]> {
     const offset = parseInt(offsetParam || '0', 10);
     const limit = parseInt(limitParam || '100', 10);
-    return this.patchService.getPatchesByUser(req.user.username, offset, offset + limit, true); // true = include private
+    return this.patchService.getPatchesByUser(req.user.username, offset, limit, req.user.username);
   }
 
   @ApiOperation({
@@ -190,7 +193,7 @@ export class PatchController {
   @UseGuards(JwtAuthGuard)
   @Get('my/total')
   getMyTotal(@Request() req): Promise<number> {
-    return this.patchService.getUserPatchTotal(req.user.username, true); // true = include private
+    return this.patchService.getUserPatchTotal(req.user.username, req.user.username);
   }
 
   @ApiOperation({
@@ -250,6 +253,7 @@ export class PatchController {
   })
   @Get('search')
   async searchPatches(
+    @Request() req,
     @Query('q') searchTerm?: string,
     @Query('category') category?: string,
     @Query('tags') tags?: string,
@@ -280,7 +284,8 @@ export class PatchController {
       sortOrder,
     };
 
-    return this.patchService.searchPatches(searchTerm, filters, options);
+    const requestingUser = req?.user?.username;
+    return this.patchService.searchPatches(searchTerm, filters, options, requestingUser);
   }
 
   @Get('categories')
@@ -289,13 +294,15 @@ export class PatchController {
   }
 
   @Get('trending')
-  async getTrendingPatches(@Query('limit') limit?: number): Promise<Patch[]> {
-    return this.patchService.getTrendingPatches(limit || 10);
+  async getTrendingPatches(@Request() req, @Query('limit') limit?: number): Promise<Patch[]> {
+    const requestingUser = req?.user?.username;
+    return this.patchService.getTrendingPatches(limit || 10, requestingUser);
   }
 
   @Get('featured')
-  async getFeaturedPatches(@Query('limit') limit?: number): Promise<Patch[]> {
-    return this.patchService.getFeaturedPatches(limit || 5);
+  async getFeaturedPatches(@Request() req, @Query('limit') limit?: number): Promise<Patch[]> {
+    const requestingUser = req?.user?.username;
+    return this.patchService.getFeaturedPatches(limit || 5, requestingUser);
   }
 
   @ApiOperation({
@@ -311,13 +318,15 @@ export class PatchController {
   })
   @Get('latest')
   async findLatestPatches(
+    @Request() req,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
   ): Promise<Patch[]> {
     console.log('🔥 Latest patches route hit!', { offsetParam, limitParam });
     const offset = parseInt(offsetParam || '0', 10);
     const limit = parseInt(limitParam || '100', 10);
-    const patches = await this.patchService.getLatestPatches(offset, offset + limit);
+    const requestingUser = req?.user?.username;
+    const patches = await this.patchService.getLatestPatches(offset, limit, requestingUser);
     return patches;
   }
 
@@ -337,9 +346,10 @@ export class PatchController {
     type: ErrorResponse,
   })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Patch> {
+  async findOne(@Request() req, @Param('id') id: string): Promise<Patch> {
     console.log('🔥 Single patch route hit with ID:', id);
-    const patch = await this.patchService.getPatch(id);
+    const requestingUser = req?.user?.username;
+    const patch = await this.patchService.getPatch(id, requestingUser);
     return patch;
   }
 
@@ -430,41 +440,50 @@ export class PatchController {
   }
 
   @Get(':id/history')
-  async getPatchHistory(@Param('id') id: string): Promise<PatchHistory> {
-    return this.patchService.getPatchHistory(id);
+  async getPatchHistory(@Request() req, @Param('id') id: string): Promise<PatchHistory> {
+    const requestingUser = req?.user?.username;
+    return this.patchService.getPatchHistory(id, requestingUser);
   }
 
   @Get(':id/version/:version')
   async getPatchVersion(
+    @Request() req,
     @Param('id') id: string,
     @Param('version') version: number,
   ): Promise<PatchVersion | null> {
-    return this.patchService.getPatchVersion(id, version);
+    const requestingUser = req?.user?.username;
+    return this.patchService.getPatchVersion(id, version, requestingUser);
   }
 
   @Get(':id/compare/:otherId')
   async comparePatches(
+    @Request() req,
     @Param('id') id: string,
     @Param('otherId') otherId: string,
   ): Promise<PatchComparison> {
-    return this.patchService.comparePatches(id, otherId);
+    const requestingUser = req?.user?.username;
+    return this.patchService.comparePatches(id, otherId, requestingUser);
   }
 
   @Get(':id/versions/:version1/compare/:version2')
   async comparePatchVersions(
+    @Request() req,
     @Param('id') id: string,
     @Param('version1') version1: number,
     @Param('version2') version2: number,
   ): Promise<any> {
-    return this.patchService.comparePatchVersions(id, version1, version2);
+    const requestingUser = req?.user?.username;
+    return this.patchService.comparePatchVersions(id, version1, version2, requestingUser);
   }
 
   @Get(':id/related')
   async getRelatedPatches(
+    @Request() req,
     @Param('id') id: string,
     @Query('limit') limit?: number,
   ): Promise<Patch[]> {
-    return this.patchService.getRelatedPatches(id, limit || 5);
+    const requestingUser = req?.user?.username;
+    return this.patchService.getRelatedPatches(id, limit || 5, requestingUser);
   }
 
   // ====== COLLECTION ENDPOINTS ======
