@@ -103,63 +103,57 @@ export class PatchController {
   }
 
   @ApiOperation({
-    summary: 'Get user patch count',
-    description:
-      'Get the total number of patches for a specific user (authenticated users only)',
+    summary: 'Get user public patch count',
+    description: 'Get the total number of public patches for a specific user',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiParam({
     name: 'username',
-    description: 'Username to get patch count for',
+    description: 'Username to get public patch count for',
   })
   @ApiResponse({
     status: 200,
-    description: 'User patch count',
+    description: 'User public patch count',
     schema: { type: 'number' },
   })
-  @ApiForbiddenResponse({
-    status: 403,
-    description: 'Access denied - users can only view their own statistics',
-    type: ErrorResponse,
-  })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('users/:username/total')
-  getMyTotal(
-    @Request() req,
-    @Param('username') username: string,
-  ): Promise<number> {
-    // Users can only access their own patch totals
-    if (req.user.username !== username) {
-      throw new ForbiddenException(
-        'Access denied: You can only view your own patch statistics',
-      );
-    }
+  getUserTotal(@Param('username') username: string): Promise<number> {
     return this.patchService.getUserPatchTotal(username);
   }
 
   @ApiOperation({
-    summary: 'Get user patches with pagination',
-    description:
-      'Get patches for a specific user with pagination (authenticated users only)',
+    summary: 'Get user public patches with pagination',
+    description: 'Get public patches for a specific user with pagination',
   })
-  @ApiBearerAuth('JWT-auth')
-  @ApiParam({ name: 'username', description: 'Username to get patches for' })
+  @ApiParam({ name: 'username', description: 'Username to get public patches for' })
   @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
   @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
   @ApiResponse({
     status: 200,
-    description: 'User patches retrieved successfully',
+    description: 'User public patches retrieved successfully',
     schema: { type: 'array', items: { type: 'object' } },
   })
-  @ApiForbiddenResponse({
-    status: 403,
-    description: 'Access denied - users can only view their own patches',
-    type: ErrorResponse,
+  @Get('users/:username')
+  getUserPatches(
+    @Param('username') username: string,
+    @Query('offset') offsetParam?: string,
+    @Query('limit') limitParam?: string,
+  ): Promise<Patch[]> {
+    const offset = parseInt(offsetParam || '0', 10);
+    const limit = parseInt(limitParam || '100', 10);
+    return this.patchService.getPatchesByUser(username, offset, offset + limit);
+  }
+
+  @ApiOperation({
+    summary: 'Get my patches with pagination',
+    description: 'Get all patches (including private) for the authenticated user',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
+  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
+  @ApiResponse({
+    status: 200,
+    description: 'My patches retrieved successfully',
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @ApiUnauthorizedResponse({
     status: 401,
@@ -167,22 +161,36 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('users/:username')
+  @Get('my')
   getMyPatches(
     @Request() req,
-    @Param('username') username: string,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
   ): Promise<Patch[]> {
-    // Users can only access their own patches through this endpoint
-    if (req.user.username !== username) {
-      throw new ForbiddenException(
-        'Access denied: You can only view your own patches',
-      );
-    }
     const offset = parseInt(offsetParam || '0', 10);
     const limit = parseInt(limitParam || '100', 10);
-    return this.patchService.getPatchesByUser(username, offset, offset + limit);
+    return this.patchService.getPatchesByUser(req.user.username, offset, offset + limit, true); // true = include private
+  }
+
+  @ApiOperation({
+    summary: 'Get my total patch count',
+    description: 'Get total patch count (including private) for the authenticated user',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiResponse({
+    status: 200,
+    description: 'My total patch count',
+    schema: { type: 'number' },
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Authentication required',
+    type: ErrorResponse,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('my/total')
+  getMyTotal(@Request() req): Promise<number> {
+    return this.patchService.getUserPatchTotal(req.user.username, true); // true = include private
   }
 
   @ApiOperation({

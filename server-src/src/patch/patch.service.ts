@@ -87,7 +87,32 @@ export class PatchService {
     username: string,
     first: number,
     last: number,
+    includePrivate: boolean = false,
   ): Promise<Patch[]> {
+    try {
+      // Try to get from database first
+      const result = await this.patchRepository.findPatchesByUser(username, {
+        limit: last - first,
+        sortOrder: 'desc', // Most recent first
+      });
+      
+      if (result.items && result.items.length > 0) {
+        // Filter private patches if not requested by owner
+        let filteredItems = result.items;
+        if (!includePrivate) {
+          // For now, all patches are considered public since we haven't added isPublic field yet
+          // This will be updated when we add the isPublic field
+          filteredItems = result.items; // TODO: filter by isPublic when field is added
+        }
+        
+        // Apply pagination on the results
+        return filteredItems.slice(first, Math.min(first + (last - first), filteredItems.length));
+      }
+    } catch (error) {
+      console.warn('Failed to get user patches from database, trying fallback:', error);
+    }
+
+    // Fallback to in-memory approach for backward compatibility
     const userPatches: Patch[] = [];
     return this.userService.findOneByUsername(username).then((user) => {
       if (!user) {
@@ -105,7 +130,25 @@ export class PatchService {
     });
   }
 
-  public async getUserPatchTotal(username: string): Promise<number> {
+  public async getUserPatchTotal(username: string, includePrivate: boolean = false): Promise<number> {
+    try {
+      // Try to get count from database first
+      const result = await this.patchRepository.findPatchesByUser(username);
+      if (result.items) {
+        // Filter private patches if not requested by owner
+        let count = result.count || result.items.length;
+        if (!includePrivate) {
+          // For now, all patches are considered public since we haven't added isPublic field yet
+          // This will be updated when we add the isPublic field
+          count = result.items.length; // TODO: filter by isPublic when field is added
+        }
+        return count;
+      }
+    } catch (error) {
+      console.warn('Failed to get user patch count from database, trying fallback:', error);
+    }
+
+    // Fallback to in-memory approach for backward compatibility
     const userPatches: Patch[] = [];
     return this.userService.findOneByUsername(username).then((user) => {
       if (!user) {
