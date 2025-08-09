@@ -128,7 +128,7 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('user/:username/total')
+  @Get('users/:username/total')
   getMyTotal(
     @Request() req,
     @Param('username') username: string,
@@ -149,8 +149,8 @@ export class PatchController {
   })
   @ApiBearerAuth('JWT-auth')
   @ApiParam({ name: 'username', description: 'Username to get patches for' })
-  @ApiParam({ name: 'first', description: 'First item index for pagination' })
-  @ApiParam({ name: 'last', description: 'Last item index for pagination' })
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
+  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
   @ApiResponse({
     status: 200,
     description: 'User patches retrieved successfully',
@@ -167,12 +167,12 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('user/:username/:first/:last')
+  @Get('users/:username')
   getMyPatches(
     @Request() req,
     @Param('username') username: string,
-    @Param('first') first: number,
-    @Param('last') last: number,
+    @Query('offset') offsetParam?: string,
+    @Query('limit') limitParam?: string,
   ): Promise<Patch[]> {
     // Users can only access their own patches through this endpoint
     if (req.user.username !== username) {
@@ -180,7 +180,9 @@ export class PatchController {
         'Access denied: You can only view your own patches',
       );
     }
-    return this.patchService.getPatchesByUser(username, first, last);
+    const offset = parseInt(offsetParam || '0', 10);
+    const limit = parseInt(limitParam || '100', 10);
+    return this.patchService.getPatchesByUser(username, offset, offset + limit);
   }
 
   @ApiOperation({
@@ -292,19 +294,22 @@ export class PatchController {
     summary: 'Get latest patches with pagination',
     description: 'Get the most recent patches with pagination',
   })
-  @ApiParam({ name: 'first', description: 'First item index for pagination' })
-  @ApiParam({ name: 'last', description: 'Last item index for pagination' })
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
+  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
   @ApiResponse({
     status: 200,
     description: 'Latest patches retrieved successfully',
     schema: { type: 'array', items: { type: 'object' } },
   })
-  @Get(':first/:last')
+  @Get('latest')
   async findLatestPatches(
-    @Param('first') first: number,
-    @Param('last') last: number,
+    @Query('offset') offsetParam?: string,
+    @Query('limit') limitParam?: string,
   ): Promise<Patch[]> {
-    const patches = await this.patchService.getLatestPatches(first, last);
+    console.log('🔥 Latest patches route hit!', { offsetParam, limitParam });
+    const offset = parseInt(offsetParam || '0', 10);
+    const limit = parseInt(limitParam || '100', 10);
+    const patches = await this.patchService.getLatestPatches(offset, offset + limit);
     return patches;
   }
 
@@ -325,6 +330,7 @@ export class PatchController {
   })
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Patch> {
+    console.log('🔥 Single patch route hit with ID:', id);
     const patch = await this.patchService.getPatch(id);
     return patch;
   }

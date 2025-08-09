@@ -9,7 +9,7 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   memorySize: 512
   architecture: x86_64
   stage: ${opt:stage, 'dev'}
