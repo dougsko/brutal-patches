@@ -39,11 +39,14 @@ export class LoggerService {
     // Different log levels for different environments
     const logLevel = process.env.NODE_ENV === 'production' ? 'info' : 'debug';
 
-    this.logger = winston.createLogger({
-      level: logLevel,
-      format: logFormat,
-      defaultMeta: { service: 'brutal-patches-api' },
-      transports: [
+    // Configure transports based on environment
+    const transports = [];
+    const exceptionHandlers = [];
+    const rejectionHandlers = [];
+
+    // Only use file transports in non-Lambda environments
+    if (!process.env.AWS_EXECUTION_ENV) {
+      transports.push(
         // Write errors to error.log
         new winston.transports.File({
           filename: 'logs/error.log',
@@ -57,18 +60,36 @@ export class LoggerService {
           maxsize: 5242880, // 5MB
           maxFiles: 10,
         }),
-      ],
-      // Handle exceptions and rejections
-      exceptionHandlers: [
+      );
+
+      exceptionHandlers.push(
         new winston.transports.File({ filename: 'logs/exceptions.log' }),
-      ],
-      rejectionHandlers: [
+      );
+      rejectionHandlers.push(
         new winston.transports.File({ filename: 'logs/rejections.log' }),
-      ],
+      );
+    }
+
+    this.logger = winston.createLogger({
+      level: logLevel,
+      format: logFormat,
+      defaultMeta: { service: 'brutal-patches-api' },
+      transports,
+      // Handle exceptions and rejections only in non-Lambda environments
+      exceptionHandlers: exceptionHandlers.length > 0 ? exceptionHandlers : undefined,
+      rejectionHandlers: rejectionHandlers.length > 0 ? rejectionHandlers : undefined,
     });
 
-    // In development, also log to console
-    if (process.env.NODE_ENV !== 'production') {
+    // Always add console transport for Lambda or development
+    if (process.env.AWS_EXECUTION_ENV) {
+      // In AWS Lambda, log to CloudWatch (console) with JSON format
+      this.logger.add(
+        new winston.transports.Console({
+          format: winston.format.json(),
+        }),
+      );
+    } else if (process.env.NODE_ENV !== 'production') {
+      // In development, also log to console with colors
       this.logger.add(
         new winston.transports.Console({
           format: winston.format.combine(
@@ -77,13 +98,11 @@ export class LoggerService {
           ),
         }),
       );
-    }
-
-    // In AWS Lambda, log to CloudWatch (console)
-    if (process.env.AWS_EXECUTION_ENV) {
+    } else {
+      // In production (non-Lambda), add simple console logging
       this.logger.add(
         new winston.transports.Console({
-          format: winston.format.json(),
+          format: winston.format.simple(),
         }),
       );
     }
