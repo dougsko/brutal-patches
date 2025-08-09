@@ -75,10 +75,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 16 (for Serverless compatibility)
+      - name: Setup Node.js 18 (for Serverless compatibility)
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'npm'
 
       - name: Configure AWS credentials

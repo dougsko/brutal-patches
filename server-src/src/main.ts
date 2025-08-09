@@ -1,12 +1,9 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'dotenv/config';
-import helmet from '@fastify/helmet';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { corsConfig } from './common/config/cors.config';
 import { LoggerService } from './common/logger.service';
@@ -15,16 +12,13 @@ const port = process.env.PORT || 4000;
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create<NestFastifyApplication>(
-      AppModule,
-      new FastifyAdapter(),
-    );
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
     // Get logger service
     const logger = app.get(LoggerService);
 
     // Security middleware
-    await app.register(helmet, {
+    app.use(helmet({
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
@@ -35,7 +29,7 @@ async function bootstrap() {
         },
         reportOnly: process.env.NODE_ENV !== 'production',
       },
-    });
+    }));
 
     // CORS configuration
     app.enableCors(corsConfig);
