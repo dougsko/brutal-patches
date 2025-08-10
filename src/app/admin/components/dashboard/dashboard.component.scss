@@ -213,6 +213,60 @@
   }
 }
 
+// Accessibility support
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Chart actions styling
+.chart-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  button {
+    font-size: 12px;
+    min-width: auto;
+    padding: 4px 8px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+    }
+  }
+}
+
+// Keyboard focus styles
+.chart-card:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+.stats-card:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+// Enhanced hover and focus states
+.chart-card:hover,
+.chart-card:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
 // Dark theme support
 @media (prefers-color-scheme: dark) {
   .dashboard-header .dashboard-title {
@@ -226,5 +280,18 @@
 
   .loading-container {
     color: #b0b0b0;
+  }
+
+  .chart-actions {
+    border-top-color: rgba(255, 255, 255, 0.08);
+
+    button {
+      color: #e0e0e0;
+    }
+  }
+
+  .chart-card:focus,
+  .stats-card:focus {
+    outline-color: #64b5f6;
   }
 }

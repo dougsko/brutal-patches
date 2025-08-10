@@ -1,40 +1,68 @@
 <div class="user-management-container">
   <!-- Header Section -->
-  <div class="page-header">
+  <div class="page-header" role="banner">
     <div class="header-content">
       <div class="title-section">
-        <h1 class="page-title">
-          <mat-icon>people</mat-icon>
+        <h1 class="page-title" id="page-title">
+          <mat-icon aria-hidden="true">people</mat-icon>
           User Management
         </h1>
-        <p class="page-subtitle">
+        <p class="page-subtitle" id="page-description">
           Manage users, roles, and permissions
         </p>
       </div>
       
-      <div class="header-actions">
-        <button mat-raised-button color="accent" (click)="onRefresh()" [disabled]="loading">
-          <mat-icon>refresh</mat-icon>
+      <div class="header-actions" role="toolbar" aria-label="Page actions">
+        <button *ngIf="shouldUseVirtualScrolling()" 
+                mat-stroked-button 
+                (click)="toggleVirtualScrolling()" 
+                [disabled]="loading"
+                matTooltip="Toggle between regular table and virtual scrolling for better performance"
+                [attr.aria-label]="'Switch to ' + (useVirtualScrolling ? 'standard' : 'virtual scrolling') + ' view'"
+                type="button">
+          <mat-icon aria-hidden="true">{{ useVirtualScrolling ? 'view_list' : 'view_stream' }}</mat-icon>
+          {{ useVirtualScrolling ? 'Standard View' : 'Virtual Scroll' }}
+        </button>
+        <button mat-raised-button 
+                color="accent" 
+                (click)="onRefresh()" 
+                [disabled]="loading"
+                aria-label="Refresh user list"
+                type="button">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
           Refresh
         </button>
       </div>
     </div>
 
     <!-- Search and Quick Filters -->
-    <div class="search-section">
+    <div class="search-section" role="search" aria-labelledby="search-heading">
+      <div id="search-heading" class="sr-only">Search and filter users</div>
       <mat-form-field class="search-field" appearance="outline">
         <mat-label>Search users</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput [formControl]="searchControl" placeholder="Search by username, email, or name">
-        <button *ngIf="searchControl.value" matSuffix mat-icon-button (click)="searchControl.setValue('')">
-          <mat-icon>close</mat-icon>
+        <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+        <input matInput 
+               [formControl]="searchControl" 
+               placeholder="Search by username, email, or name"
+               aria-label="Search users by username, email, or name"
+               autocomplete="off"
+               spellcheck="false">
+        <button *ngIf="searchControl.value" 
+                matSuffix 
+                mat-icon-button 
+                (click)="searchControl.setValue('')"
+                aria-label="Clear search"
+                type="button">
+          <mat-icon aria-hidden="true">close</mat-icon>
         </button>
       </mat-form-field>
 
-      <div class="quick-filters">
+      <div class="quick-filters" role="group" aria-label="Filter options">
         <mat-form-field appearance="outline">
           <mat-label>Status</mat-label>
-          <mat-select [(value)]="filters.status" (selectionChange)="onFilterChange()">
+          <mat-select [(value)]="filters.status" 
+                      (selectionChange)="onFilterChange()"
+                      aria-label="Filter by user status">
             <mat-option *ngFor="let status of statusOptions" [value]="status.value">
               {{ status.label }}
             </mat-option>
@@ -43,7 +71,9 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Role</mat-label>
-          <mat-select [(value)]="filters.role" (selectionChange)="onFilterChange()">
+          <mat-select [(value)]="filters.role" 
+                      (selectionChange)="onFilterChange()"
+                      aria-label="Filter by user role">
             <mat-option *ngFor="let role of roleOptions" [value]="role.value">
               {{ role.label }}
             </mat-option>
@@ -52,7 +82,9 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Date Range</mat-label>
-          <mat-select [(value)]="filters.dateRange" (selectionChange)="onFilterChange()">
+          <mat-select [(value)]="filters.dateRange" 
+                      (selectionChange)="onFilterChange()"
+                      aria-label="Filter by registration date range">
             <mat-option *ngFor="let range of dateRangeOptions" [value]="range.value">
               {{ range.label }}
             </mat-option>
@@ -61,7 +93,9 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Activity</mat-label>
-          <mat-select [(value)]="filters.activity" (selectionChange)="onFilterChange()">
+          <mat-select [(value)]="filters.activity" 
+                      (selectionChange)="onFilterChange()"
+                      aria-label="Filter by user activity level">
             <mat-option *ngFor="let activity of activityOptions" [value]="activity.value">
               {{ activity.label }}
             </mat-option>
@@ -72,31 +106,41 @@
   </div>
 
   <!-- Bulk Operations Bar -->
-  <div class="bulk-operations" *ngIf="selection.hasValue()">
-    <div class="bulk-info">
-      <mat-icon>info</mat-icon>
-      <span>{{ selection.selected.length }} user(s) selected</span>
+  <div class="bulk-operations" 
+       *ngIf="selection.hasValue()" 
+       role="toolbar" 
+       aria-label="Bulk operations for selected users"
+       [attr.aria-describedby]="'bulk-info-' + selection.selected.length">
+    <div class="bulk-info" [attr.id]="'bulk-info-' + selection.selected.length">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span aria-live="polite">{{ selection.selected.length }} user(s) selected</span>
     </div>
 
-    <div class="bulk-actions">
+    <div class="bulk-actions" role="group" aria-label="Available bulk operations">
       <button *ngFor="let operation of availableBulkOperations" 
               mat-stroked-button 
               [color]="operation.color"
               (click)="onBulkOperation(operation.value)"
-              [disabled]="loading">
-        <mat-icon>{{ operation.icon }}</mat-icon>
+              [disabled]="loading"
+              [attr.aria-label]="operation.label + ' for ' + selection.selected.length + ' selected users'"
+              type="button">
+        <mat-icon aria-hidden="true">{{ operation.icon }}</mat-icon>
         {{ operation.label }}
       </button>
     </div>
   </div>
 
   <!-- Error Display -->
-  <mat-card *ngIf="error" class="error-card">
+  <mat-card *ngIf="error" class="error-card" role="alert" aria-live="assertive">
     <mat-card-content>
       <div class="error-content">
-        <mat-icon color="warn">error</mat-icon>
+        <mat-icon color="warn" aria-hidden="true">error</mat-icon>
         <span>{{ error }}</span>
-        <button mat-button color="primary" (click)="onRefresh()">
+        <button mat-button 
+                color="primary" 
+                (click)="onRefresh()"
+                aria-label="Try to reload the user list again"
+                type="button">
           Try Again
         </button>
       </div>
@@ -107,23 +151,46 @@
   <div class="table-container">
     <mat-card>
       <mat-card-content class="table-content">
-        <mat-table [dataSource]="dataSource" 
+        
+        <!-- Virtual Scrolling Table (for large datasets) -->
+        <app-virtual-scroll-table 
+          *ngIf="useVirtualScrolling && !loading"
+          [data]="dataSource.data"
+          [columns]="virtualColumns"
+          [loading]="loading"
+          [itemHeight]="52"
+          containerHeight="500px"
+          ariaLabel="User management table with virtual scrolling"
+          (rowSelect)="onVirtualRowSelect($event)"
+          (sortChange)="onVirtualSortChange($event)">
+        </app-virtual-scroll-table>
+
+        <!-- Standard Material Table (for smaller datasets) -->
+        <mat-table *ngIf="!useVirtualScrolling"
+                   [dataSource]="dataSource" 
                    matSort 
                    (matSortChange)="onSortChange($event)"
-                   class="users-table">
+                   class="users-table"
+                   role="table"
+                   [attr.aria-label]="'User list with ' + totalUsers + ' total users'"
+                   [attr.aria-rowcount]="totalUsers + 1"
+                   (keydown)="onTableKeydown($event)">
 
           <!-- Selection Column -->
           <ng-container matColumnDef="select">
-            <mat-header-cell *matHeaderCellDef>
+            <mat-header-cell *matHeaderCellDef role="columnheader">
               <mat-checkbox (change)="masterToggle()"
                            [checked]="selection.hasValue() && isAllSelected()"
-                           [indeterminate]="selection.hasValue() && !isAllSelected()">
+                           [indeterminate]="selection.hasValue() && !isAllSelected()"
+                           [attr.aria-label]="'Select all users on this page'"
+                           [attr.aria-describedby]="selection.hasValue() ? 'selection-info' : null">
               </mat-checkbox>
             </mat-header-cell>
-            <mat-cell *matCellDef="let user">
+            <mat-cell *matCellDef="let user" role="gridcell">
               <mat-checkbox (click)="$event.stopPropagation()"
                            (change)="toggleSelection(user)"
-                           [checked]="selection.isSelected(user)">
+                           [checked]="selection.isSelected(user)"
+                           [attr.aria-label]="'Select user ' + user.username">
               </mat-checkbox>
             </mat-cell>
           </ng-container>
@@ -211,32 +278,41 @@
           <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
             <mat-cell *matCellDef="let user">
-              <div class="action-buttons">
+              <div class="action-buttons" role="group" [attr.aria-label]="'Actions for user ' + user.username">
                 <button mat-icon-button 
                        color="primary"
                        (click)="onEditUser(user)"
-                       matTooltip="Edit User">
-                  <mat-icon>edit</mat-icon>
+                       matTooltip="Edit User"
+                       [attr.aria-label]="'Edit user ' + user.username"
+                       type="button">
+                  <mat-icon aria-hidden="true">edit</mat-icon>
                 </button>
                 
                 <button *ngIf="getUserStatus(user) === 'active'"
                        mat-icon-button 
                        color="warn"
                        (click)="onSuspendUser(user)"
-                       matTooltip="Suspend User">
-                  <mat-icon>block</mat-icon>
+                       matTooltip="Suspend User"
+                       [attr.aria-label]="'Suspend user ' + user.username"
+                       type="button">
+                  <mat-icon aria-hidden="true">block</mat-icon>
                 </button>
                 
                 <button *ngIf="getUserStatus(user) === 'suspended'"
                        mat-icon-button 
                        color="primary"
                        (click)="onActivateUser(user)"
-                       matTooltip="Activate User">
-                  <mat-icon>check_circle</mat-icon>
+                       matTooltip="Activate User"
+                       [attr.aria-label]="'Activate user ' + user.username"
+                       type="button">
+                  <mat-icon aria-hidden="true">check_circle</mat-icon>
                 </button>
 
-                <button mat-icon-button [matMenuTriggerFor]="userMenu">
-                  <mat-icon>more_vert</mat-icon>
+                <button mat-icon-button 
+                       [matMenuTriggerFor]="userMenu"
+                       [attr.aria-label]="'More actions for user ' + user.username"
+                       type="button">
+                  <mat-icon aria-hidden="true">more_vert</mat-icon>
                 </button>
                 
                 <mat-menu #userMenu="matMenu">
@@ -270,21 +346,35 @@
           </mat-row>
         </mat-table>
 
-        <!-- Loading Indicator -->
-        <div *ngIf="loading" class="loading-container">
+        <!-- Loading Indicator (for standard table) -->
+        <div *ngIf="loading && !useVirtualScrolling" class="loading-container">
           <mat-spinner diameter="40"></mat-spinner>
           <p>Loading users...</p>
         </div>
 
-        <!-- No Data Message -->
-        <div *ngIf="!loading && dataSource.data.length === 0" class="no-data-container">
+        <!-- No Data Message (for standard table) -->
+        <div *ngIf="!loading && !useVirtualScrolling && dataSource.data.length === 0" class="no-data-container">
           <mat-icon class="no-data-icon">people_outline</mat-icon>
           <h3>No users found</h3>
           <p>Try adjusting your search criteria or filters</p>
         </div>
 
-        <!-- Paginator -->
-        <mat-paginator [length]="totalUsers"
+        <!-- Loading Indicator (for virtual scrolling) -->
+        <div *ngIf="loading && useVirtualScrolling" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading users...</p>
+        </div>
+
+        <!-- No Data Message (for virtual scrolling) -->
+        <div *ngIf="!loading && useVirtualScrolling && dataSource.data.length === 0" class="no-data-container">
+          <mat-icon class="no-data-icon">people_outline</mat-icon>
+          <h3>No users found</h3>
+          <p>Try adjusting your search criteria or filters</p>
+        </div>
+
+        <!-- Paginator (only for standard table - virtual scrolling handles its own scrolling) -->
+        <mat-paginator *ngIf="!useVirtualScrolling"
+                      [length]="totalUsers"
                       [pageSize]="25"
                       [pageSizeOptions]="[10, 25, 50, 100]"
                       (page)="onPageChange()"

@@ -1,37 +1,47 @@
-<div class="dashboard-container">
+<div class="dashboard-container" role="main" aria-label="Admin Dashboard">
   <!-- Header Section -->
   <div class="dashboard-header">
     <div class="header-content">
-      <h1 class="dashboard-title">
-        <mat-icon>dashboard</mat-icon>
+      <h1 class="dashboard-title" id="dashboard-title">
+        <mat-icon aria-hidden="true">dashboard</mat-icon>
         Admin Dashboard
       </h1>
-      <div class="header-actions">
-        <div class="last-updated">
-          <mat-icon class="update-icon">schedule</mat-icon>
-          Last updated: {{ lastUpdated | date:'short' }}
+      <div class="header-actions" role="toolbar" aria-label="Dashboard controls">
+        <div class="last-updated" role="status" aria-live="polite">
+          <mat-icon class="update-icon" aria-hidden="true">schedule</mat-icon>
+          <span aria-label="Last updated time">Last updated: {{ lastUpdated | date:'short' }}</span>
         </div>
         
         <!-- Auto Refresh Toggle -->
         <mat-slide-toggle 
           [(ngModel)]="autoRefreshEnabled"
           (change)="onToggleAutoRefresh()"
-          matTooltip="Auto refresh dashboard">
+          matTooltip="Auto refresh dashboard"
+          aria-label="Toggle automatic dashboard refresh"
+          [attr.aria-describedby]="'auto-refresh-desc'">
           Auto refresh
         </mat-slide-toggle>
+        <div id="auto-refresh-desc" class="sr-only">
+          {{ autoRefreshEnabled ? 'Auto refresh is enabled' : 'Auto refresh is disabled' }}
+        </div>
         
         <!-- Refresh Interval Selector -->
         <mat-form-field appearance="outline" class="refresh-interval">
           <mat-label>Refresh every</mat-label>
           <mat-select 
             [value]="refreshInterval" 
-            (selectionChange)="onRefreshIntervalChange($event.value)">
-            <mat-option value="15">15 seconds</mat-option>
-            <mat-option value="30">30 seconds</mat-option>
-            <mat-option value="60">1 minute</mat-option>
-            <mat-option value="300">5 minutes</mat-option>
+            (selectionChange)="onRefreshIntervalChange($event.value)"
+            aria-label="Select refresh interval"
+            [attr.aria-describedby]="'refresh-interval-desc'">
+            <mat-option value="15" aria-label="Refresh every 15 seconds">15 seconds</mat-option>
+            <mat-option value="30" aria-label="Refresh every 30 seconds">30 seconds</mat-option>
+            <mat-option value="60" aria-label="Refresh every 1 minute">1 minute</mat-option>
+            <mat-option value="300" aria-label="Refresh every 5 minutes">5 minutes</mat-option>
           </mat-select>
         </mat-form-field>
+        <div id="refresh-interval-desc" class="sr-only">
+          Currently set to refresh every {{ getRefreshIntervalText() }}
+        </div>
         
         <!-- Manual Refresh Button -->
         <button 
@@ -39,21 +49,30 @@
           color="primary" 
           (click)="onRefresh()"
           [disabled]="loading"
-          matTooltip="Refresh dashboard data">
-          <mat-icon>refresh</mat-icon>
+          matTooltip="Refresh dashboard data"
+          aria-label="Manually refresh dashboard data"
+          [attr.aria-describedby]="'refresh-status'">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
           Refresh
         </button>
+        <div id="refresh-status" class="sr-only" aria-live="polite">
+          {{ loading ? 'Refreshing dashboard data...' : 'Dashboard data loaded' }}
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Error Message -->
-  <mat-card class="error-card" *ngIf="error">
+  <mat-card class="error-card" *ngIf="error" role="alert" aria-labelledby="error-title">
     <mat-card-content>
       <div class="error-content">
-        <mat-icon color="warn">error</mat-icon>
-        <span>{{ error }}</span>
-        <button mat-button color="primary" (click)="onRefresh()">
+        <mat-icon color="warn" aria-hidden="true">error</mat-icon>
+        <span id="error-title">{{ error }}</span>
+        <button 
+          mat-button 
+          color="primary" 
+          (click)="onRefresh()"
+          aria-label="Try loading dashboard data again">
           Try Again
         </button>
       </div>
@@ -61,99 +80,199 @@
   </mat-card>
 
   <!-- Loading Spinner -->
-  <div class="loading-container" *ngIf="loading && !error">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Loading dashboard data...</p>
+  <div class="loading-container" *ngIf="loading && !error" role="status" aria-live="polite" aria-label="Loading dashboard data">
+    <mat-spinner diameter="40" aria-hidden="true"></mat-spinner>
+    <p aria-live="polite">Loading dashboard data...</p>
   </div>
 
   <!-- Dashboard Content -->
   <div class="dashboard-content" *ngIf="!loading && !error">
     
     <!-- Statistics Cards Grid -->
-    <div class="stats-grid">
+    <section class="stats-grid" 
+             role="region" 
+             aria-labelledby="stats-section-title"
+             [attr.aria-describedby]="'stats-section-desc'">
+      <h2 id="stats-section-title" class="sr-only">Dashboard Statistics</h2>
+      <div id="stats-section-desc" class="sr-only">
+        Key metrics and statistics for the admin dashboard including user counts, patch statistics, and system information
+      </div>
       <app-stats-card 
         *ngFor="let card of statsCards; trackBy: trackByFn" 
-        [card]="card">
+        [card]="card"
+        [tabindex]="0"
+        role="article">
       </app-stats-card>
-    </div>
+    </section>
 
     <!-- Charts Section -->
-    <div class="charts-section">
+    <section class="charts-section" 
+             role="region" 
+             aria-labelledby="charts-section-title"
+             [attr.aria-describedby]="'charts-section-desc'">
+      <h2 id="charts-section-title" class="sr-only">Analytics Charts</h2>
+      <div id="charts-section-desc" class="sr-only">
+        Visual analytics charts showing user growth, patch activity, category distribution, and rating trends
+      </div>
       
       <!-- User Growth Chart -->
-      <mat-card class="chart-card">
+      <mat-card class="chart-card" 
+                role="img" 
+                [attr.aria-labelledby]="'user-growth-title'"
+                [attr.aria-describedby]="'user-growth-desc'"
+                tabindex="0"
+                (keydown.enter)="onChartInteraction('user-growth', $event)"
+                (keydown.space)="onChartInteraction('user-growth', $event)">
         <mat-card-header>
-          <mat-card-title>
-            <mat-icon>trending_up</mat-icon>
+          <mat-card-title id="user-growth-title">
+            <mat-icon aria-hidden="true">trending_up</mat-icon>
             User Growth (Last 30 Days)
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div id="user-growth-desc" class="sr-only">
+            Line chart showing user growth over the last 30 days with {{ userGrowthData.length }} data points
+          </div>
           <app-line-chart
             [data]="userGrowthData"
             [height]="'300px'"
             [color]="'#1976d2'"
             [fillArea]="true"
-            [tension]="0.3">
+            [tension]="0.3"
+            [ariaLabel]="'User growth chart for the last 30 days'"
+            [ariaDescription]="getUserGrowthAriaDescription()">
           </app-line-chart>
+          <div class="chart-actions" role="toolbar" aria-label="Chart actions">
+            <button mat-button (click)="exportChartData('user-growth')" aria-label="Export user growth data">
+              <mat-icon aria-hidden="true">download</mat-icon>
+              Export
+            </button>
+            <button mat-button (click)="openChartDetails('user-growth')" aria-label="View user growth details">
+              <mat-icon aria-hidden="true">zoom_in</mat-icon>
+              Details
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
 
       <!-- Patch Activity Chart -->
-      <mat-card class="chart-card">
+      <mat-card class="chart-card" 
+                role="img" 
+                [attr.aria-labelledby]="'patch-activity-title'"
+                [attr.aria-describedby]="'patch-activity-desc'"
+                tabindex="0"
+                (keydown.enter)="onChartInteraction('patch-activity', $event)"
+                (keydown.space)="onChartInteraction('patch-activity', $event)">
         <mat-card-header>
-          <mat-card-title>
-            <mat-icon>library_music</mat-icon>
+          <mat-card-title id="patch-activity-title">
+            <mat-icon aria-hidden="true">library_music</mat-icon>
             Patch Creation Activity
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div id="patch-activity-desc" class="sr-only">
+            Line chart showing patch creation activity with {{ patchActivityData.length }} data points
+          </div>
           <app-line-chart
             [data]="patchActivityData"
             [height]="'300px'"
             [color]="'#388e3c'"
             [fillArea]="false"
-            [tension]="0.2">
+            [tension]="0.2"
+            [ariaLabel]="'Patch creation activity chart'"
+            [ariaDescription]="getPatchActivityAriaDescription()">
           </app-line-chart>
+          <div class="chart-actions" role="toolbar" aria-label="Chart actions">
+            <button mat-button (click)="exportChartData('patch-activity')" aria-label="Export patch activity data">
+              <mat-icon aria-hidden="true">download</mat-icon>
+              Export
+            </button>
+            <button mat-button (click)="openChartDetails('patch-activity')" aria-label="View patch activity details">
+              <mat-icon aria-hidden="true">zoom_in</mat-icon>
+              Details
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
 
       <!-- Category Distribution Chart -->
-      <mat-card class="chart-card">
+      <mat-card class="chart-card" 
+                role="img" 
+                [attr.aria-labelledby]="'category-dist-title'"
+                [attr.aria-describedby]="'category-dist-desc'"
+                tabindex="0"
+                (keydown.enter)="onChartInteraction('category-distribution', $event)"
+                (keydown.space)="onChartInteraction('category-distribution', $event)">
         <mat-card-header>
-          <mat-card-title>
-            <mat-icon>category</mat-icon>
+          <mat-card-title id="category-dist-title">
+            <mat-icon aria-hidden="true">category</mat-icon>
             Category Distribution
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div id="category-dist-desc" class="sr-only">
+            Donut chart showing distribution of patches across {{ categoryDistribution.length }} categories
+          </div>
           <app-donut-chart
             [data]="categoryDistribution"
             [height]="'300px'"
             [centerText]="true"
             [centerLabel]="'Categories'"
-            [showPercentages]="true">
+            [showPercentages]="true"
+            [ariaLabel]="'Category distribution donut chart'"
+            [ariaDescription]="getCategoryDistributionAriaDescription()">
           </app-donut-chart>
+          <div class="chart-actions" role="toolbar" aria-label="Chart actions">
+            <button mat-button (click)="exportChartData('category-distribution')" aria-label="Export category distribution data">
+              <mat-icon aria-hidden="true">download</mat-icon>
+              Export
+            </button>
+            <button mat-button (click)="openChartDetails('category-distribution')" aria-label="View category distribution details">
+              <mat-icon aria-hidden="true">zoom_in</mat-icon>
+              Details
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
 
       <!-- Rating Distribution Chart -->
-      <mat-card class="chart-card">
+      <mat-card class="chart-card" 
+                role="img" 
+                [attr.aria-labelledby]="'rating-dist-title'"
+                [attr.aria-describedby]="'rating-dist-desc'"
+                tabindex="0"
+                (keydown.enter)="onChartInteraction('rating-distribution', $event)"
+                (keydown.space)="onChartInteraction('rating-distribution', $event)">
         <mat-card-header>
-          <mat-card-title>
-            <mat-icon>star</mat-icon>
+          <mat-card-title id="rating-dist-title">
+            <mat-icon aria-hidden="true">star</mat-icon>
             Rating Distribution
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
+          <div id="rating-dist-desc" class="sr-only">
+            Bar chart showing rating distribution across {{ ratingDistribution.length }} rating levels
+          </div>
           <app-bar-chart
             [data]="ratingDistribution"
             [height]="'300px'"
-            [showGrid]="true">
+            [showGrid]="true"
+            [ariaLabel]="'Rating distribution bar chart'"
+            [ariaDescription]="getRatingDistributionAriaDescription()">
           </app-bar-chart>
+          <div class="chart-actions" role="toolbar" aria-label="Chart actions">
+            <button mat-button (click)="exportChartData('rating-distribution')" aria-label="Export rating distribution data">
+              <mat-icon aria-hidden="true">download</mat-icon>
+              Export
+            </button>
+            <button mat-button (click)="openChartDetails('rating-distribution')" aria-label="View rating distribution details">
+              <mat-icon aria-hidden="true">zoom_in</mat-icon>
+              Details
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
 
-    </div>
+    </section>
   </div>
 </div>

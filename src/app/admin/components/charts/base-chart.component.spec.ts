@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ElementRef } from '@angular/core';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { ChartConfiguration, ChartType, ChartEvent, ActiveElement } from 'chart.js';
 
 import { BaseChartComponent } from './base-chart.component';
 
@@ -32,7 +32,7 @@ describe('BaseChartComponent', () => {
     mockCanvas.getContext.and.returnValue(mockContext);
 
     // Create spy for Chart constructor
-    mockChart = jasmine.createSpyObj('Chart', ['destroy', 'update']);
+    mockChart = jasmine.createSpyObj('Chart', ['destroy', 'update', 'resetZoom', 'zoom', 'getElementsAtEventForMode']);
     
     // Mock Chart constructor
     (globalThis as any).Chart = jasmine.createSpy('Chart').and.returnValue(mockChart);
@@ -148,5 +148,182 @@ describe('BaseChartComponent', () => {
 
   it('should use default maintainAspectRatio setting if not provided', () => {
     expect(component.maintainAspectRatio).toBe(false);
+  });
+
+  // New tests for enhanced features
+  describe('Accessibility Features', () => {
+    it('should have default accessibility properties', () => {
+      expect(component.ariaLabel).toBe('Chart');
+      expect(component.ariaDescription).toBe('');
+    });
+
+    it('should generate unique aria-describedby ID', () => {
+      const id1 = component.ariaDescribedby;
+      const id2 = component.ariaDescribedby;
+      
+      expect(id1).toBe(id2);
+      expect(id1).toContain('chart-desc-');
+    });
+
+    it('should set proper accessibility attributes in template', () => {
+      component.ariaLabel = 'Test Chart';
+      component.ariaDescription = 'A test chart';
+      fixture.detectChanges();
+
+      const canvas = fixture.nativeElement.querySelector('canvas');
+      expect(canvas.getAttribute('aria-label')).toBe('Test Chart');
+      expect(canvas.getAttribute('role')).toBe('img');
+      expect(canvas.getAttribute('tabindex')).toBe('0');
+    });
+
+    it('should show description element when ariaDescription is provided', () => {
+      component.ariaDescription = 'Test description';
+      fixture.detectChanges();
+
+      const descElement = fixture.nativeElement.querySelector('.sr-only');
+      expect(descElement).toBeTruthy();
+      expect(descElement.textContent.trim()).toBe('Test description');
+    });
+  });
+
+  describe('Zoom and Pan Features', () => {
+    it('should have default zoom and pan settings', () => {
+      expect(component.enableZoom).toBe(true);
+      expect(component.enablePan).toBe(true);
+    });
+
+    it('should configure zoom plugin when enabled', () => {
+      component.enableZoom = true;
+      component.enablePan = true;
+      component.ngOnInit();
+
+      const zoomConfig = component.config.options?.plugins?.zoom;
+      expect(zoomConfig?.pan?.enabled).toBe(true);
+      expect(zoomConfig?.zoom?.wheel?.enabled).toBe(true);
+    });
+
+    it('should disable zoom plugin when disabled', () => {
+      component.enableZoom = false;
+      component.ngOnInit();
+
+      expect(component.config.options?.plugins?.zoom).toEqual({});
+    });
+
+    it('should reset zoom when called', () => {
+      component['chart'] = mockChart;
+      component.resetZoom();
+
+      expect(mockChart.resetZoom).toHaveBeenCalled();
+    });
+
+    it('should handle reset zoom with no chart', () => {
+      component['chart'] = null;
+      expect(() => component.resetZoom()).not.toThrow();
+    });
+  });
+
+  describe('Event Handling', () => {
+    it('should emit chart click events', () => {
+      spyOn(component.chartClick, 'emit');
+      const mockEvent = {} as ChartEvent;
+      const mockElements = [] as ActiveElement[];
+
+      component.ngOnInit();
+      
+      if (component.config.options?.onClick) {
+        component.config.options.onClick(mockEvent, mockElements);
+      }
+
+      expect(component.chartClick.emit).toHaveBeenCalledWith({ event: mockEvent, elements: mockElements });
+    });
+
+    it('should emit chart hover events', () => {
+      spyOn(component.chartHover, 'emit');
+      const mockEvent = {} as ChartEvent;
+      const mockElements = [] as ActiveElement[];
+
+      component.ngOnInit();
+      
+      if (component.config.options?.onHover) {
+        component.config.options.onHover(mockEvent, mockElements);
+      }
+
+      expect(component.chartHover.emit).toHaveBeenCalledWith({ event: mockEvent, elements: mockElements });
+    });
+  });
+
+  describe('Keyboard Interactions', () => {
+    beforeEach(() => {
+      component['chart'] = mockChart;
+      mockChart.getElementsAtEventForMode.and.returnValue([]);
+    });
+
+    it('should reset zoom on Ctrl+R', () => {
+      const event = new KeyboardEvent('keydown', { key: 'R', ctrlKey: true });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockChart.resetZoom).toHaveBeenCalled();
+    });
+
+    it('should zoom in on Ctrl++', () => {
+      const event = new KeyboardEvent('keydown', { key: '+', ctrlKey: true });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockChart.zoom).toHaveBeenCalledWith(1.1);
+    });
+
+    it('should zoom out on Ctrl+-', () => {
+      const event = new KeyboardEvent('keydown', { key: '-', ctrlKey: true });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(mockChart.zoom).toHaveBeenCalledWith(0.9);
+    });
+
+    it('should emit click event on Enter key', () => {
+      spyOn(component.chartClick, 'emit');
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.chartClick.emit).toHaveBeenCalled();
+    });
+
+    it('should emit click event on Space key', () => {
+      spyOn(component.chartClick, 'emit');
+      const event = new KeyboardEvent('keydown', { key: ' ' });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).toHaveBeenCalled();
+      expect(component.chartClick.emit).toHaveBeenCalled();
+    });
+
+    it('should handle keyboard events without chart gracefully', () => {
+      component['chart'] = null;
+      const event = new KeyboardEvent('keydown', { key: 'R', ctrlKey: true });
+      
+      expect(() => component.onKeyDown(event)).not.toThrow();
+    });
+
+    it('should ignore non-modifier keys', () => {
+      const event = new KeyboardEvent('keydown', { key: 'a' });
+      spyOn(event, 'preventDefault');
+      
+      component.onKeyDown(event);
+
+      expect(event.preventDefault).not.toHaveBeenCalled();
+    });
   });
 });

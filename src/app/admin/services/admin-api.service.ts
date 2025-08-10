@@ -121,11 +121,16 @@ export class AdminApiService {
     'Content-Type': 'application/json'
   });
 
-  // Cache configuration
+  // Enhanced cache configuration
   private readonly CACHE_DURATION = {
     stats: 30 * 1000, // 30 seconds for dashboard stats
     health: 15 * 1000, // 15 seconds for health data
-    settings: 5 * 60 * 1000 // 5 minutes for settings
+    settings: 5 * 60 * 1000, // 5 minutes for settings
+    users: 2 * 60 * 1000, // 2 minutes for user lists
+    userDetails: 10 * 60 * 1000, // 10 minutes for individual user details
+    roles: 30 * 60 * 1000, // 30 minutes for role data (rarely changes)
+    analytics: 5 * 60 * 1000, // 5 minutes for analytics data
+    logs: 1 * 60 * 1000 // 1 minute for logs
   };
 
   // Cache storage
@@ -217,14 +222,29 @@ export class AdminApiService {
     return request$;
   }
 
-  // User Management
+  // Enhanced User Management with intelligent caching
   getUsers(params: {
     search?: string;
     sortBy?: 'username' | 'created_at' | 'patch_count';
     sortOrder?: 'asc' | 'desc';
     limit?: number;
     offset?: number;
-  } = {}): Observable<{ users: AdminUser[], total: number }> {
+  } = {}, useCache: boolean = true): Observable<{ users: AdminUser[], total: number }> {
+    // Create cache key based on parameters
+    const cacheKey = `users_${JSON.stringify(params)}`;
+    
+    if (useCache) {
+      const cachedData = this.getCachedData<{ users: AdminUser[], total: number }>(cacheKey);
+      if (cachedData) {
+        return of(cachedData);
+      }
+
+      // Check if request is already pending
+      if (this.pendingRequests.has(cacheKey)) {
+        return this.pendingRequests.get(cacheKey)!;
+      }
+    }
+
     let httpParams = new HttpParams();
     
     Object.keys(params).forEach(key => {
@@ -233,25 +253,97 @@ export class AdminApiService {
       }
     });
 
-    return this.http.get<{ users: AdminUser[], total: number }>(`${this.baseUrl}/users`, { params: httpParams }).pipe(
-      tap(result => this.logger.logAdminAction('users_retrieved', { 
-        count: result.users.length, 
-        search: params.search 
-      })),
+    const request$ = this.http.get<{ users: AdminUser[], total: number }>(`${this.baseUrl}/users`, { params: httpParams }).pipe(
+      tap(result => {
+        this.logger.logAdminAction('users_retrieved', { 
+          count: result.users.length, 
+          search: params.search,
+          cached: false
+        });
+        
+        if (useCache) {
+          // Cache with shorter duration for search results, longer for basic listings
+          const duration = params.search ? this.CACHE_DURATION.users / 2 : this.CACHE_DURATION.users;
+          this.setCachedData(cacheKey, result, duration);
+        }
+      }),
       retry(2),
-      catchError(this.handleError('getUsers'))
+      catchError(this.handleError('getUsers')),
+      shareReplay(1)
     );
+
+    if (useCache) {
+      this.pendingRequests.set(cacheKey, request$);
+      
+      // Clean up pending request after completion
+      request$.subscribe({
+        complete: () => this.pendingRequests.delete(cacheKey),
+        error: () => this.pendingRequests.delete(cacheKey)
+      });
+    }
+
+    return request$;
+  }
+
+  // Individual user details with caching
+  getUserDetails(userId: number, useCache: boolean = true): Observable<AdminUser> {
+    const cacheKey = `user_details_${userId}`;
+    
+    if (useCache) {
+      const cachedData = this.getCachedData<AdminUser>(cacheKey);
+      if (cachedData) {
+        return of(cachedData);
+      }
+
+      if (this.pendingRequests.has(cacheKey)) {
+        return this.pendingRequests.get(cacheKey)!;
+      }
+    }
+
+    const request$ = this.http.get<AdminUser>(`${this.baseUrl}/users/${userId}`).pipe(
+      tap(user => {
+        this.logger.logAdminAction('user_details_retrieved', { 
+          userId,
+          username: user.username,
+          cached: false
+        });
+        
+        if (useCache) {
+          this.setCachedData(cacheKey, user, this.CACHE_DURATION.userDetails);
+        }
+      }),
+      retry(2),
+      catchError(this.handleError('getUserDetails')),
+      shareReplay(1)
+    );
+
+    if (useCache) {
+      this.pendingRequests.set(cacheKey, request$);
+      request$.subscribe({
+        complete: () => this.pendingRequests.delete(cacheKey),
+        error: () => this.pendingRequests.delete(cacheKey)
+      });
+    }
+
+    return request$;
   }
 
   moderateUser(userId: number, action: 'suspend' | 'activate', reason?: string): Observable<BulkOperationResult> {
     const body = { action, reason };
     
     return this.http.put<BulkOperationResult>(`${this.baseUrl}/users/${userId}/moderate`, body).pipe(
-      tap(result => this.logger.logAdminAction('user_moderated', { 
-        userId, 
-        action, 
-        success: result.success 
-      })),
+      tap(result => {
+        this.logger.logAdminAction('user_moderated', { 
+          userId, 
+          action, 
+          success: result.success 
+        });
+        
+        if (result.success) {
+          // Invalidate related cache entries
+          this.invalidateUserCaches(userId);
+        }
+      }),
       catchError(this.handleError('moderateUser'))
     );
   }
@@ -316,6 +408,62 @@ export class AdminApiService {
         success: result.success 
       })),
       catchError(this.handleError('bulkPatchOperation'))
+    );
+  }
+
+  // Dedicated bulk user operations
+  bulkUserOperation(operation: 'activate' | 'suspend' | 'ban' | 'delete', userIds: number[], reason?: string, params?: any): Observable<BulkOperationResult> {
+    const body = { operation, userIds, reason, params };
+    
+    return this.http.post<BulkOperationResult>(`${this.baseUrl}/users/bulk`, body).pipe(
+      tap(result => {
+        this.logger.logAdminAction('bulk_user_operation', { 
+          operation, 
+          itemCount: userIds.length, 
+          success: result.success,
+          reason 
+        });
+        
+        if (result.success) {
+          // Invalidate caches for all affected users
+          userIds.forEach(userId => this.invalidateUserCaches(userId));
+          
+          // Invalidate general user lists and stats
+          this.invalidateCache(/^users_/);
+          this.cache.delete('admin_stats');
+        }
+      }),
+      catchError(this.handleError('bulkUserOperation'))
+    );
+  }
+
+  // Bulk content moderation operations
+  bulkContentModeration(operation: 'approve' | 'reject', itemIds: string[], notes?: string): Observable<BulkOperationResult> {
+    const body = { operation, itemIds, notes };
+    
+    return this.http.post<BulkOperationResult>(`${this.baseUrl}/moderation/bulk`, body).pipe(
+      tap(result => this.logger.logAdminAction('bulk_content_moderation', { 
+        operation, 
+        itemCount: itemIds.length, 
+        success: result.success,
+        notes 
+      })),
+      catchError(this.handleError('bulkContentModeration'))
+    );
+  }
+
+  // Bulk role assignment for users
+  bulkAssignRoles(userIds: number[], rolesToAdd: string[], rolesToRemove: string[] = []): Observable<BulkOperationResult> {
+    const body = { userIds, rolesToAdd, rolesToRemove };
+    
+    return this.http.post<BulkOperationResult>(`${this.baseUrl}/users/bulk-roles`, body).pipe(
+      tap(result => this.logger.logAdminAction('bulk_role_assignment', { 
+        userCount: userIds.length, 
+        rolesToAdd,
+        rolesToRemove,
+        success: result.success 
+      })),
+      catchError(this.handleError('bulkAssignRoles'))
     );
   }
 
@@ -522,5 +670,89 @@ export class AdminApiService {
       keysRemoved: keysToDelete,
       timestamp: new Date().toISOString()
     });
+  }
+
+  /**
+   * Invalidate user-related cache entries
+   */
+  private invalidateUserCaches(userId?: number): void {
+    if (userId) {
+      // Invalidate specific user's cache
+      this.cache.delete(`user_details_${userId}`);
+    }
+    
+    // Invalidate all user list caches since they may contain the modified user
+    const userListPattern = /^users_/;
+    this.invalidateCache(userListPattern);
+    
+    // Also invalidate stats as user changes affect stats
+    this.cache.delete('admin_stats');
+    
+    this.logger.logAdminAction('user_cache_invalidated', {
+      userId,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Smart cache preloading for frequently accessed data
+   */
+  public preloadCaches(): void {
+    // Preload admin stats
+    this.getAdminStats(true).subscribe();
+    
+    // Preload system health
+    this.getSystemHealth(true).subscribe();
+    
+    // Preload basic user list
+    this.getUsers({}, true).subscribe();
+    
+    this.logger.logAdminAction('cache_preloaded', {
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Get cache utilization statistics
+   */
+  public getCacheUtilization(): { utilization: number; hitRate: number; statistics: any } {
+    const totalPossibleEntries = 50; // Estimated based on typical usage
+    const utilization = (this.cache.size / totalPossibleEntries) * 100;
+    
+    // In a production implementation, we'd track hit rates
+    const hitRate = 75; // Mock hit rate for demo
+    
+    const statistics = {
+      cacheSize: this.cache.size,
+      keys: Array.from(this.cache.keys()),
+      oldestEntry: this.getOldestCacheEntry(),
+      newestEntry: this.getNewestCacheEntry()
+    };
+    
+    return { utilization, hitRate, statistics };
+  }
+
+  private getOldestCacheEntry(): { key: string; timestamp: number } | null {
+    let oldest: { key: string; timestamp: number } | null = null;
+    
+    this.cache.forEach((value, key) => {
+      if (!oldest || value.timestamp < oldest.timestamp) {
+        oldest = { key, timestamp: value.timestamp };
+      }
+    });
+    
+    return oldest;
+  }
+
+  private getNewestCacheEntry(): { key: string; timestamp: number } | null {
+    let newest: { key: string; timestamp: number } | null = null;
+    
+    this.cache.forEach((value, key) => {
+      if (!newest || value.timestamp > newest.timestamp) {
+        newest = { key, timestamp: value.timestamp };
+      }
+    });
+    
+    return newest;
   }
 }

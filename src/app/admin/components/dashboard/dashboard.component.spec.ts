@@ -272,4 +272,179 @@ describe('DashboardComponent', () => {
     // Auto refresh should not be started
     expect(component['refreshSubscription']).toBeUndefined();
   });
+
+  // New tests for accessibility features
+  describe('Accessibility Features', () => {
+    it('should provide correct refresh interval text', () => {
+      component.refreshInterval = 15;
+      expect(component.getRefreshIntervalText()).toBe('15 seconds');
+
+      component.refreshInterval = 30;
+      expect(component.getRefreshIntervalText()).toBe('30 seconds');
+
+      component.refreshInterval = 60;
+      expect(component.getRefreshIntervalText()).toBe('1 minute');
+
+      component.refreshInterval = 300;
+      expect(component.getRefreshIntervalText()).toBe('5 minutes');
+    });
+
+    it('should provide meaningful ARIA descriptions for user growth chart', () => {
+      component.userGrowthData = [
+        { date: '2024-01-01', value: 10, label: 'New Users' },
+        { date: '2024-01-02', value: 15, label: 'New Users' },
+        { date: '2024-01-03', value: 20, label: 'New Users' }
+      ];
+
+      const description = component.getUserGrowthAriaDescription();
+      expect(description).toContain('User growth from 10 to 20 users over 3 data points');
+    });
+
+    it('should provide meaningful ARIA descriptions for patch activity chart', () => {
+      component.patchActivityData = [
+        { date: '2024-01-01', value: 25, label: 'New Patches' },
+        { date: '2024-01-02', value: 30, label: 'New Patches' }
+      ];
+
+      const description = component.getPatchActivityAriaDescription();
+      expect(description).toContain('Patch activity showing 55 total patches created across 2 time periods');
+    });
+
+    it('should provide meaningful ARIA descriptions for category distribution', () => {
+      component.categoryDistribution = [
+        { category: 'bass', count: 120, percentage: 0 },
+        { category: 'lead', count: 80, percentage: 0 }
+      ];
+
+      const description = component.getCategoryDistributionAriaDescription();
+      expect(description).toContain('Category distribution with 2 categories');
+      expect(description).toContain('bass has the most patches with 120');
+    });
+
+    it('should handle empty data gracefully in ARIA descriptions', () => {
+      component.userGrowthData = [];
+      expect(component.getUserGrowthAriaDescription()).toBe('No user growth data available');
+
+      component.patchActivityData = [];
+      expect(component.getPatchActivityAriaDescription()).toBe('No patch activity data available');
+
+      component.categoryDistribution = [];
+      expect(component.getCategoryDistributionAriaDescription()).toBe('No category distribution data available');
+
+      component.ratingDistribution = [];
+      expect(component.getRatingDistributionAriaDescription()).toBe('No rating distribution data available');
+    });
+  });
+
+  // New tests for chart interaction features
+  describe('Chart Interaction Features', () => {
+    it('should handle chart interaction events', () => {
+      const mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      spyOn(mockEvent, 'preventDefault');
+      spyOn(component, 'openChartDetails');
+
+      component.onChartInteraction('user-growth', mockEvent);
+
+      expect(mockEvent.preventDefault).toHaveBeenCalled();
+      expect(component.openChartDetails).toHaveBeenCalledWith('user-growth');
+    });
+
+    it('should export chart data correctly', () => {
+      component.userGrowthData = [
+        { date: '2024-01-01', value: 10, label: 'New Users' },
+        { date: '2024-01-02', value: 15, label: 'New Users' }
+      ];
+      spyOn<any>(component, 'downloadAsCSV');
+
+      component.exportChartData('user-growth');
+
+      expect(component['downloadAsCSV']).toHaveBeenCalledWith(
+        component.userGrowthData,
+        'user-growth-data'
+      );
+      expect(mockAdminLoggerService.logAdminAction).toHaveBeenCalledWith(
+        'chart_data_exported',
+        jasmine.objectContaining({
+          chartType: 'user-growth',
+          recordCount: 2
+        })
+      );
+    });
+
+    it('should handle unknown chart types in export', () => {
+      spyOn(console, 'warn');
+      
+      component.exportChartData('unknown-chart');
+
+      expect(console.warn).toHaveBeenCalledWith('Unknown chart type for export:', 'unknown-chart');
+    });
+
+    it('should open chart details and log action', () => {
+      spyOn(console, 'log');
+
+      component.openChartDetails('user-growth');
+
+      expect(console.log).toHaveBeenCalledWith('Opening details for chart:', 'user-growth');
+      expect(mockAdminLoggerService.logAdminAction).toHaveBeenCalledWith(
+        'chart_details_viewed',
+        jasmine.objectContaining({
+          chartType: 'user-growth'
+        })
+      );
+    });
+
+    it('should handle CSV download with comma-containing fields', () => {
+      const testData = [
+        { name: 'Test, Name', value: 100 },
+        { name: 'Simple Name', value: 200 }
+      ];
+      spyOn(document, 'createElement').and.callThrough();
+      spyOn(URL, 'createObjectURL').and.returnValue('mock-url');
+      spyOn(URL, 'revokeObjectURL');
+
+      component['downloadAsCSV'](testData, 'test-data');
+
+      expect(document.createElement).toHaveBeenCalledWith('a');
+      expect(URL.createObjectURL).toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('mock-url');
+    });
+  });
+
+  // Tests for proper ARIA attributes in template
+  describe('Template Accessibility', () => {
+    beforeEach(fakeAsync(() => {
+      component.ngOnInit();
+      tick();
+      fixture.detectChanges();
+    }));
+
+    it('should have proper ARIA roles and labels', () => {
+      const compiled = fixture.nativeElement;
+      
+      // Main dashboard should have role="main"
+      const dashboard = compiled.querySelector('.dashboard-container');
+      expect(dashboard.getAttribute('role')).toBe('main');
+      expect(dashboard.getAttribute('aria-label')).toBe('Admin Dashboard');
+
+      // Header actions should have toolbar role
+      const headerActions = compiled.querySelector('.header-actions');
+      expect(headerActions.getAttribute('role')).toBe('toolbar');
+      expect(headerActions.getAttribute('aria-label')).toBe('Dashboard controls');
+    });
+
+    it('should have accessible chart regions', () => {
+      const compiled = fixture.nativeElement;
+      
+      const chartsSection = compiled.querySelector('.charts-section');
+      expect(chartsSection.getAttribute('role')).toBe('region');
+      expect(chartsSection.getAttribute('aria-labelledby')).toBe('charts-section-title');
+    });
+
+    it('should have screen reader only text for descriptions', () => {
+      const compiled = fixture.nativeElement;
+      
+      const srOnlyElements = compiled.querySelectorAll('.sr-only');
+      expect(srOnlyElements.length).toBeGreaterThan(0);
+    });
+  });
 });

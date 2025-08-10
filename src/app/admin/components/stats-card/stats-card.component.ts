@@ -4,33 +4,57 @@ import { AdminDashboardCard } from '../../interfaces/admin.interfaces';
 @Component({
   selector: 'app-stats-card',
   template: `
-    <mat-card class="stats-card" [ngClass]="'color-' + card.color">
+    <mat-card class="stats-card" 
+              [ngClass]="'color-' + card.color"
+              [attr.aria-labelledby]="cardId + '-title'"
+              [attr.aria-describedby]="cardId + '-description'"
+              role="article"
+              tabindex="0"
+              (keydown.enter)="onCardActivate($event)"
+              (keydown.space)="onCardActivate($event)"
+              (click)="onCardClick()">
       <mat-card-content>
         <div class="stats-header">
-          <div class="stats-icon">
-            <mat-icon [ngClass]="'icon-' + card.color">{{ card.icon }}</mat-icon>
+          <div class="stats-icon" [attr.aria-hidden]="true">
+            <mat-icon [ngClass]="'icon-' + card.color" aria-hidden="true">{{ card.icon }}</mat-icon>
           </div>
-          <div class="stats-trend" *ngIf="card.trend">
+          <div class="stats-trend" 
+               *ngIf="card.trend"
+               [attr.aria-label]="getTrendAriaLabel()">
             <mat-icon 
               [ngClass]="'trend-' + card.trend.direction"
-              [matTooltip]="card.trend.percentage + '% ' + card.trend.direction + ' from ' + card.trend.period">
+              [matTooltip]="card.trend.percentage + '% ' + card.trend.direction + ' from ' + card.trend.period"
+              aria-hidden="true">
               {{ getTrendIcon(card.trend.direction) }}
             </mat-icon>
-            <span class="trend-percentage" [ngClass]="'trend-' + card.trend.direction">
+            <span class="trend-percentage" 
+                  [ngClass]="'trend-' + card.trend.direction"
+                  [attr.aria-label]="card.trend.percentage + ' percent ' + card.trend.direction">
               {{ card.trend.percentage }}%
             </span>
           </div>
         </div>
         
         <div class="stats-content">
-          <div class="stats-value">{{ formatValue(card.value) }}</div>
-          <div class="stats-title">{{ card.title }}</div>
+          <div class="stats-value" 
+               [attr.aria-label]="getValueAriaLabel()">
+            {{ formatValue(card.value) }}
+          </div>
+          <div class="stats-title" [id]="cardId + '-title'">{{ card.title }}</div>
+        </div>
+        
+        <!-- Hidden description for screen readers -->
+        <div [id]="cardId + '-description'" class="sr-only">
+          {{ getCardDescription() }}
         </div>
         
         <div class="stats-action" *ngIf="card.link">
-          <button mat-button class="view-details-btn" (click)="onViewDetails()">
+          <button mat-button 
+                  class="view-details-btn" 
+                  (click)="onViewDetails($event)"
+                  [attr.aria-label]="'View details for ' + card.title">
             View Details
-            <mat-icon>arrow_forward</mat-icon>
+            <mat-icon aria-hidden="true">arrow_forward</mat-icon>
           </button>
         </div>
       </mat-card-content>
@@ -159,10 +183,38 @@ import { AdminDashboardCard } from '../../interfaces/admin.interfaces';
       height: 100%;
       padding: 20px;
     }
+
+    // Accessibility styles
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .stats-card:focus {
+      outline: 2px solid #1976d2;
+      outline-offset: 2px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .stats-card:focus {
+        outline-color: #64b5f6;
+      }
+    }
   `]
 })
 export class StatsCardComponent {
   @Input() card!: AdminDashboardCard;
+  
+  get cardId(): string {
+    return this.card.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  }
 
   getTrendIcon(direction: 'up' | 'down' | 'neutral'): string {
     switch (direction) {
@@ -188,7 +240,58 @@ export class StatsCardComponent {
     return value;
   }
 
-  onViewDetails(): void {
+  // Accessibility methods
+  getTrendAriaLabel(): string {
+    if (!this.card.trend) {
+      return '';
+    }
+    const direction = this.card.trend.direction === 'up' ? 'increased' : 
+                     this.card.trend.direction === 'down' ? 'decreased' : 
+                     'remained stable';
+    return `Trend: ${direction} by ${this.card.trend.percentage}% from ${this.card.trend.period}`;
+  }
+
+  getValueAriaLabel(): string {
+    const formattedValue = this.formatValue(this.card.value);
+    return `Current value: ${formattedValue}`;
+  }
+
+  getCardDescription(): string {
+    let description = `${this.card.title}: ${this.formatValue(this.card.value)}`;
+    
+    if (this.card.trend) {
+      const direction = this.card.trend.direction === 'up' ? 'increased' : 
+                       this.card.trend.direction === 'down' ? 'decreased' : 
+                       'remained stable';
+      description += `. ${direction} by ${this.card.trend.percentage}% from ${this.card.trend.period}`;
+    }
+    
+    if (this.card.link) {
+      description += '. Press Enter or Space to view details.';
+    }
+    
+    return description;
+  }
+
+  // Interaction methods
+  onCardActivate(event: KeyboardEvent): void {
+    event.preventDefault();
+    if (this.card.link) {
+      this.onViewDetails(event);
+    }
+  }
+
+  onCardClick(): void {
+    if (this.card.link) {
+      this.onViewDetails();
+    }
+  }
+
+  onViewDetails(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
     if (this.card.link) {
       // Navigate to the link - this would be handled by a router service
       console.log('Navigate to:', this.card.link);

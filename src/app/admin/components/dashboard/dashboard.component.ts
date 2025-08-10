@@ -288,4 +288,135 @@ export class DashboardComponent implements OnInit, OnDestroy {
   trackByFn(index: number, item: AdminDashboardCard): string {
     return item.title;
   }
+
+  // Accessibility helper methods
+  getRefreshIntervalText(): string {
+    switch (this.refreshInterval) {
+      case 15:
+        return '15 seconds';
+      case 30:
+        return '30 seconds';
+      case 60:
+        return '1 minute';
+      case 300:
+        return '5 minutes';
+      default:
+        return `${this.refreshInterval} seconds`;
+    }
+  }
+
+  getUserGrowthAriaDescription(): string {
+    if (this.userGrowthData.length === 0) {
+      return 'No user growth data available';
+    }
+    const latest = this.userGrowthData[this.userGrowthData.length - 1];
+    const earliest = this.userGrowthData[0];
+    return `User growth from ${earliest.value} to ${latest.value} users over ${this.userGrowthData.length} data points`;
+  }
+
+  getPatchActivityAriaDescription(): string {
+    if (this.patchActivityData.length === 0) {
+      return 'No patch activity data available';
+    }
+    const total = this.patchActivityData.reduce((sum, item) => sum + item.value, 0);
+    return `Patch activity showing ${total} total patches created across ${this.patchActivityData.length} time periods`;
+  }
+
+  getCategoryDistributionAriaDescription(): string {
+    if (this.categoryDistribution.length === 0) {
+      return 'No category distribution data available';
+    }
+    const topCategory = this.categoryDistribution.reduce((max, item) => 
+      item.count > max.count ? item : max, this.categoryDistribution[0]);
+    return `Category distribution with ${this.categoryDistribution.length} categories. ${topCategory.category} has the most patches with ${topCategory.count}`;
+  }
+
+  getRatingDistributionAriaDescription(): string {
+    if (this.ratingDistribution.length === 0) {
+      return 'No rating distribution data available';
+    }
+    const total = this.ratingDistribution.reduce((sum, item) => sum + item.count, 0);
+    return `Rating distribution across ${this.ratingDistribution.length} rating levels with ${total} total ratings`;
+  }
+
+  // Chart interaction methods
+  onChartInteraction(chartType: string, event: KeyboardEvent): void {
+    event.preventDefault();
+    this.openChartDetails(chartType);
+  }
+
+  exportChartData(chartType: string): void {
+    let data: any[] = [];
+    let filename = '';
+
+    switch (chartType) {
+      case 'user-growth':
+        data = this.userGrowthData;
+        filename = 'user-growth-data';
+        break;
+      case 'patch-activity':
+        data = this.patchActivityData;
+        filename = 'patch-activity-data';
+        break;
+      case 'category-distribution':
+        data = this.categoryDistribution;
+        filename = 'category-distribution-data';
+        break;
+      case 'rating-distribution':
+        data = this.ratingDistribution;
+        filename = 'rating-distribution-data';
+        break;
+      default:
+        console.warn('Unknown chart type for export:', chartType);
+        return;
+    }
+
+    this.downloadAsCSV(data, filename);
+    
+    this.logger.logAdminAction('chart_data_exported', {
+      chartType,
+      recordCount: data.length,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  openChartDetails(chartType: string): void {
+    // This would open a detailed view or modal for the specific chart
+    console.log('Opening details for chart:', chartType);
+    
+    this.logger.logAdminAction('chart_details_viewed', {
+      chartType,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  private downloadAsCSV(data: any[], filename: string): void {
+    if (!data || data.length === 0) {
+      return;
+    }
+
+    // Convert data to CSV format
+    const headers = Object.keys(data[0]).join(',');
+    const csvContent = data.map(row => 
+      Object.values(row).map(field => 
+        typeof field === 'string' && field.includes(',') 
+          ? `"${field}"` 
+          : field
+      ).join(',')
+    ).join('\n');
+
+    const csv = `${headers}\n${csvContent}`;
+    
+    // Create and trigger download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 }

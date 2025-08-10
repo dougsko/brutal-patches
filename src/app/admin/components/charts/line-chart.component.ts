@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ChartConfiguration, ChartType } from 'chart.js';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { ChartConfiguration, ChartType, ChartEvent, ActiveElement } from 'chart.js';
 import { TimeSeriesData } from '../../interfaces/admin.interfaces';
 
 @Component({
@@ -8,7 +8,13 @@ import { TimeSeriesData } from '../../interfaces/admin.interfaces';
     <app-base-chart 
       [config]="chartConfig" 
       [height]="height"
-      [responsive]="responsive">
+      [responsive]="responsive"
+      [ariaLabel]="ariaLabel"
+      [ariaDescription]="ariaDescription"
+      [enableZoom]="enableZoom"
+      [enablePan]="enablePan"
+      (chartClick)="onChartClick($event)"
+      (chartHover)="onChartHover($event)">
     </app-base-chart>
   `
 })
@@ -22,6 +28,13 @@ export class LineChartComponent implements OnInit {
   @Input() showGrid: boolean = true;
   @Input() showPoints: boolean = true;
   @Input() tension: number = 0.1;
+  @Input() ariaLabel: string = 'Line chart';
+  @Input() ariaDescription: string = '';
+  @Input() enableZoom: boolean = true;
+  @Input() enablePan: boolean = true;
+
+  @Output() chartClick = new EventEmitter<{event: ChartEvent, elements: ActiveElement[]}>();
+  @Output() chartHover = new EventEmitter<{event: ChartEvent, elements: ActiveElement[]}>();
 
   chartConfig: ChartConfiguration = {
     type: 'line' as ChartType,
@@ -51,6 +64,10 @@ export class LineChartComponent implements OnInit {
 
     const values = this.data.map(item => item.value);
 
+    // Adjust colors for dark mode
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const adjustedColor = isDarkMode ? this.getLightVariant(this.color) : this.color;
+
     this.chartConfig = {
       type: 'line' as ChartType,
       data: {
@@ -58,13 +75,17 @@ export class LineChartComponent implements OnInit {
         datasets: [{
           label: this.title,
           data: values,
-          borderColor: this.color,
-          backgroundColor: this.fillArea ? this.color + '20' : 'transparent',
+          borderColor: adjustedColor,
+          backgroundColor: this.fillArea ? adjustedColor + '30' : 'transparent',
           fill: this.fillArea,
           tension: this.tension,
           pointRadius: this.showPoints ? 4 : 0,
           pointHoverRadius: 6,
-          borderWidth: 2
+          borderWidth: 2,
+          pointBackgroundColor: adjustedColor,
+          pointBorderColor: adjustedColor,
+          pointHoverBackgroundColor: adjustedColor,
+          pointHoverBorderColor: isDarkMode ? '#fff' : '#000'
         }]
       },
       options: {
@@ -91,21 +112,68 @@ export class LineChartComponent implements OnInit {
           x: {
             display: true,
             grid: {
-              display: this.showGrid
+              display: this.showGrid,
+              color: (context) => {
+                // Dark mode support for grid lines
+                return window.matchMedia('(prefers-color-scheme: dark)').matches 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.1)';
+              }
             },
             ticks: {
-              maxTicksLimit: 8
+              maxTicksLimit: 8,
+              color: (context) => {
+                // Dark mode support for tick labels
+                return window.matchMedia('(prefers-color-scheme: dark)').matches 
+                  ? '#e0e0e0' 
+                  : '#666';
+              }
             }
           },
           y: {
             display: true,
             grid: {
-              display: this.showGrid
+              display: this.showGrid,
+              color: (context) => {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : 'rgba(0, 0, 0, 0.1)';
+              }
             },
-            beginAtZero: true
+            beginAtZero: true,
+            ticks: {
+              color: (context) => {
+                return window.matchMedia('(prefers-color-scheme: dark)').matches 
+                  ? '#e0e0e0' 
+                  : '#666';
+              }
+            }
           }
         }
       }
     };
+  }
+
+  onChartClick(event: {event: ChartEvent, elements: ActiveElement[]}): void {
+    this.chartClick.emit(event);
+  }
+
+  onChartHover(event: {event: ChartEvent, elements: ActiveElement[]}): void {
+    this.chartHover.emit(event);
+  }
+
+  private getLightVariant(color: string): string {
+    // Convert common dark colors to lighter variants for dark mode
+    const colorMap: { [key: string]: string } = {
+      '#1976d2': '#64b5f6', // Blue
+      '#388e3c': '#81c784', // Green
+      '#d32f2f': '#e57373', // Red
+      '#f57c00': '#ffb74d', // Orange
+      '#7b1fa2': '#ba68c8', // Purple
+      '#5d4037': '#a1887f', // Brown
+      '#455a64': '#90a4ae'  // Blue Grey
+    };
+    
+    return colorMap[color] || color;
   }
 }
