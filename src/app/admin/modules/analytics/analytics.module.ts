@@ -1,9 +1,15 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-// Placeholder component - will be implemented by Agent 2
+// Temporary stub component - will be implemented by Agent 2
+@Component({
+  template: '<div>Analytics Overview - Implementation pending</div>'
+})
+class AnalyticsOverviewComponent { }
+
 @NgModule({
+  declarations: [AnalyticsOverviewComponent],
   imports: [
     CommonModule,
     RouterModule.forChild([
@@ -13,6 +19,3 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class AnalyticsModule { }
-
-// Temporary stub component
-class AnalyticsOverviewComponent { }

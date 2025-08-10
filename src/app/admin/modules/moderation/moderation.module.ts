@@ -1,9 +1,15 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-// Placeholder component - will be implemented by Agent 3
+// Temporary stub component - will be implemented by Agent 3
+@Component({
+  template: '<div>Moderation Queue - Implementation pending</div>'
+})
+class ModerationQueueComponent { }
+
 @NgModule({
+  declarations: [ModerationQueueComponent],
   imports: [
     CommonModule,
     RouterModule.forChild([
@@ -13,6 +19,3 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class ModerationModule { }
-
-// Temporary stub component
-class ModerationQueueComponent { }

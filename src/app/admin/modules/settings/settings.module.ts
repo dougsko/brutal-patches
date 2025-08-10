@@ -1,9 +1,15 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-// Placeholder component - will be implemented by Agent 3
+// Temporary stub component - will be implemented by Agent 3
+@Component({
+  template: '<div>System Settings - Implementation pending</div>'
+})
+class SystemSettingsComponent { }
+
 @NgModule({
+  declarations: [SystemSettingsComponent],
   imports: [
     CommonModule,
     RouterModule.forChild([
@@ -13,6 +19,3 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class SettingsModule { }
-
-// Temporary stub component
-class SystemSettingsComponent { }
