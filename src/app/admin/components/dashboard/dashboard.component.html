@@ -121,8 +121,8 @@
                 [attr.aria-labelledby]="'user-growth-title'"
                 [attr.aria-describedby]="'user-growth-desc'"
                 tabindex="0"
-                (keydown.enter)="onChartInteraction('user-growth', $event)"
-                (keydown.space)="onChartInteraction('user-growth', $event)">
+                (keydown.enter)="onChartInteraction('user-growth', $any($event))"
+                (keydown.space)="onChartInteraction('user-growth', $any($event))">
         <mat-card-header>
           <mat-card-title id="user-growth-title">
             <mat-icon aria-hidden="true">trending_up</mat-icon>
@@ -161,8 +161,8 @@
                 [attr.aria-labelledby]="'patch-activity-title'"
                 [attr.aria-describedby]="'patch-activity-desc'"
                 tabindex="0"
-                (keydown.enter)="onChartInteraction('patch-activity', $event)"
-                (keydown.space)="onChartInteraction('patch-activity', $event)">
+                (keydown.enter)="onChartInteraction('patch-activity', $any($event))"
+                (keydown.space)="onChartInteraction('patch-activity', $any($event))">
         <mat-card-header>
           <mat-card-title id="patch-activity-title">
             <mat-icon aria-hidden="true">library_music</mat-icon>
@@ -201,8 +201,8 @@
                 [attr.aria-labelledby]="'category-dist-title'"
                 [attr.aria-describedby]="'category-dist-desc'"
                 tabindex="0"
-                (keydown.enter)="onChartInteraction('category-distribution', $event)"
-                (keydown.space)="onChartInteraction('category-distribution', $event)">
+                (keydown.enter)="onChartInteraction('category-distribution', $any($event))"
+                (keydown.space)="onChartInteraction('category-distribution', $any($event))">
         <mat-card-header>
           <mat-card-title id="category-dist-title">
             <mat-icon aria-hidden="true">category</mat-icon>
@@ -241,8 +241,8 @@
                 [attr.aria-labelledby]="'rating-dist-title'"
                 [attr.aria-describedby]="'rating-dist-desc'"
                 tabindex="0"
-                (keydown.enter)="onChartInteraction('rating-distribution', $event)"
-                (keydown.space)="onChartInteraction('rating-distribution', $event)">
+                (keydown.enter)="onChartInteraction('rating-distribution', $any($event))"
+                (keydown.space)="onChartInteraction('rating-distribution', $any($event))">
         <mat-card-header>
           <mat-card-title id="rating-dist-title">
             <mat-icon aria-hidden="true">star</mat-icon>

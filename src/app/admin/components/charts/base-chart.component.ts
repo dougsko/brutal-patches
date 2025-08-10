@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { Chart, ChartConfiguration, ChartType, registerables, ChartEvent, ActiveElement } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
+// import zoomPlugin from 'chartjs-plugin-zoom'; // Temporarily disabled
 
 // Register Chart.js components
-Chart.register(...registerables, zoomPlugin);
+Chart.register(...registerables); // zoomPlugin disabled temporarily
 
 @Component({
   selector: 'app-base-chart',
@@ -92,21 +92,21 @@ export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
             ...this.config.options?.plugins?.legend,
             position: 'top'
           },
-          zoom: this.enableZoom ? {
-            pan: {
-              enabled: this.enablePan,
-              mode: 'xy'
-            },
-            zoom: {
-              wheel: {
-                enabled: true,
-              },
-              pinch: {
-                enabled: true
-              },
-              mode: 'xy',
-            }
-          } : {}
+          // zoom: this.enableZoom ? {
+          //   pan: {
+          //     enabled: this.enablePan,
+          //     mode: 'xy'
+          //   },
+          //   zoom: {
+          //     wheel: {
+          //       enabled: true,
+          //     },
+          //     pinch: {
+          //       enabled: true
+          //     },
+          //     mode: 'xy',
+          //   }
+          // } : {} // Zoom temporarily disabled
         }
       };
     }
@@ -149,8 +149,8 @@ export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public resetZoom(): void {
-    if (this.chart && this.chart.resetZoom) {
-      this.chart.resetZoom();
+    if (this.chart && (this.chart as any).resetZoom) {
+      (this.chart as any).resetZoom();
     }
   }
 
@@ -171,8 +171,8 @@ export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
         if (event.ctrlKey || event.metaKey) {
           event.preventDefault();
           // Zoom in programmatically
-          if (this.chart.zoom) {
-            this.chart.zoom(1.1);
+          if ((this.chart as any).zoom) {
+            (this.chart as any).zoom(1.1);
           }
         }
         break;
@@ -180,8 +180,8 @@ export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
         if (event.ctrlKey || event.metaKey) {
           event.preventDefault();
           // Zoom out programmatically
-          if (this.chart.zoom) {
-            this.chart.zoom(0.9);
+          if ((this.chart as any).zoom) {
+            (this.chart as any).zoom(0.9);
           }
         }
         break;

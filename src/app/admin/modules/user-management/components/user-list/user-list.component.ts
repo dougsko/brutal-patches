@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FormControl } from '@angular/forms';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil, startWith, switchMap, catchError, filter } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, takeUntil, startWith, switchMap, catchError, filter, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 import { AdminApiService, AdminUser, BulkOperationResult } from '../../../../services/admin-api.service';
@@ -215,6 +215,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange(): void {
+    this.searchCache.clear();
     this.paginator.firstPage();
     this.loadUsers();
     this.logger.logAdminAction('user_list_filtered', {
@@ -644,7 +645,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     // Check specific export permissions
     const hasDataExportPermission = currentUser.permissions.includes('data.export');
     const hasUserDataPermission = currentUser.permissions.includes('users.read_full');
-    const hasComplianceRole = currentUser.roles.some(role => 
+    const hasComplianceRole = currentUser.roles.some((role: string) => 
       ['compliance_officer', 'data_protection_officer', 'super_admin'].includes(role)
     );
     
@@ -1131,7 +1132,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         // Add search term length filtering to avoid too many API calls
         filter(term => !term || term.length >= 2),
         // Add intelligent search optimizations
-        switchMap(term => this.optimizedSearch(term))
+        switchMap(term => this.optimizedSearch(term || ''))
       ),
       // We'll add filter observables here when we implement the filter component
     ]).pipe(
@@ -1143,7 +1144,8 @@ export class UserListComponent implements OnInit, OnDestroy {
         return of({ users: [], total: 0 });
       })
     ).subscribe({
-      next: (result) => {
+      next: (results: any) => {
+        const result = Array.isArray(results) ? results[0] : results;
         this.dataSource.data = result.users;
         this.totalUsers = result.total;
         this.loading = false;
@@ -1307,13 +1309,4 @@ export class UserListComponent implements OnInit, OnDestroy {
     return this.adminApi.getUsers(params, true);
   }
 
-  // Clear search cache when filters change
-  onFilterChange(): void {
-    this.searchCache.clear();
-    this.paginator.firstPage();
-    this.loadUsers();
-    this.logger.logAdminAction('user_list_filtered', {
-      filters: this.filters
-    });
-  }
 }

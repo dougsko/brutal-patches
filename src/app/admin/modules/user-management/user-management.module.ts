@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Shared Admin Material Module
 import { AdminMaterialModule } from '../../shared/admin-material.module';
+import { AdminSharedModule } from '../../shared/admin-shared.module';
 
 // Additional Material Modules not covered by shared module
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -29,6 +30,7 @@ import { UserListComponent } from './components/user-list/user-list.component';
     
     // Shared Material Modules
     AdminMaterialModule,
+    AdminSharedModule,
     
     // Additional specific Material Modules
     MatDatepickerModule,

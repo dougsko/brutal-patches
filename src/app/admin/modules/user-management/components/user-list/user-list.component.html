@@ -152,8 +152,8 @@
     <mat-card>
       <mat-card-content class="table-content">
         
-        <!-- Virtual Scrolling Table (for large datasets) -->
-        <app-virtual-scroll-table 
+        <!-- Virtual Scrolling Table (for large datasets) - disabled for build -->
+        <!-- <app-virtual-scroll-table 
           *ngIf="useVirtualScrolling && !loading"
           [data]="dataSource.data"
           [columns]="virtualColumns"
@@ -163,10 +163,10 @@
           ariaLabel="User management table with virtual scrolling"
           (rowSelect)="onVirtualRowSelect($event)"
           (sortChange)="onVirtualSortChange($event)">
-        </app-virtual-scroll-table>
+        </app-virtual-scroll-table> -->
 
-        <!-- Standard Material Table (for smaller datasets) -->
-        <mat-table *ngIf="!useVirtualScrolling"
+        <!-- Standard Material Table (always show for now) -->
+        <mat-table
                    [dataSource]="dataSource" 
                    matSort 
                    (matSortChange)="onSortChange($event)"

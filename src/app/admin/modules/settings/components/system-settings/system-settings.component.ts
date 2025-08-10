@@ -183,7 +183,7 @@ export class SystemSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadSystemSettings(): void {
+  loadSystemSettings(): void {
     this.loading = true;
     this.error = null;
 
@@ -320,7 +320,7 @@ export class SystemSettingsComponent implements OnInit, OnDestroy {
     this.adminApi.clearCache().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (result) => {
+      next: (result: any) => {
         if (result.success) {
           this.snackBar.open('Cache cleared successfully', 'Close', { duration: 3000 });
           
@@ -329,7 +329,7 @@ export class SystemSettingsComponent implements OnInit, OnDestroy {
           });
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.snackBar.open('Failed to clear cache', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']

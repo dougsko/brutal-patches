@@ -10,8 +10,8 @@ import { AdminDashboardCard } from '../../interfaces/admin.interfaces';
               [attr.aria-describedby]="cardId + '-description'"
               role="article"
               tabindex="0"
-              (keydown.enter)="onCardActivate($event)"
-              (keydown.space)="onCardActivate($event)"
+              (keydown.enter)="onCardActivate($any($event))"
+              (keydown.space)="onCardActivate($any($event))"
               (click)="onCardClick()">
       <mat-card-content>
         <div class="stats-header">

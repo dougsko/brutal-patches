@@ -24,6 +24,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDividerModule } from '@angular/material/divider';
 
 // Components
 import { ModerationQueueComponent } from './components/moderation-queue/moderation-queue.component';
@@ -58,6 +59,7 @@ import { ModerationQueueComponent } from './components/moderation-queue/moderati
     MatBadgeModule,
     MatExpansionModule,
     MatSlideToggleModule,
+    MatDividerModule,
     
     RouterModule.forChild([
       { path: '', redirectTo: 'queue', pathMatch: 'full' },

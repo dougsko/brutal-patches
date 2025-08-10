@@ -627,7 +627,7 @@ export class AdminApiService {
   /**
    * Clear all cached data or specific cache keys
    */
-  public clearCache(keys?: string[]): void {
+  public clearCache(keys?: string[]): Observable<{success: boolean}> {
     if (keys) {
       keys.forEach(key => this.cache.delete(key));
     } else {
@@ -639,6 +639,8 @@ export class AdminApiService {
       keys: keys || ['all'],
       timestamp: new Date().toISOString()
     });
+    
+    return of({success: true});
   }
 
   /**
