@@ -1,0 +1,511 @@
+<div class="user-edit-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="navigation">
+        <button mat-icon-button (click)="onGoBack()" matTooltip="Back to User List">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="breadcrumb">
+          <span class="breadcrumb-item">Users</span>
+          <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+          <span class="breadcrumb-current">Edit User</span>
+        </div>
+      </div>
+      
+      <div class="user-header" *ngIf="user">
+        <div class="user-avatar-large">
+          <mat-icon *ngIf="!user.avatar" class="avatar-icon-large">person</mat-icon>
+          <img *ngIf="user.avatar" [src]="user.avatar" [alt]="user.username" class="avatar-image-large">
+        </div>
+        <div class="user-info">
+          <h1 class="user-title">{{ user.username }}</h1>
+          <p class="user-subtitle">{{ user.email }}</p>
+          <div class="user-badges">
+            <mat-chip [color]="user.status === 'active' ? 'primary' : 'warn'" selected>
+              {{ user.status | titlecase }}
+            </mat-chip>
+            <mat-chip *ngFor="let role of user.roles" color="accent" selected>
+              {{ role.name }}
+            </mat-chip>
+          </div>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button mat-raised-button 
+                color="warn" 
+                *ngIf="user?.status === 'active'"
+                (click)="onSuspendUser()"
+                [disabled]="loading || saving">
+          <mat-icon>block</mat-icon>
+          Suspend User
+        </button>
+        
+        <button mat-raised-button 
+                color="primary" 
+                *ngIf="user?.status === 'suspended'"
+                (click)="onActivateUser()"
+                [disabled]="loading || saving">
+          <mat-icon>check_circle</mat-icon>
+          Activate User
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-card>
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading user data...</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="error && !loading" class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+        <button mat-button color="primary" (click)="loadUserData()">
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Main Content -->
+  <div *ngIf="user && !loading" class="content-container">
+    <!-- Save Banner -->
+    <div class="save-banner" *ngIf="hasUnsavedChanges">
+      <div class="save-info">
+        <mat-icon>info</mat-icon>
+        <span>You have unsaved changes</span>
+      </div>
+      <div class="save-actions">
+        <button mat-button (click)="onResetForm()">Reset</button>
+        <button mat-raised-button color="primary" (click)="onSaveUser()" [disabled]="saving">
+          <mat-spinner *ngIf="saving" diameter="16"></mat-spinner>
+          <span *ngIf="!saving">Save Changes</span>
+          <span *ngIf="saving">Saving...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabbed Interface -->
+    <mat-card class="tabs-card">
+      <mat-tab-group [(selectedIndex)]="activeTab" (selectedTabChange)="onTabChange($event.index)">
+        
+        <!-- Profile Tab -->
+        <mat-tab label="Profile">
+          <div class="tab-content">
+            <form [formGroup]="userForm" class="user-form">
+              
+              <!-- Personal Information Section -->
+              <mat-card class="form-section">
+                <mat-card-header>
+                  <mat-card-title>Personal Information</mat-card-title>
+                  <mat-card-subtitle>Basic user account information</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content formGroupName="personalInfo">
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Username</mat-label>
+                      <input matInput formControlName="username" required>
+                      <mat-error>{{ getFieldError(personalInfo, 'username') }}</mat-error>
+                    </mat-form-field>
+                  </div>
+                  
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Email Address</mat-label>
+                      <input matInput type="email" formControlName="email" required>
+                      <mat-error>{{ getFieldError(personalInfo, 'email') }}</mat-error>
+                    </mat-form-field>
+                  </div>
+                  
+                  <div class="form-row two-column">
+                    <mat-form-field appearance="outline">
+                      <mat-label>First Name</mat-label>
+                      <input matInput formControlName="firstName">
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline">
+                      <mat-label>Last Name</mat-label>
+                      <input matInput formControlName="lastName">
+                    </mat-form-field>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- Account Status Section -->
+              <mat-card class="form-section">
+                <mat-card-header>
+                  <mat-card-title>Account Status</mat-card-title>
+                  <mat-card-subtitle>Account verification and security settings</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content formGroupName="status">
+                  <div class="toggle-list">
+                    <mat-slide-toggle formControlName="active">
+                      <span class="toggle-label">Account Active</span>
+                      <span class="toggle-description">User can log in and access the system</span>
+                    </mat-slide-toggle>
+                    
+                    <mat-slide-toggle formControlName="emailVerified">
+                      <span class="toggle-label">Email Verified</span>
+                      <span class="toggle-description">User has verified their email address</span>
+                    </mat-slide-toggle>
+                    
+                    <mat-slide-toggle formControlName="twoFactorEnabled">
+                      <span class="toggle-label">Two-Factor Authentication</span>
+                      <span class="toggle-description">Additional security verification enabled</span>
+                    </mat-slide-toggle>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </form>
+          </div>
+        </mat-tab>
+
+        <!-- Roles & Permissions Tab -->
+        <mat-tab label="Roles & Permissions">
+          <div class="tab-content">
+            <mat-card class="form-section">
+              <mat-card-header>
+                <mat-card-title>User Roles</mat-card-title>
+                <mat-card-subtitle>Assign roles to control user permissions</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="roles-section">
+                  <div class="current-roles">
+                    <h3>Current Roles</h3>
+                    <div class="role-chips">
+                      <mat-chip *ngFor="let role of selectedRoles"
+                               color="primary"
+                               selected
+                               removable
+                               (removed)="onRemoveRole(role)">
+                        {{ getRoleDisplayName(role) }}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                      </mat-chip>
+                      <span *ngIf="selectedRoles.length === 0" class="no-roles">
+                        No roles assigned
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="available-roles">
+                    <h3>Available Roles</h3>
+                    <div class="role-list">
+                      <mat-card *ngFor="let role of availableRoles" 
+                               class="role-card"
+                               [class.role-selected]="selectedRoles.includes(role.id)">
+                        <mat-card-content>
+                          <div class="role-info">
+                            <h4>{{ role.name }}</h4>
+                            <p class="role-description">
+                              {{ role.permissions.length }} permissions
+                            </p>
+                          </div>
+                          <div class="role-actions">
+                            <button *ngIf="!selectedRoles.includes(role.id)"
+                                   mat-button
+                                   color="primary"
+                                   (click)="onAddRole(role.id)">
+                              Add Role
+                            </button>
+                            <button *ngIf="selectedRoles.includes(role.id)"
+                                   mat-button
+                                   color="warn"
+                                   (click)="onRemoveRole(role.id)">
+                              Remove Role
+                            </button>
+                          </div>
+                        </mat-card-content>
+                      </mat-card>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Activity & Statistics Tab -->
+        <mat-tab label="Activity">
+          <div class="tab-content">
+            <div class="statistics-grid">
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">library_music</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.totalPatches }}</div>
+                      <div class="stat-label">Total Patches</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">collections</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.totalCollections }}</div>
+                      <div class="stat-label">Collections</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">visibility</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.totalViews }}</div>
+                      <div class="stat-label">Total Views</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">download</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.totalDownloads }}</div>
+                      <div class="stat-label">Downloads</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">star</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.averageRating.toFixed(1) }}</div>
+                      <div class="stat-label">Avg Rating</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-content">
+                    <mat-icon class="stat-icon">login</mat-icon>
+                    <div class="stat-info">
+                      <div class="stat-value">{{ userStatistics.loginCount }}</div>
+                      <div class="stat-label">Login Count</div>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <mat-card class="activity-details">
+              <mat-card-header>
+                <mat-card-title>Account Information</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="info-list">
+                  <div class="info-item">
+                    <span class="info-label">Registration Date:</span>
+                    <span class="info-value">{{ formatDate(userStatistics.registrationDate) }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Last Login:</span>
+                    <span class="info-value">{{ formatDate(userStatistics.lastLoginDate) }}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Moderation History Tab -->
+        <mat-tab label="Moderation">
+          <div class="tab-content">
+            <mat-card class="form-section">
+              <mat-card-header>
+                <mat-card-title>Suspension History</mat-card-title>
+                <mat-card-subtitle>Record of all suspensions and their status</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div *ngIf="suspensionHistory.length === 0" class="empty-state">
+                  <mat-icon>check_circle</mat-icon>
+                  <p>No suspension history</p>
+                </div>
+                
+                <div *ngFor="let suspension of suspensionHistory" class="suspension-record">
+                  <div class="suspension-info">
+                    <div class="suspension-header">
+                      <span class="suspension-reason">{{ suspension.reason }}</span>
+                      <mat-chip [color]="suspension.isActive ? 'warn' : 'primary'" selected>
+                        {{ suspension.isActive ? 'Active' : 'Resolved' }}
+                      </mat-chip>
+                    </div>
+                    <div class="suspension-details">
+                      <span>By: {{ suspension.adminUsername }}</span>
+                      <span>Start: {{ formatDate(suspension.startDate) }}</span>
+                      <span *ngIf="suspension.endDate">End: {{ formatDate(suspension.endDate) }}</span>
+                    </div>
+                    <p *ngIf="suspension.notes" class="suspension-notes">{{ suspension.notes }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Suspension Form -->
+            <mat-card *ngIf="showSuspensionForm" class="form-section">
+              <mat-card-header>
+                <mat-card-title>Suspend User</mat-card-title>
+                <mat-card-subtitle>Create a new suspension for this user</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <form [formGroup]="suspensionForm" (ngSubmit)="onSubmitSuspension()">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Suspension Reason</mat-label>
+                    <textarea matInput 
+                             formControlName="reason" 
+                             rows="3" 
+                             required></textarea>
+                    <mat-error>{{ getFieldError(suspensionForm, 'reason') }}</mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Duration</mat-label>
+                    <mat-select formControlName="duration">
+                      <mat-option value="1day">1 Day</mat-option>
+                      <mat-option value="3days">3 Days</mat-option>
+                      <mat-option value="1week">1 Week</mat-option>
+                      <mat-option value="1month">1 Month</mat-option>
+                      <mat-option value="permanent">Permanent</mat-option>
+                      <mat-option value="custom">Custom</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Additional Notes</mat-label>
+                    <textarea matInput 
+                             formControlName="notes" 
+                             rows="2"></textarea>
+                  </mat-form-field>
+
+                  <mat-slide-toggle formControlName="notifyUser">
+                    Notify user via email
+                  </mat-slide-toggle>
+
+                  <div class="form-actions">
+                    <button type="button" mat-button (click)="showSuspensionForm = false">Cancel</button>
+                    <button type="submit" mat-raised-button color="warn" [disabled]="suspensionForm.invalid">
+                      Suspend User
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+
+        <!-- Admin Notes Tab -->
+        <mat-tab label="Notes">
+          <div class="tab-content">
+            <!-- Add New Note -->
+            <mat-card class="form-section">
+              <mat-card-header>
+                <mat-card-title>Add Admin Note</mat-card-title>
+                <mat-card-subtitle>Add a note about this user for other administrators</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <form [formGroup]="newNoteForm" (ngSubmit)="onAddNote()">
+                  <div class="form-row two-column">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Note Type</mat-label>
+                      <mat-select formControlName="type">
+                        <mat-option value="general">General</mat-option>
+                        <mat-option value="warning">Warning</mat-option>
+                        <mat-option value="suspension">Suspension</mat-option>
+                        <mat-option value="ban">Ban</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    
+                    <mat-slide-toggle formControlName="isVisible">
+                      Visible to user
+                    </mat-slide-toggle>
+                  </div>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Note Content</mat-label>
+                    <textarea matInput 
+                             formControlName="content" 
+                             rows="4" 
+                             required></textarea>
+                    <mat-error>{{ getFieldError(newNoteForm, 'content') }}</mat-error>
+                  </mat-form-field>
+
+                  <div class="form-actions">
+                    <button type="submit" 
+                           mat-raised-button 
+                           color="primary" 
+                           [disabled]="newNoteForm.invalid || addingNote">
+                      <mat-spinner *ngIf="addingNote" diameter="16"></mat-spinner>
+                      <span *ngIf="!addingNote">Add Note</span>
+                      <span *ngIf="addingNote">Adding...</span>
+                    </button>
+                  </div>
+                </form>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Existing Notes -->
+            <mat-card class="form-section">
+              <mat-card-header>
+                <mat-card-title>Admin Notes History</mat-card-title>
+                <mat-card-subtitle>{{ adminNotes.length }} notes</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div *ngIf="adminNotes.length === 0" class="empty-state">
+                  <mat-icon>note_add</mat-icon>
+                  <p>No admin notes yet</p>
+                </div>
+
+                <div *ngFor="let note of adminNotes" class="note-item">
+                  <div class="note-header">
+                    <div class="note-meta">
+                      <mat-chip [color]="note.type === 'warning' || note.type === 'ban' ? 'warn' : 'primary'" selected>
+                        {{ note.type | titlecase }}
+                      </mat-chip>
+                      <span class="note-author">{{ note.adminUsername }}</span>
+                      <span class="note-date">{{ formatDate(note.createdAt) }}</span>
+                    </div>
+                    <div class="note-actions">
+                      <mat-icon *ngIf="note.isVisible" matTooltip="Visible to user">visibility</mat-icon>
+                      <mat-icon *ngIf="!note.isVisible" matTooltip="Admin only">visibility_off</mat-icon>
+                      <button mat-icon-button color="warn" (click)="onDeleteNote(note.id)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="note-content">
+                    <p>{{ note.content }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+</div>

@@ -4,7 +4,19 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000'
+  apiUrl: 'http://localhost:4000',
+  jwt: {
+    secret: 'development-secret-key', // This should be the same as backend secret
+    issuer: 'brutal-patches',
+    audience: 'brutal-patches-users'
+  },
+  security: {
+    adminUsernames: ['admin'], // Configurable admin usernames
+    adminAccessRateLimit: {
+      maxAttempts: 5,
+      windowMs: 15 * 60 * 1000 // 15 minutes
+    }
+  }
 };
 
 /*

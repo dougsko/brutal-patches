@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import * as CryptoJS from 'crypto-js';
+import { environment } from '../../environments/environment';
 
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
@@ -12,6 +14,11 @@ interface JwtPayload {
   sub: string;
   username: string;
   email?: string;
+  roles?: string[];
+  isAdmin?: boolean;
+  permissions?: string[];
+  iss?: string; // issuer
+  aud?: string; // audience
 }
 
 interface TokenValidityStatus {
@@ -132,12 +139,31 @@ export class TokenStorageService {
 
   private validateToken(token: string): TokenValidityStatus {
     try {
+      // First check JWT signature if secret is available (development mode only)
+      if (!environment.production && environment.jwt.secret) {
+        if (!this.verifyJWTSignature(token)) {
+          console.error('JWT signature verification failed');
+          return {
+            isValid: false,
+            isExpired: true,
+            expiresIn: 0,
+            needsRefresh: false
+          };
+        }
+      }
+
       const decoded = jwtDecode<JwtPayload>(token);
       const now = Date.now() / 1000; // Convert to seconds
       const expiresIn = (decoded.exp - now) * 1000; // Convert back to milliseconds
       
       const isExpired = decoded.exp <= now;
-      const isValid = !isExpired && !!decoded.sub && !!decoded.username;
+      
+      // Enhanced validation including issuer and audience checks
+      const isValidStructure = !!decoded.sub && !!decoded.username;
+      const isValidIssuer = !environment.jwt.issuer || decoded.iss === environment.jwt.issuer;
+      const isValidAudience = !environment.jwt.audience || decoded.aud === environment.jwt.audience;
+      
+      const isValid = !isExpired && isValidStructure && isValidIssuer && isValidAudience;
       const needsRefresh = !isExpired && expiresIn <= TOKEN_REFRESH_THRESHOLD;
 
       return {
@@ -155,6 +181,49 @@ export class TokenStorageService {
         needsRefresh: false
       };
     }
+  }
+
+  /**
+   * Verify JWT signature (development only)
+   * In production, this should be done on the server side
+   */
+  private verifyJWTSignature(token: string): boolean {
+    try {
+      if (environment.production) {
+        return true; // Skip client-side verification in production
+      }
+
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        return false;
+      }
+
+      const header = parts[0];
+      const payload = parts[1];
+      const signature = parts[2];
+
+      // Create expected signature
+      const data = header + '.' + payload;
+      const expectedSignature = CryptoJS.HmacSHA256(data, environment.jwt.secret)
+        .toString(CryptoJS.enc.Base64url);
+
+      return signature === expectedSignature;
+    } catch (error) {
+      console.error('JWT signature verification error:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Check if username is in the configured list of admin users
+   */
+  private isConfiguredAdminUser(username: string): boolean {
+    if (!username) {
+      return false;
+    }
+    
+    const adminUsernames = environment.security?.adminUsernames || ['admin'];
+    return adminUsernames.includes(username);
   }
 
   private checkTokenValidity(): void {
@@ -183,6 +252,64 @@ export class TokenStorageService {
     this.tokenValiditySubject.next(status);
   }
 
+  /**
+   * Extract user roles and permissions from JWT token
+   * Returns null if no token or if roles are not present in token
+   */
+  public getUserRoles(): { roles: string[], isAdmin: boolean, permissions: string[] } | null {
+    const token = window.sessionStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      
+      // Check if roles information is present in token
+      if (!decoded.roles && decoded.isAdmin === undefined) {
+        return null; // No role information in token
+      }
+
+      const roles = decoded.roles || [];
+      const isAdmin = decoded.isAdmin || roles.includes('admin') || this.isConfiguredAdminUser(decoded.username);
+      const permissions = decoded.permissions || (isAdmin ? ['admin.full'] : []);
+
+      return {
+        roles,
+        isAdmin,
+        permissions
+      };
+    } catch (error) {
+      console.error('Error extracting user roles from token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if current user has admin privileges based on token
+   * Returns null if unable to determine from token
+   */
+  public isAdminFromToken(): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? roles.isAdmin : null;
+  }
+
+  /**
+   * Check if user has specific role based on token
+   */
+  public hasRoleFromToken(role: string): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? roles.roles.includes(role) : null;
+  }
+
+  /**
+   * Check if user has specific permission based on token
+   */
+  public hasPermissionFromToken(permission: string): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? (roles.permissions.includes(permission) || roles.isAdmin) : null;
+  }
+
   // For debugging purposes
   public getTokenInfo(): any {
     const token = window.sessionStorage.getItem(TOKEN_KEY);
@@ -192,10 +319,15 @@ export class TokenStorageService {
 
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      const userRoles = this.getUserRoles();
+      
       return {
         username: decoded.username,
         subject: decoded.sub,
         email: decoded.email,
+        roles: userRoles?.roles || [],
+        isAdmin: userRoles?.isAdmin || false,
+        permissions: userRoles?.permissions || [],
         issuedAt: new Date(decoded.iat * 1000),
         expiresAt: new Date(decoded.exp * 1000),
         expiresIn: this.getTimeUntilExpiry(),
