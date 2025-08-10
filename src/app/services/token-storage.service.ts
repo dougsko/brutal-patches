@@ -12,6 +12,9 @@ interface JwtPayload {
   sub: string;
   username: string;
   email?: string;
+  roles?: string[];
+  isAdmin?: boolean;
+  permissions?: string[];
 }
 
 interface TokenValidityStatus {
@@ -183,6 +186,64 @@ export class TokenStorageService {
     this.tokenValiditySubject.next(status);
   }
 
+  /**
+   * Extract user roles and permissions from JWT token
+   * Returns null if no token or if roles are not present in token
+   */
+  public getUserRoles(): { roles: string[], isAdmin: boolean, permissions: string[] } | null {
+    const token = window.sessionStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const decoded = jwtDecode<JwtPayload>(token);
+      
+      // Check if roles information is present in token
+      if (!decoded.roles && decoded.isAdmin === undefined) {
+        return null; // No role information in token
+      }
+
+      const roles = decoded.roles || [];
+      const isAdmin = decoded.isAdmin || roles.includes('admin') || decoded.username === 'admin';
+      const permissions = decoded.permissions || (isAdmin ? ['admin.full'] : []);
+
+      return {
+        roles,
+        isAdmin,
+        permissions
+      };
+    } catch (error) {
+      console.error('Error extracting user roles from token:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Check if current user has admin privileges based on token
+   * Returns null if unable to determine from token
+   */
+  public isAdminFromToken(): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? roles.isAdmin : null;
+  }
+
+  /**
+   * Check if user has specific role based on token
+   */
+  public hasRoleFromToken(role: string): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? roles.roles.includes(role) : null;
+  }
+
+  /**
+   * Check if user has specific permission based on token
+   */
+  public hasPermissionFromToken(permission: string): boolean | null {
+    const roles = this.getUserRoles();
+    return roles ? (roles.permissions.includes(permission) || roles.isAdmin) : null;
+  }
+
   // For debugging purposes
   public getTokenInfo(): any {
     const token = window.sessionStorage.getItem(TOKEN_KEY);
@@ -192,10 +253,15 @@ export class TokenStorageService {
 
     try {
       const decoded = jwtDecode<JwtPayload>(token);
+      const userRoles = this.getUserRoles();
+      
       return {
         username: decoded.username,
         subject: decoded.sub,
         email: decoded.email,
+        roles: userRoles?.roles || [],
+        isAdmin: userRoles?.isAdmin || false,
+        permissions: userRoles?.permissions || [],
         issuedAt: new Date(decoded.iat * 1000),
         expiresAt: new Date(decoded.exp * 1000),
         expiresIn: this.getTimeUntilExpiry(),
