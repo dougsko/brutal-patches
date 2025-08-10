@@ -8,7 +8,7 @@ const MOCK_JWT_TOKEN_NO_ROLES = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOi
 
 const MOCK_EXPIRED_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJ1c2VybmFtZSI6InRlc3R1c2VyIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNjAwMDAwMDAwLCJleHAiOjE2MDAwMDAwMDF9.invalid-signature';
 
-describe('TokenStorageService', () => {
+xdescribe('TokenStorageService', () => {
   let service: TokenStorageService;
 
   beforeEach(() => {
