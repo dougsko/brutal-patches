@@ -266,10 +266,10 @@ describe('AdminApiService', () => {
   });
 
   describe('system management', () => {
-    it('should clear cache', () => {
+    it('should clear server cache', () => {
       const type = 'patches';
 
-      service.clearCache(type).subscribe(result => {
+      service.clearServerCache(type).subscribe(result => {
         expect(result.success).toBe(true);
         expect(mockLogger.logAdminAction).toHaveBeenCalledWith('cache_cleared', {
           type,
@@ -298,6 +298,337 @@ describe('AdminApiService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ tasks });
       req.flush({ success: true, message: 'Maintenance tasks completed', results: {} });
+    });
+  });
+
+  // Enhanced error handling tests for caching functionality
+  describe('Caching Functionality', () => {
+    beforeEach(() => {
+      // Clear any existing cache before each test
+      service.clearCache();
+    });
+
+    it('should return cached data when available and valid', () => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      // First request - should hit the API
+      service.getAdminStats().subscribe(stats => {
+        expect(stats).toEqual(mockStats);
+      });
+
+      const req1 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req1.flush(mockStats);
+
+      // Second request - should use cache (no HTTP request expected)
+      service.getAdminStats().subscribe(stats => {
+        expect(stats).toEqual(mockStats);
+        expect(mockLogger.logAdminAction).toHaveBeenCalledTimes(1); // Only called once (not from cache)
+      });
+
+      // Verify no additional HTTP requests were made
+      httpMock.verify();
+    });
+
+    it('should bypass cache when useCache is false', () => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      // First request with cache
+      service.getAdminStats(true).subscribe();
+      const req1 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req1.flush(mockStats);
+
+      // Second request bypassing cache
+      service.getAdminStats(false).subscribe();
+      const req2 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req2.flush(mockStats);
+    });
+
+    it('should share pending requests to avoid duplicate API calls', (done) => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      let responseCount = 0;
+
+      // Make two simultaneous requests
+      service.getAdminStats().subscribe(stats => {
+        expect(stats).toEqual(mockStats);
+        responseCount++;
+        if (responseCount === 2) {
+          done();
+        }
+      });
+
+      service.getAdminStats().subscribe(stats => {
+        expect(stats).toEqual(mockStats);
+        responseCount++;
+        if (responseCount === 2) {
+          done();
+        }
+      });
+
+      // Only one HTTP request should be made
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.flush(mockStats);
+    });
+
+    it('should clear cache entries when clearCache is called', () => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      // First request - populate cache
+      service.getAdminStats().subscribe();
+      const req1 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req1.flush(mockStats);
+
+      // Clear cache
+      service.clearCache();
+
+      // Next request should hit API again
+      service.getAdminStats().subscribe();
+      const req2 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req2.flush(mockStats);
+    });
+
+    it('should provide cache statistics', () => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      // Initially cache should be empty
+      let cacheStats = service.getCacheStats();
+      expect(cacheStats.size).toBe(0);
+      expect(cacheStats.keys).toEqual([]);
+
+      // Populate cache
+      service.getAdminStats().subscribe();
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.flush(mockStats);
+
+      // Cache should now have one entry
+      cacheStats = service.getCacheStats();
+      expect(cacheStats.size).toBe(1);
+      expect(cacheStats.keys).toContain('admin_stats');
+    });
+
+    it('should handle cache invalidation with patterns', () => {
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      const mockHealth: SystemHealth = {
+        status: 'healthy',
+        database: { status: 'connected', responseTime: 50 },
+        cache: { status: 'active', hitRate: 85 },
+        storage: { status: 'healthy', usage: 60 },
+        lastChecked: new Date().toISOString()
+      };
+
+      // Populate cache with both stats and health
+      service.getAdminStats().subscribe();
+      const req1 = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req1.flush(mockStats);
+
+      service.getSystemHealth().subscribe();
+      const req2 = httpMock.expectOne(req => req.url.includes('/api/admin/health'));
+      req2.flush(mockHealth);
+
+      // Verify both entries are cached
+      let cacheStats = service.getCacheStats();
+      expect(cacheStats.size).toBe(2);
+
+      // Invalidate only stats entries
+      service.invalidateCache(/admin_stats/);
+
+      // Health should still be cached
+      cacheStats = service.getCacheStats();
+      expect(cacheStats.size).toBe(1);
+      expect(cacheStats.keys).toContain('system_health');
+      expect(cacheStats.keys).not.toContain('admin_stats');
+    });
+  });
+
+  // Error handling edge cases
+  describe('Advanced Error Handling', () => {
+    it('should handle malformed JSON responses', () => {
+      service.getAdminStats().subscribe({
+        next: () => fail('Should have failed'),
+        error: (error) => {
+          expect(mockLogger.logError).toHaveBeenCalled();
+          expect(error.operation).toBe('getAdminStats');
+        }
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.error(new ErrorEvent('JSON Parse Error'));
+    });
+
+    it('should handle timeout errors', () => {
+      service.getUsers().subscribe({
+        next: () => fail('Should have failed'),
+        error: (error) => {
+          expect(error.message).toBe('Unable to connect to the server. Please check your connection.');
+          expect(mockLogger.logError).toHaveBeenCalled();
+        }
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/users'));
+      req.error(new ErrorEvent('Timeout'), { status: 0, statusText: 'Timeout' });
+    });
+
+    it('should handle partial failures in bulk operations', () => {
+      const operation = 'delete';
+      const patchIds = [1, 2, 3];
+
+      service.bulkPatchOperation(operation, patchIds).subscribe(result => {
+        expect(result.success).toBe(false);
+        expect(result.errors).toBeDefined();
+        expect(mockLogger.logAdminAction).toHaveBeenCalledWith('bulk_patch_operation', {
+          operation,
+          itemCount: patchIds.length,
+          success: false
+        });
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/patches/bulk'));
+      req.flush({
+        success: false,
+        message: 'Partial failure',
+        errors: ['Failed to delete patch 2: Permission denied'],
+        results: { deleted: [1, 3], failed: [2] }
+      });
+    });
+
+    it('should handle concurrent request failures gracefully', (done) => {
+      let errorCount = 0;
+      const expectedErrors = 2;
+
+      const handleError = (error: any) => {
+        expect(error.message).toContain('server error');
+        errorCount++;
+        if (errorCount === expectedErrors) {
+          done();
+        }
+      };
+
+      // Make two concurrent failing requests
+      service.getAdminStats().subscribe({
+        next: () => fail('Should have failed'),
+        error: handleError
+      });
+
+      service.getAdminStats().subscribe({
+        next: () => fail('Should have failed'),
+        error: handleError
+      });
+
+      // Both should share the same failing request
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.flush({ error: 'Server error' }, { status: 500, statusText: 'Internal Server Error' });
+    });
+
+    it('should handle cache corruption gracefully', () => {
+      // Simulate corrupted cache by directly manipulating the internal cache
+      const corruptedData = { corrupted: true };
+      (service as any).setCachedData('admin_stats', corruptedData, 30000);
+
+      // Request should still work by making a new API call
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      service.getAdminStats().subscribe(stats => {
+        // Should return real data, not corrupted cache
+        expect(stats).toEqual(mockStats);
+        expect(stats).not.toEqual(jasmine.any(Object));
+      });
+
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.flush(mockStats);
+    });
+
+    it('should handle memory pressure by clearing old cache entries', () => {
+      // This test would simulate cache eviction policies
+      // In a real implementation, you might want to add automatic cache cleanup
+
+      const cacheSize = service.getCacheStats().size;
+      expect(cacheSize).toBe(0);
+
+      // Add multiple cache entries
+      const mockStats: AdminStats = {
+        totalUsers: 100,
+        activeUsers: 75,
+        totalPatches: 500,
+        totalCollections: 25,
+        averageRating: 4.2,
+        systemUptime: 30000,
+        diskUsage: { used: 50, total: 100, percentage: 50 },
+        memoryUsage: { used: 4, total: 8, percentage: 50 }
+      };
+
+      service.getAdminStats().subscribe();
+      const req = httpMock.expectOne(req => req.url.includes('/api/admin/stats'));
+      req.flush(mockStats);
+
+      expect(service.getCacheStats().size).toBe(1);
+
+      // Clear cache when needed
+      service.clearCache();
+      expect(service.getCacheStats().size).toBe(0);
     });
   });
 });

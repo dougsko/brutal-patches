@@ -1,0 +1,173 @@
+<div class="health-container">
+  <!-- Header Section -->
+  <div class="health-header">
+    <div class="header-content">
+      <h1 class="health-title">
+        <mat-icon>health_and_safety</mat-icon>
+        System Health Monitor
+      </h1>
+      <div class="header-actions">
+        <div class="last-checked">
+          <mat-icon class="update-icon">schedule</mat-icon>
+          Last checked: {{ lastChecked | date:'short' }}
+        </div>
+        
+        <!-- Auto Refresh Toggle -->
+        <mat-slide-toggle 
+          [(ngModel)]="autoRefreshEnabled"
+          (change)="onToggleAutoRefresh()"
+          matTooltip="Auto refresh every 15 seconds">
+          Auto refresh
+        </mat-slide-toggle>
+        
+        <!-- Manual Refresh Button -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="onRefresh()"
+          [disabled]="loading"
+          matTooltip="Check system health now">
+          <mat-icon>refresh</mat-icon>
+          Check Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <mat-card class="error-card" *ngIf="error">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+        <button mat-button color="primary" (click)="onRefresh()">
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading && !error">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Checking system health...</p>
+  </div>
+
+  <!-- Health Status Content -->
+  <div class="health-content" *ngIf="!loading && !error">
+    
+    <!-- Overall Status Card -->
+    <mat-card class="overall-status-card" [ngClass]="'status-' + overallStatus">
+      <mat-card-content>
+        <div class="overall-status">
+          <div class="status-icon">
+            <mat-icon 
+              [style.color]="getOverallStatusColor()" 
+              [style.font-size.px]="48">
+              {{ getOverallStatusIcon() }}
+            </mat-icon>
+          </div>
+          <div class="status-details">
+            <h2 class="status-title">System Status</h2>
+            <div class="status-value" [style.color]="getOverallStatusColor()">
+              {{ overallStatus | titlecase }}
+            </div>
+            <div class="status-description">
+              <span *ngIf="overallStatus === 'healthy'">
+                All systems are operating normally
+              </span>
+              <span *ngIf="overallStatus === 'warning'">
+                Some systems require attention
+              </span>
+              <span *ngIf="overallStatus === 'critical'">
+                Critical issues detected - immediate action required
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Health Metrics Grid -->
+    <div class="metrics-grid">
+      <mat-card 
+        *ngFor="let metric of healthMetrics; trackBy: trackByFn" 
+        class="metric-card"
+        [ngClass]="getStatusBadgeClass(metric.status)">
+        
+        <mat-card-content>
+          <div class="metric-header">
+            <div class="metric-icon">
+              <mat-icon [style.color]="metric.color">{{ metric.icon }}</mat-icon>
+            </div>
+            <div class="metric-status">
+              <mat-chip 
+                [ngClass]="getStatusBadgeClass(metric.status)"
+                class="status-chip">
+                {{ metric.status | titlecase }}
+              </mat-chip>
+            </div>
+          </div>
+          
+          <div class="metric-content">
+            <h3 class="metric-name">{{ metric.name }}</h3>
+            <div class="metric-value">{{ metric.value | titlecase }}</div>
+            <div class="metric-details" *ngIf="metric.details">
+              {{ metric.details }}
+            </div>
+          </div>
+          
+          <div class="metric-actions" *ngIf="metric.status !== 'healthy'">
+            <button mat-button color="primary" class="action-btn">
+              <mat-icon>visibility</mat-icon>
+              View Details
+            </button>
+            <button mat-button color="warn" class="action-btn" *ngIf="metric.status === 'critical'">
+              <mat-icon>build</mat-icon>
+              Fix Issue
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- System Information -->
+    <mat-card class="system-info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          System Information
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Environment</div>
+            <div class="info-value">Production</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Version</div>
+            <div class="info-value">1.0.0</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Deployment</div>
+            <div class="info-value">AWS Lambda</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Database</div>
+            <div class="info-value">DynamoDB</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Monitoring</div>
+            <div class="info-value">CloudWatch</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Region</div>
+            <div class="info-value">us-east-1</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

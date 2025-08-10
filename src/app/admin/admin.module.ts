@@ -6,25 +6,12 @@ import { HttpClientModule } from '@angular/common/http';
 // CDK imports
 import { LayoutModule } from '@angular/cdk/layout';
 
-// Angular Material imports
+// Angular Material imports - only what's needed for core admin layout
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatMenuModule } from '@angular/material/menu';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
@@ -43,25 +30,12 @@ import { AdminLayoutComponent } from './components/admin-layout/admin-layout.com
     // CDK modules
     LayoutModule,
     
-    // Angular Material modules
+    // Angular Material modules - only core layout components
     MatToolbarModule,
     MatSidenavModule,
     MatListModule,
     MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatChipsModule,
-    MatTabsModule,
-    MatMenuModule
+    MatButtonModule
   ],
   providers: []
 })

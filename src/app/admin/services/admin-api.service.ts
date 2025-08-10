@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry, tap } from 'rxjs/operators';
+import { Observable, throwError, of, BehaviorSubject } from 'rxjs';
+import { catchError, retry, tap, map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AdminLoggerService } from './admin-logger.service';
 
@@ -105,6 +105,12 @@ export interface SystemSettings {
   [key: string]: any;
 }
 
+interface CachedData<T> {
+  data: T;
+  timestamp: number;
+  expiresAt: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -115,26 +121,100 @@ export class AdminApiService {
     'Content-Type': 'application/json'
   });
 
+  // Cache configuration
+  private readonly CACHE_DURATION = {
+    stats: 30 * 1000, // 30 seconds for dashboard stats
+    health: 15 * 1000, // 15 seconds for health data
+    settings: 5 * 60 * 1000 // 5 minutes for settings
+  };
+
+  // Cache storage
+  private cache = new Map<string, CachedData<any>>();
+  
+  // Observables for shared requests
+  private pendingRequests = new Map<string, Observable<any>>();
+
   constructor(
     private http: HttpClient,
     private logger: AdminLoggerService
   ) {}
 
   // Dashboard & Statistics
-  getAdminStats(): Observable<AdminStats> {
-    return this.http.get<AdminStats>(`${this.baseUrl}/stats`).pipe(
-      tap(() => this.logger.logAdminAction('stats_viewed', { endpoint: '/stats' })),
+  getAdminStats(useCache: boolean = true): Observable<AdminStats> {
+    const cacheKey = 'admin_stats';
+    
+    if (useCache) {
+      const cachedData = this.getCachedData<AdminStats>(cacheKey);
+      if (cachedData) {
+        return of(cachedData);
+      }
+
+      // Check if request is already pending to avoid duplicate requests
+      if (this.pendingRequests.has(cacheKey)) {
+        return this.pendingRequests.get(cacheKey)!;
+      }
+    }
+
+    const request$ = this.http.get<AdminStats>(`${this.baseUrl}/stats`).pipe(
+      tap((data) => {
+        this.logger.logAdminAction('stats_viewed', { endpoint: '/stats' });
+        if (useCache) {
+          this.setCachedData(cacheKey, data, this.CACHE_DURATION.stats);
+        }
+      }),
       retry(2),
-      catchError(this.handleError('getAdminStats'))
+      catchError(this.handleError('getAdminStats')),
+      shareReplay(1)
     );
+
+    if (useCache) {
+      this.pendingRequests.set(cacheKey, request$);
+      
+      // Clean up pending request after completion
+      request$.subscribe({
+        complete: () => this.pendingRequests.delete(cacheKey),
+        error: () => this.pendingRequests.delete(cacheKey)
+      });
+    }
+
+    return request$;
   }
 
-  getSystemHealth(): Observable<SystemHealth> {
-    return this.http.get<SystemHealth>(`${this.baseUrl}/health`).pipe(
-      tap(() => this.logger.logAdminAction('health_checked', { endpoint: '/health' })),
+  getSystemHealth(useCache: boolean = true): Observable<SystemHealth> {
+    const cacheKey = 'system_health';
+    
+    if (useCache) {
+      const cachedData = this.getCachedData<SystemHealth>(cacheKey);
+      if (cachedData) {
+        return of(cachedData);
+      }
+
+      if (this.pendingRequests.has(cacheKey)) {
+        return this.pendingRequests.get(cacheKey)!;
+      }
+    }
+
+    const request$ = this.http.get<SystemHealth>(`${this.baseUrl}/health`).pipe(
+      tap((data) => {
+        this.logger.logAdminAction('health_checked', { endpoint: '/health' });
+        if (useCache) {
+          this.setCachedData(cacheKey, data, this.CACHE_DURATION.health);
+        }
+      }),
       retry(2),
-      catchError(this.handleError('getSystemHealth'))
+      catchError(this.handleError('getSystemHealth')),
+      shareReplay(1)
     );
+
+    if (useCache) {
+      this.pendingRequests.set(cacheKey, request$);
+      request$.subscribe({
+        complete: () => this.pendingRequests.delete(cacheKey),
+        error: () => this.pendingRequests.delete(cacheKey)
+      });
+    }
+
+    return request$;
   }
 
   // User Management
@@ -283,7 +363,7 @@ export class AdminApiService {
   }
 
   // Cache Management
-  clearCache(type?: 'patches' | 'users' | 'collections' | 'all'): Observable<BulkOperationResult> {
+  clearServerCache(type?: 'patches' | 'users' | 'collections' | 'all'): Observable<BulkOperationResult> {
     const body = { type: type || 'all' };
     
     return this.http.post<BulkOperationResult>(`${this.baseUrl}/cache/clear`, body).pipe(
@@ -291,7 +371,7 @@ export class AdminApiService {
         type: type || 'all', 
         success: result.success 
       })),
-      catchError(this.handleError('clearCache'))
+      catchError(this.handleError('clearServerCache'))
     );
   }
 
@@ -369,5 +449,78 @@ export class AdminApiService {
         operation
       }));
     };
+  }
+
+  // Cache management methods
+  private getCachedData<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    if (!cached) {
+      return null;
+    }
+
+    // Check if data is still valid
+    if (Date.now() > cached.expiresAt) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return cached.data;
+  }
+
+  private setCachedData<T>(key: string, data: T, duration: number): void {
+    const now = Date.now();
+    this.cache.set(key, {
+      data,
+      timestamp: now,
+      expiresAt: now + duration
+    });
+  }
+
+  /**
+   * Clear all cached data or specific cache keys
+   */
+  public clearCache(keys?: string[]): void {
+    if (keys) {
+      keys.forEach(key => this.cache.delete(key));
+    } else {
+      this.cache.clear();
+      this.pendingRequests.clear();
+    }
+    
+    this.logger.logAdminAction('cache_cleared', { 
+      keys: keys || ['all'],
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  /**
+   * Get cache statistics for monitoring
+   */
+  public getCacheStats(): { size: number; keys: string[]; hitRate?: number } {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys())
+    };
+  }
+
+  /**
+   * Invalidate cache entries that match a pattern
+   */
+  public invalidateCache(pattern?: RegExp): void {
+    if (!pattern) {
+      this.clearCache();
+      return;
+    }
+
+    const keysToDelete = Array.from(this.cache.keys())
+      .filter(key => pattern.test(key));
+    
+    keysToDelete.forEach(key => this.cache.delete(key));
+    
+    this.logger.logAdminAction('cache_invalidated', {
+      pattern: pattern.toString(),
+      keysRemoved: keysToDelete,
+      timestamp: new Date().toISOString()
+    });
   }
 }

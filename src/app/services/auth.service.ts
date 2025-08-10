@@ -114,7 +114,8 @@ export class AuthService {
       catchError(error => {
         // If the endpoint doesn't exist or fails, fall back to simple username check
         const tokenInfo = this.tokenStorage.getTokenInfo();
-        const isSimpleAdmin = tokenInfo?.username === 'admin';
+        const adminUsernames = environment.security?.adminUsernames || ['admin'];
+        const isSimpleAdmin = tokenInfo?.username && adminUsernames.includes(tokenInfo.username);
         
         console.warn('Admin status check failed, using fallback:', error);
         return of({

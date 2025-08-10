@@ -1,0 +1,458 @@
+<div class="settings-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon>settings</mat-icon>
+          System Settings
+        </h1>
+        <p class="page-subtitle">
+          Configure system-wide settings and preferences
+        </p>
+      </div>
+      
+      <div class="header-actions">
+        <button mat-button (click)="onExportSettings()" [disabled]="loading">
+          <mat-icon>download</mat-icon>
+          Export Settings
+        </button>
+        
+        <input type="file" 
+               #fileInput 
+               (change)="onImportSettings($event)" 
+               accept=".json" 
+               style="display: none;">
+        <button mat-button (click)="fileInput.click()" [disabled]="loading">
+          <mat-icon>upload</mat-icon>
+          Import Settings
+        </button>
+        
+        <button mat-raised-button color="accent" (click)="onResetSettings()" [disabled]="loading || saving">
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-card>
+      <mat-card-content>
+        <div class="loading-content">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Loading system settings...</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Error State -->
+  <mat-card *ngIf="error && !loading" class="error-card">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+        <button mat-button color="primary" (click)="loadSystemSettings()">
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Save Banner -->
+  <div class="save-banner" *ngIf="hasUnsavedChanges && !loading">
+    <div class="save-info">
+      <mat-icon>info</mat-icon>
+      <span>You have unsaved changes</span>
+    </div>
+    <div class="save-actions">
+      <button mat-button (click)="onResetSettings()">Reset</button>
+      <button mat-raised-button color="primary" (click)="onSaveSettings()" [disabled]="saving">
+        <mat-spinner *ngIf="saving" diameter="16"></mat-spinner>
+        <span *ngIf="!saving">Save Changes</span>
+        <span *ngIf="saving">Saving...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Content -->
+  <div *ngIf="!loading" class="settings-content">
+    <form [formGroup]="settingsForm" class="settings-form">
+      
+      <!-- Settings Sections -->
+      <mat-accordion multi="true">
+        
+        <!-- General Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[0].expanded"
+                            (opened)="onToggleSection('general')"
+                            (closed)="onToggleSection('general')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[0].icon }}</mat-icon>
+              {{ settingsSections[0].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[0].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="general">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Site Name</mat-label>
+                <input matInput formControlName="siteName" required>
+                <mat-error>{{ getFieldError('general.siteName') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Site URL</mat-label>
+                <input matInput formControlName="siteUrl" type="url" required>
+                <mat-error>{{ getFieldError('general.siteUrl') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Admin Email</mat-label>
+                <input matInput formControlName="adminEmail" type="email" required>
+                <mat-error>{{ getFieldError('general.adminEmail') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-slide-toggle formControlName="maintenanceMode"
+                               (change)="onMaintenanceModeChange($event.checked)">
+                <div class="toggle-content">
+                  <span class="toggle-label">Maintenance Mode</span>
+                  <span class="toggle-description">Put the site in maintenance mode</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="form-row" *ngIf="settingsForm.get('general.maintenanceMode')?.value">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Maintenance Message</mat-label>
+                <textarea matInput formControlName="maintenanceMessage" rows="3"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Registration Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[1].expanded"
+                            (opened)="onToggleSection('registration')"
+                            (closed)="onToggleSection('registration')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[1].icon }}</mat-icon>
+              {{ settingsSections[1].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[1].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="registration">
+            <div class="toggle-list">
+              <mat-slide-toggle formControlName="enabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">User Registration Enabled</span>
+                  <span class="toggle-description">Allow new users to register accounts</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="requireEmailVerification">
+                <div class="toggle-content">
+                  <span class="toggle-label">Require Email Verification</span>
+                  <span class="toggle-description">Users must verify their email before account activation</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="autoApproveUsers">
+                <div class="toggle-content">
+                  <span class="toggle-label">Auto-Approve Users</span>
+                  <span class="toggle-description">Automatically approve new user registrations</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Content Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[2].expanded"
+                            (opened)="onToggleSection('content')"
+                            (closed)="onToggleSection('content')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[2].icon }}</mat-icon>
+              {{ settingsSections[2].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[2].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="content">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Max Patch Size (MB)</mat-label>
+                <input matInput formControlName="maxPatchSize" type="number" min="1" max="100">
+                <mat-error>{{ getFieldError('content.maxPatchSize') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Allowed File Types</mat-label>
+                <mat-select formControlName="allowedFileTypes" multiple>
+                  <mat-option *ngFor="let fileType of allowedFileTypes" [value]="fileType.value">
+                    {{ fileType.label }} - {{ fileType.description }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="toggle-list">
+              <mat-slide-toggle formControlName="moderationEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Content Moderation</span>
+                  <span class="toggle-description">Enable content moderation system</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="autoModerationEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Auto-Moderation</span>
+                  <span class="toggle-description">Automatically flag suspicious content</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="requireApproval">
+                <div class="toggle-content">
+                  <span class="toggle-label">Require Content Approval</span>
+                  <span class="toggle-description">All content must be approved before publication</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Security Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[3].expanded"
+                            (opened)="onToggleSection('security')"
+                            (closed)="onToggleSection('security')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[3].icon }}</mat-icon>
+              {{ settingsSections[3].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[3].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="security">
+            <div class="form-row two-column">
+              <mat-form-field appearance="outline">
+                <mat-label>Session Timeout (minutes)</mat-label>
+                <input matInput formControlName="sessionTimeout" type="number" min="5" max="480">
+                <mat-error>{{ getFieldError('security.sessionTimeout') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Max Login Attempts</mat-label>
+                <input matInput formControlName="maxLoginAttempts" type="number" min="3" max="20">
+                <mat-error>{{ getFieldError('security.maxLoginAttempts') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Lockout Duration (minutes)</mat-label>
+                <input matInput formControlName="lockoutDuration" type="number" min="1" max="1440">
+                <mat-error>{{ getFieldError('security.lockoutDuration') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="toggle-list">
+              <mat-slide-toggle formControlName="requireStrongPasswords">
+                <div class="toggle-content">
+                  <span class="toggle-label">Require Strong Passwords</span>
+                  <span class="toggle-description">Enforce strong password requirements</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="enableTwoFactor">
+                <div class="toggle-content">
+                  <span class="toggle-label">Enable Two-Factor Authentication</span>
+                  <span class="toggle-description">Allow users to enable 2FA for their accounts</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Performance Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[4].expanded"
+                            (opened)="onToggleSection('performance')"
+                            (closed)="onToggleSection('performance')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[4].icon }}</mat-icon>
+              {{ settingsSections[4].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[4].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="performance">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Cache Duration (seconds)</mat-label>
+                <input matInput formControlName="cacheDuration" type="number" min="300" max="86400">
+                <mat-error>{{ getFieldError('performance.cacheDuration') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="toggle-list">
+              <mat-slide-toggle formControlName="cacheEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Enable Caching</span>
+                  <span class="toggle-description">Cache frequently accessed content</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="compressionEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Enable Compression</span>
+                  <span class="toggle-description">Compress HTTP responses for better performance</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="cdnEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Enable CDN</span>
+                  <span class="toggle-description">Use Content Delivery Network for static assets</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="action-section">
+              <button mat-stroked-button color="accent" (click)="onClearCache()">
+                <mat-icon>clear_all</mat-icon>
+                Clear Cache
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Notifications Settings -->
+        <mat-expansion-panel [expanded]="settingsSections[5].expanded"
+                            (opened)="onToggleSection('notifications')"
+                            (closed)="onToggleSection('notifications')">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>{{ settingsSections[5].icon }}</mat-icon>
+              {{ settingsSections[5].title }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ settingsSections[5].description }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="section-content" formGroupName="notifications">
+            <div class="toggle-list">
+              <mat-slide-toggle formControlName="emailEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Email Notifications</span>
+                  <span class="toggle-description">Enable email notifications system</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="smsEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">SMS Notifications</span>
+                  <span class="toggle-description">Enable SMS notifications (requires provider setup)</span>
+                </div>
+              </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="pushEnabled">
+                <div class="toggle-content">
+                  <span class="toggle-label">Push Notifications</span>
+                  <span class="toggle-description">Enable browser push notifications</span>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Admin Notification Types</mat-label>
+                <mat-select formControlName="adminNotifications" multiple>
+                  <mat-option *ngFor="let notif of notificationTypes" [value]="notif.value">
+                    {{ notif.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="action-section">
+              <button mat-stroked-button color="primary" (click)="onTestEmailSettings()">
+                <mat-icon>email</mat-icon>
+                Send Test Email
+              </button>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </form>
+
+    <!-- Backup Management Section -->
+    <mat-card class="backup-section">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>backup</mat-icon>
+          Backup Management
+        </mat-card-title>
+        <mat-card-subtitle>Create and manage system backups</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="backup-actions">
+          <button mat-raised-button color="primary" (click)="onCreateBackup()">
+            <mat-icon>add</mat-icon>
+            Create Backup
+          </button>
+          <span class="backup-info" *ngIf="lastBackup">
+            Last backup: {{ lastBackup | date:'medium' }}
+          </span>
+        </div>
+
+        <div class="backup-list" *ngIf="backupInfo.length > 0">
+          <h3>Available Backups</h3>
+          <mat-list>
+            <mat-list-item *ngFor="let backup of backupInfo">
+              <mat-icon matListIcon>folder_zip</mat-icon>
+              <div matLine>{{ backup.filename }}</div>
+              <div matLine class="backup-details">
+                {{ formatFileSize(backup.size) }} • {{ backup.createdAt | date:'short' }} • {{ backup.type | titlecase }}
+              </div>
+              <div class="backup-item-actions">
+                <button mat-icon-button color="primary" (click)="onDownloadBackup(backup)">
+                  <mat-icon>download</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDeleteBackup(backup.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Angular Material Modules
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,19 +12,19 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatExpansionModule } from '@angular/material/expansion';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-// Components
-import { SystemSettingsComponent } from './components/system-settings/system-settings.component';
+// Component
+import { UserEditComponent } from './user-edit.component';
 
 @NgModule({
   declarations: [
-    SystemSettingsComponent
+    UserEditComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +32,7 @@ import { SystemSettingsComponent } from './components/system-settings/system-set
     FormsModule,
     
     // Material Modules
+    MatTabsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -38,17 +40,16 @@ import { SystemSettingsComponent } from './components/system-settings/system-set
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatExpansionModule,
+    MatChipsModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatListModule,
+    MatMenuModule,
     MatTooltipModule,
     
     RouterModule.forChild([
-      { path: '', redirectTo: 'system', pathMatch: 'full' },
-      { path: 'system', component: SystemSettingsComponent }
+      { path: '', component: UserEditComponent }
     ])
   ]
 })
-export class SettingsModule { }
+export class UserEditModule { }

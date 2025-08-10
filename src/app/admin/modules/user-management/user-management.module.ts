@@ -1,20 +1,48 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
-// Temporary stub component - will be implemented by Agent 3
-@Component({
-  template: '<div>User List - Implementation pending</div>'
-})
-class UserListComponent { }
+// Shared Admin Material Module
+import { AdminMaterialModule } from '../../shared/admin-material.module';
+
+// Additional Material Modules not covered by shared module
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDividerModule } from '@angular/material/divider';
+
+// Components
+import { UserListComponent } from './components/user-list/user-list.component';
 
 @NgModule({
-  declarations: [UserListComponent],
+  declarations: [
+    UserListComponent
+  ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    
+    // Shared Material Modules
+    AdminMaterialModule,
+    
+    // Additional specific Material Modules
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTabsModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatBadgeModule,
+    MatDividerModule,
+    
     RouterModule.forChild([
       { path: '', redirectTo: 'list', pathMatch: 'full' },
-      { path: 'list', component: UserListComponent }
+      { path: 'list', component: UserListComponent },
+      { path: 'edit/:id', loadChildren: () => import('./components/user-edit/user-edit.module').then(m => m.UserEditModule) }
     ])
   ]
 })

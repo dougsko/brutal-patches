@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
-// Angular Material Modules
+// Commonly used Material modules across admin components
+import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -15,29 +13,19 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-// Components
-import { ModerationQueueComponent } from './components/moderation-queue/moderation-queue.component';
-
+/**
+ * Shared Material Design module for admin components
+ * Contains commonly used Material components to avoid redundant imports
+ * and improve bundle optimization through tree-shaking
+ */
 @NgModule({
-  declarations: [
-    ModerationQueueComponent
-  ],
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    
-    // Material Modules
+    MatCardModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
@@ -49,20 +37,28 @@ import { ModerationQueueComponent } from './components/moderation-queue/moderati
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatCardModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatDialogModule,
-    MatSnackBarModule,
-    MatTabsModule,
-    MatBadgeModule,
-    MatExpansionModule,
-    MatSlideToggleModule,
-    
-    RouterModule.forChild([
-      { path: '', redirectTo: 'queue', pathMatch: 'full' },
-      { path: 'queue', component: ModerationQueueComponent }
-    ])
+    MatSnackBarModule
+  ],
+  exports: [
+    MatCardModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatChipsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatDialogModule,
+    MatSnackBarModule
   ]
 })
-export class ModerationModule { }
+export class AdminMaterialModule {}

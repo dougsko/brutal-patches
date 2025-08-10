@@ -1,0 +1,346 @@
+<div class="analytics-container">
+  <!-- Header Section -->
+  <div class="analytics-header">
+    <div class="header-content">
+      <h1 class="analytics-title">
+        <mat-icon>analytics</mat-icon>
+        Analytics Dashboard
+      </h1>
+      <div class="header-actions">
+        <div class="last-updated">
+          <mat-icon class="update-icon">schedule</mat-icon>
+          Last updated: {{ lastUpdated | date:'short' }}
+        </div>
+        
+        <!-- Auto Refresh Toggle -->
+        <mat-slide-toggle 
+          [(ngModel)]="autoRefreshEnabled"
+          (change)="onToggleAutoRefresh()"
+          matTooltip="Auto refresh every minute">
+          Auto refresh
+        </mat-slide-toggle>
+        
+        <!-- Export Button -->
+        <button 
+          mat-stroked-button 
+          (click)="onExportData()"
+          [disabled]="loading || !analyticsData"
+          matTooltip="Export analytics data">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+        
+        <!-- Manual Refresh Button -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="onRefresh()"
+          [disabled]="loading"
+          matTooltip="Refresh analytics data">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-grid">
+        
+        <!-- Time Range Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Time Range</mat-label>
+          <mat-select [formControl]="timeRangeControl">
+            <mat-option *ngFor="let option of timeRangeOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Category Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select [formControl]="categoryControl">
+            <mat-option *ngFor="let option of categoryOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- User Segment Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>User Segment</mat-label>
+          <mat-select [formControl]="userSegmentControl">
+            <mat-option *ngFor="let option of userSegmentOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Error Message -->
+  <mat-card class="error-card" *ngIf="error">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+        <button mat-button color="primary" (click)="onRefresh()">
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading && !error">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading analytics data...</p>
+  </div>
+
+  <!-- Analytics Content -->
+  <div class="analytics-content" *ngIf="!loading && !error && analyticsData">
+    
+    <!-- Summary Statistics Cards -->
+    <div class="summary-stats">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-header">
+            <mat-icon color="primary">people_alt</mat-icon>
+            <span class="stat-label">New Users</span>
+          </div>
+          <div class="stat-value">{{ totalUserGrowth | number }}</div>
+          <div class="stat-period">in selected period</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-header">
+            <mat-icon color="accent">library_music</mat-icon>
+            <span class="stat-label">Patches Created</span>
+          </div>
+          <div class="stat-value">{{ totalPatchesCreated | number }}</div>
+          <div class="stat-period">in selected period</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-header">
+            <mat-icon color="warn">star</mat-icon>
+            <span class="stat-label">Average Rating</span>
+          </div>
+          <div class="stat-value">{{ averageRating | number:'1.1-1' }}</div>
+          <div class="stat-period">out of 5.0</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-header">
+            <mat-icon color="primary">category</mat-icon>
+            <span class="stat-label">Top Category</span>
+          </div>
+          <div class="stat-value">{{ mostPopularCategory | titlecase }}</div>
+          <div class="stat-period">most patches</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      
+      <!-- User Growth Chart -->
+      <mat-card class="chart-card full-width">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>trending_up</mat-icon>
+            User Growth Over Time
+          </mat-card-title>
+          <mat-card-subtitle>
+            New user registrations in the selected time period
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-line-chart
+            [data]="userGrowthData"
+            [height]="'400px'"
+            [color]="'#1976d2'"
+            [fillArea]="true"
+            [tension]="0.3"
+            [showGrid]="true">
+          </app-line-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Patch Activity Charts -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>add_circle</mat-icon>
+            Patch Creation Activity
+          </mat-card-title>
+          <mat-card-subtitle>
+            New patches created daily
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-line-chart
+            [data]="patchActivityData"
+            [height]="'300px'"
+            [color]="'#388e3c'"
+            [fillArea]="false"
+            [tension]="0.2"
+            [showGrid]="true">
+          </app-line-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>edit</mat-icon>
+            Patch Update Activity
+          </mat-card-title>
+          <mat-card-subtitle>
+            Patches updated daily
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-line-chart
+            [data]="patchUpdateData"
+            [height]="'300px'"
+            [color]="'#f57c00'"
+            [fillArea]="false"
+            [tension]="0.2"
+            [showGrid]="true">
+          </app-line-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Category Distribution -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>category</mat-icon>
+            Category Distribution
+          </mat-card-title>
+          <mat-card-subtitle>
+            Patches by category
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-pie-chart
+            [data]="categoryDistribution"
+            [height]="'300px'"
+            [showPercentages]="true"
+            [showLabels]="true">
+          </app-pie-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Rating Distribution -->
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>star</mat-icon>
+            Rating Distribution
+          </mat-card-title>
+          <mat-card-subtitle>
+            Patches by star rating
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-bar-chart
+            [data]="ratingDistribution"
+            [height]="'300px'"
+            [showGrid]="true"
+            [horizontal]="false">
+          </app-bar-chart>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Detailed Activity Chart (Combined) -->
+      <mat-card class="chart-card full-width">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>insights</mat-icon>
+            Patch Activity Overview
+          </mat-card-title>
+          <mat-card-subtitle>
+            Created vs Updated patches over time
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="combined-chart">
+            <app-line-chart
+              [data]="patchActivityData"
+              [height]="'400px'"
+              [color]="'#4caf50'"
+              [fillArea]="true"
+              [tension]="0.3"
+              [showGrid]="true">
+            </app-line-chart>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <!-- Data Table Section -->
+    <mat-card class="data-table-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>table_view</mat-icon>
+          Category Performance Table
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="categoryDistribution" class="category-table">
+            
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="category-cell">
+                  <mat-icon class="category-icon">category</mat-icon>
+                  {{ element.category | titlecase }}
+                </div>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="count">
+              <th mat-header-cell *matHeaderCellDef>Patch Count</th>
+              <td mat-cell *matCellDef="let element">
+                <span class="count-value">{{ element.count | number }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="percentage">
+              <th mat-header-cell *matHeaderCellDef>Percentage</th>
+              <td mat-cell *matCellDef="let element">
+                <div class="percentage-cell">
+                  <mat-progress-bar
+                    mode="determinate"
+                    [value]="element.percentage"
+                    class="percentage-bar">
+                  </mat-progress-bar>
+                  <span class="percentage-text">{{ element.percentage | number:'1.1-1' }}%</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['category', 'count', 'percentage']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['category', 'count', 'percentage'];"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>
