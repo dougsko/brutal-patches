@@ -416,9 +416,9 @@ export class QualityGateEngine {
   private evaluateEnvironmentGates(): QualityGateResult[] {
     const results: QualityGateResult[] = [];
 
-    // Node version gate
-    const currentNodeVersion = process.version || 'unknown';
-    const nodeVersionSupported = this.config.supportedNodeVersions.some(version => 
+    // Node version gate (browser-safe)
+    const currentNodeVersion = (typeof process !== 'undefined' && process.version) ? process.version : 'browser';
+    const nodeVersionSupported = currentNodeVersion === 'browser' ? true : this.config.supportedNodeVersions.some(version => 
       currentNodeVersion.startsWith('v' + version.replace('.x', ''))
     );
 
