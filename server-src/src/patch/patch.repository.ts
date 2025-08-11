@@ -193,7 +193,7 @@ export class PatchRepository extends BaseRepository<Patch> {
   async findLatestPatches(
     offset: number = 0,
     limit?: number,
-  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number; totalCount: number }> {
+  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
       // Get all patches from database (scan without limit for proper sorting)
       // With 611 patches, this is acceptable performance-wise
@@ -218,7 +218,6 @@ export class PatchRepository extends BaseRepository<Patch> {
       return {
         items: paginatedPatches,
         count: paginatedPatches.length,
-        totalCount: sortedPatches.length,
         lastEvaluatedKey: undefined // Not applicable for in-memory pagination
       };
     } catch (error) {

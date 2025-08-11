@@ -107,7 +107,7 @@ export class PatchService {
     try {
       // Get ALL patches sorted by date first, then apply privacy filter and pagination
       const result = await this.patchRepository.findLatestPatches(0, undefined); // Get all patches
-      console.log('🔥 Database result:', { count: result.items?.length, totalCount: result.totalCount });
+      console.log('🔥 Database result:', { count: result.items?.length, dbCount: result.count });
       
       if (result.items && result.items.length > 0) {
         // Filter private patches unless requested by owner
