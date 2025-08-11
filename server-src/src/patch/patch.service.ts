@@ -102,39 +102,35 @@ export class PatchService {
   }
 
   public async getLatestPatches(offset: number, limit: number, requestingUser?: string): Promise<Patch[]> {
-    console.log('🔥 PatchService.getLatestPatches called with:', { offset, limit, requestingUser });
-    
     try {
-      // Get ALL patches sorted by date first, then apply privacy filter and pagination
-      const result = await this.patchRepository.findLatestPatches(0, undefined); // Get all patches
-      console.log('🔥 Database result:', { count: result.items?.length, dbCount: result.count });
+      // Use the base repository list method which we know works
+      const result = await this.patchRepository.list({
+        limit: undefined, // Get all patches for proper sorting
+      });
       
       if (result.items && result.items.length > 0) {
+        // Sort by created_at descending (newest first)
+        const sortedPatches = result.items.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        
         // Filter private patches unless requested by owner
-        const filteredPatches = result.items.filter(patch => 
+        const filteredPatches = sortedPatches.filter(patch => 
           patch.isPublic !== false || patch.username === requestingUser
         );
-        console.log('🔥 After filtering:', { filteredCount: filteredPatches.length });
         
-        // Apply pagination after filtering
-        const paginatedPatches = filteredPatches.slice(offset, offset + limit);
-        console.log('🔥 After pagination:', { offset, limit, resultCount: paginatedPatches.length });
-        
-        return paginatedPatches;
+        // Apply pagination after filtering and sorting
+        return filteredPatches.slice(offset, offset + limit);
       }
     } catch (error) {
-      console.error('🚨 Failed to get latest patches from database:', error);
+      console.warn('Failed to get latest patches from database, using mock data:', error);
     }
     
-    console.warn('🔥 Falling back to mock data');
     // Fallback to mock data - Filter private patches and then apply sorting and pagination
-    const mockResult = this.patches
+    return this.patches
       .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
       .sort((a, b) => b.created_at.localeCompare(a.created_at)) // Most recent first
       .slice(offset, offset + limit);
-    
-    console.log('🔥 Mock data result:', { mockCount: mockResult.length });
-    return mockResult;
   }
 
   public async getPatchesByUser(
