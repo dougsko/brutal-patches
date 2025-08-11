@@ -40,7 +40,7 @@ import { MonitoringMiddleware } from './common/monitoring/monitoring.middleware'
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(MonitoringMiddleware, LoggerMiddleware, RateLimitMiddleware)
+      .apply(MonitoringMiddleware, LoggerMiddleware)
       .forRoutes('*');
   }
 }

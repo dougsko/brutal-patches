@@ -203,18 +203,10 @@ export class PatchController {
     @Request() req,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
-    @Query('cursor') cursor?: string,
-  ): Promise<Patch[] | {patches: Patch[], nextCursor?: string, hasMore: boolean}> {
-    const limit = parseInt(limitParam || '25', 10);
-    
-    if (cursor !== undefined || offsetParam === undefined) {
-      // Use cursor-based pagination
-      return this.patchService.getUserPatchesCursor(req.user.username, limit, cursor, req.user.username);
-    } else {
-      // Legacy offset-based pagination
-      const offset = parseInt(offsetParam || '0', 10);
-      return this.patchService.getPatchesByUser(req.user.username, offset, limit, req.user.username);
-    }
+  ): Promise<Patch[]> {
+    const offset = parseInt(offsetParam || '0', 10);
+    const limit = parseInt(limitParam || '100', 10);
+    return this.patchService.getPatchesByUser(req.user.username, offset, limit, req.user.username);
   }
 
   @ApiOperation({
