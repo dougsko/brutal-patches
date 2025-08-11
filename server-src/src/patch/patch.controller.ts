@@ -307,27 +307,49 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get latest patches with pagination',
-    description: 'Get the most recent patches with pagination',
+    description: 'Get the most recent patches with cursor or offset pagination',
   })
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination (legacy)', required: false })
   @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
+  @ApiQuery({ name: 'cursor', description: 'Cursor for pagination', required: false })
   @ApiResponse({
     status: 200,
     description: 'Latest patches retrieved successfully',
-    schema: { type: 'array', items: { type: 'object' } },
+    schema: { 
+      oneOf: [
+        { type: 'array', items: { type: 'object' } },
+        { 
+          type: 'object',
+          properties: {
+            patches: { type: 'array', items: { type: 'object' } },
+            nextCursor: { type: 'string' },
+            hasMore: { type: 'boolean' }
+          }
+        }
+      ]
+    },
   })
   @Get('latest')
   async findLatestPatches(
     @Request() req,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
-  ): Promise<Patch[]> {
-    console.log('🔥 Latest patches route hit!', { offsetParam, limitParam });
-    const offset = parseInt(offsetParam || '0', 10);
-    const limit = parseInt(limitParam || '100', 10);
+    @Query('cursor') cursor?: string,
+  ): Promise<Patch[] | {patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    const limit = parseInt(limitParam || '25', 10);
     const requestingUser = req?.user?.username;
-    const patches = await this.patchService.getLatestPatches(offset, limit, requestingUser);
-    return patches;
+    
+    if (cursor !== undefined || offsetParam === undefined) {
+      // Use cursor-based pagination
+      console.log('🔥 Latest patches (cursor) route hit!', { limit, cursor });
+      return await this.patchService.getLatestPatchesCursor(limit, requestingUser, cursor);
+    } else {
+      // Legacy offset-based pagination
+      console.log('🔥 Latest patches (legacy) route hit!', { offsetParam, limitParam });
+      const offset = parseInt(offsetParam || '0', 10);
+      const patches = await this.patchService.getLatestPatches(offset, limit, requestingUser);
+      return patches;
+    }
   }
 
   @ApiOperation({

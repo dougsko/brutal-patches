@@ -227,6 +227,40 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
+   * Get latest patches with cursor-based pagination for better performance
+   */
+  async findLatestPatchesCursor(
+    limit: number,
+    exclusiveStartKey?: any,
+  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
+    try {
+      // Use DynamoDB's native pagination
+      const result = await this.dynamoService.scanItems<Patch>(
+        this.getTableConfig(),
+        {
+          limit,
+          exclusiveStartKey,
+        },
+      );
+
+      // Sort the returned items by created_at descending (newest first)
+      const sortedPatches = result.items.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+
+      return {
+        items: sortedPatches,
+        lastEvaluatedKey: result.lastEvaluatedKey,
+        count: result.count,
+      };
+    } catch (error) {
+      this.logger.error('Failed to find latest patches with cursor:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get patches with high ratings
    */
   async findTopRatedPatches(
