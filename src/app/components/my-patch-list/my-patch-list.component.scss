@@ -95,29 +95,55 @@
   border: 1px solid rgba(253, 153, 1, 0.3) !important;
 }
 
-.patch-paginator {
-  margin-top: 24px;
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
   
-  ::ng-deep .mat-paginator {
-    background: transparent;
+  mat-spinner {
+    margin-bottom: 16px;
     
-    .mat-paginator-container {
-      justify-content: center;
+    ::ng-deep circle {
+      stroke: #fd9901;
+    }
+  }
+  
+  p {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.end-message, .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  
+  p {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0 0 8px 0;
+    
+    &:first-child {
+      font-style: italic;
     }
     
-    .mat-paginator-page-size,
-    .mat-paginator-range-label {
-      color: #aaa;
-    }
-    
-    .mat-icon-button {
+    a {
       color: #fd9901;
+      text-decoration: none;
+      font-weight: 500;
       
-      &:disabled {
-        color: #ccc;
+      &:hover {
+        text-decoration: underline;
       }
     }
   }
+}
+
+.infinite-scroll {
+  min-height: 100vh;
 }
 
 // Responsive adjustments

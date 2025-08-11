@@ -98,6 +98,32 @@ export class PatchService {
       })
     );
   }
+
+  getUserPatchesCursor(username: string, limit: number = 25, cursor?: string): Observable<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    let params = `limit=${limit}`;
+    if (cursor) {
+      params += `&cursor=${encodeURIComponent(cursor)}`;
+    }
+    
+    return this.http.get<{patches: Patch[], nextCursor?: string, hasMore: boolean}>(`${environment.apiUrl}/api/patches/users/${username}?${params}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
+
+  getMyPatchesCursor(limit: number = 25, cursor?: string): Observable<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    let params = `limit=${limit}`;
+    if (cursor) {
+      params += `&cursor=${encodeURIComponent(cursor)}`;
+    }
+    
+    return this.http.get<{patches: Patch[], nextCursor?: string, hasMore: boolean}>(`${environment.apiUrl}/api/patches/my?${params}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
 }
 
 

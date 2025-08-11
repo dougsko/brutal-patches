@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Patch } from 'src/app/interfaces/patch';
 import { PatchService } from 'src/app/services/patch.service';
@@ -10,35 +9,23 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
   templateUrl: './my-patch-list.component.html',
   styleUrls: ['./my-patch-list.component.scss']
 })
-export class MyPatchListComponent implements OnInit {
+export class MyPatchListComponent implements OnInit, OnDestroy {
   patches: Patch[] = [];
-  visiblePatches: Patch[] = [];
   selectedPatch?: Patch;
-  // private patchSub!: Subscription;
   private subs: Subscription[] = [];
-  lowValue: number = 0;
-  highValue: number = 25;
-  totalPatches!: number;
-
-  lowGet: number = 0;
-  highGet: number = 100;
-  lowShow: number = 0;
-  highShow: number = 25;
-  myPatchTotal: number = 0;
+  isLoading = false;
+  hasMore = true;
+  nextCursor?: string;
   isLoggedIn = false;
 
   constructor(private patchService: PatchService, private tokenStorage: TokenStorageService) {
    }
 
   ngOnInit(): void {
-    this.getPatchTotal();
-    this.getMyPatches(0, 100);
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
-      this.getMyPatchTotal();
+      this.loadInitialPatches();
     }
-    // console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
-    // console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
   }
 
   ngOnDestroy(): void {
@@ -47,115 +34,53 @@ export class MyPatchListComponent implements OnInit {
     });
   }
 
-  getPatches(): void {
-    let patchSub = this.patchService.getPatches().subscribe( patches => {
-      this.patches = patches;
-    });
-    this.subs.push(patchSub);
-  }
-
-  getLatestPatches(first: number, last: number): void {
-    let patchSub = this.patchService.getLatestPatches(first, last).subscribe( patches => {
-      this.patches = patches;
-      this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
-    });
-    this.subs.push(patchSub);
-  }
-
-  getMyPatches(first: number, last: number): void {
-    const user = this.tokenStorage.getUser();
-    if (!user || !user.username) {
-      console.error('No valid user found, cannot fetch user patches');
-      return;
-    }
+  loadInitialPatches(): void {
+    if (this.isLoading) return;
     
-    let patchSub = this.patchService.getUserPatches(user.username, first, last).subscribe( patches => {
-      this.patches = patches;
-      this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
+    this.isLoading = true;
+    let patchSub = this.patchService.getMyPatchesCursor(25).subscribe({
+      next: (response) => {
+        this.patches = response.patches;
+        this.nextCursor = response.nextCursor;
+        this.hasMore = response.hasMore;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading my patches:', error);
+        this.isLoading = false;
+      }
     });
     this.subs.push(patchSub);
   }
 
-  getPatchTotal(): void {
-    let patchSub = this.patchService.getPatchTotal().subscribe( total => {
-      this.totalPatches = total;
-    });
-    this.subs.push(patchSub);
-  }
-
-  getMyPatchTotal(): void {
-    const user = this.tokenStorage.getUser();
-    if (!user || !user.username) {
-      console.error('No valid user found, cannot fetch user patch total');
-      return;
-    }
+  loadMorePatches(): void {
+    if (this.isLoading || !this.hasMore || !this.nextCursor) return;
     
-    let patchSub = this.patchService.getUserPatchTotal(user.username).subscribe( total => {
-      this.myPatchTotal = total;
-    })
+    this.isLoading = true;
+    let patchSub = this.patchService.getMyPatchesCursor(25, this.nextCursor).subscribe({
+      next: (response) => {
+        this.patches = [...this.patches, ...response.patches];
+        this.nextCursor = response.nextCursor;
+        this.hasMore = response.hasMore;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading more patches:', error);
+        this.isLoading = false;
+      }
+    });
     this.subs.push(patchSub);
   }
 
-  public getPaginatorData(event: PageEvent): PageEvent {
-    if (event.previousPageIndex && event.pageIndex - event.previousPageIndex < 0) {
-      if (event.previousPageIndex - event.pageIndex > 1) {
-        // console.log("big jump back")
-        this.lowShow = 0;
-        this.highShow = 25;
-        this.lowGet = 0;
-        this.highGet = 100;
-        this.getMyPatches(this.lowGet, this.highGet);
-      } else {
-        // console.log("small jump back");
-        this.lowShow -= 25;
-        this.highShow = this.lowShow + 25;
-        if (this.lowShow < 0) {
-          this.highGet = this.lowGet;
-          this.lowGet = this.highGet - 100;
-          this.lowShow = 75;
-          this.highShow = 100;
-          if(this.lowGet < 0) {
-            this.lowGet = 0;
-            this.highGet = 100;
-            this.lowShow = 0;
-            this.highShow = 25;
-          }
-          this.getMyPatches(this.lowGet, this.highGet);
-        }
-      }
-    } else if (event.pageIndex - event.previousPageIndex! > 0) {
-      if (event.pageIndex - event.previousPageIndex! > 1) {
-        // console.log("big jump forward");
-        this.lowShow = 75;
-        this.highShow = 100;
-        this.highGet = this.totalPatches;
-        this.lowGet = this.highGet - 100;
-        this.getMyPatches(this.lowGet, this.highGet);
-      } else {
-        // console.log("small jump forward");
-        this.lowShow += 25;
-        this.highShow = this.lowShow + 25;
-
-        if (this.highShow > 100) {
-          this.lowGet = this.highGet;
-          this.highGet = this.lowGet + 100;
-          this.lowShow = 0;
-          this.highShow = 25;
-          if (this.highGet > this.totalPatches) {
-            this.highGet = this.myPatchTotal;
-            this.highShow = this.highGet - this.lowGet;
-          }
-
-          this.getMyPatches(this.lowGet, this.highGet);
-        }
-      }
-    } 
-    this.visiblePatches = this.patches.slice(this.lowShow, this.highShow);
-    /* console.log(`lowGet: ${this.lowGet} highGet: ${this.highGet}`);
-    console.log(`lowShow: ${this.lowShow} highShow: ${this.highShow}`);
-    console.log(event); */
-
-    return event;
+  @HostListener('window:scroll', ['$event'])
+  onScroll(): void {
+    const scrollPosition = window.pageYOffset;
+    const windowSize = window.innerHeight;
+    const bodyHeight = document.body.offsetHeight;
+    
+    if (scrollPosition + windowSize >= bodyHeight - 200) {
+      this.loadMorePatches();
+    }
   }
 
 }

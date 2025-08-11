@@ -203,6 +203,66 @@ export class PatchService {
     }
   }
 
+  public async getUserPatchesCursor(
+    username: string,
+    limit: number,
+    cursor?: string,
+    requestingUser?: string
+  ): Promise<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    try {
+      let exclusiveStartKey: any;
+      if (cursor) {
+        try {
+          exclusiveStartKey = JSON.parse(Buffer.from(cursor, 'base64').toString());
+        } catch (e) {
+          console.warn('Invalid cursor provided, starting from beginning');
+        }
+      }
+
+      const result = await this.patchRepository.findUserPatchesCursor(username, limit + 1, exclusiveStartKey);
+      
+      if (result.items && result.items.length > 0) {
+        const includePrivate = requestingUser === username;
+        const filteredPatches = result.items.filter(patch => 
+          includePrivate || patch.isPublic !== false
+        );
+        
+        const hasMore = filteredPatches.length > limit;
+        const patches = hasMore ? filteredPatches.slice(0, limit) : filteredPatches;
+        
+        let nextCursor: string | undefined;
+        if (hasMore && patches.length > 0) {
+          const lastPatch = patches[patches.length - 1];
+          const cursorData = { id: lastPatch.id };
+          nextCursor = Buffer.from(JSON.stringify(cursorData)).toString('base64');
+        }
+        
+        return { patches, nextCursor, hasMore };
+      }
+    } catch (error) {
+      console.warn('Failed to get user patches from database with cursor, using fallback:', error);
+    }
+
+    // Fallback to mock data with cursor simulation
+    const includePrivate = requestingUser === username;
+    const startIndex = cursor ? this.decodeCursorToIndex(cursor) : 0;
+    
+    const userPatches = this.patches.filter(patch => 
+      patch.username === username && (includePrivate || patch.isPublic !== false)
+    ).sort((a, b) => b.created_at.localeCompare(a.created_at));
+    
+    const endIndex = Math.min(startIndex + limit, userPatches.length);
+    const patches = userPatches.slice(startIndex, endIndex);
+    const hasMore = endIndex < userPatches.length;
+    
+    let nextCursor: string | undefined;
+    if (hasMore) {
+      nextCursor = Buffer.from(JSON.stringify({ index: endIndex })).toString('base64');
+    }
+    
+    return { patches, nextCursor, hasMore };
+  }
+
   public async getPatchesByUser(
     username: string,
     offset: number,

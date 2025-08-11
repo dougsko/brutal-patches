@@ -261,6 +261,33 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
+   * Get user patches with cursor-based pagination (sorted by created_at desc)
+   */
+  async findUserPatchesCursor(
+    username: string,
+    limit: number,
+    exclusiveStartKey?: any,
+  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
+    try {
+      const result = await this.queryByIndex(
+        'UserIndex',
+        'username = :username',
+        { ':username': username },
+        {
+          limit,
+          exclusiveStartKey,
+          scanIndexForward: false, // Sort by created_at descending (newest first)
+        },
+      );
+
+      return result;
+    } catch (error) {
+      this.logger.error('Failed to find user patches with cursor:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Get patches with high ratings
    */
   async findTopRatedPatches(
