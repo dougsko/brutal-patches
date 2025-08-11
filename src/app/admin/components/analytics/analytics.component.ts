@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { interval, Subscription, combineLatest } from 'rxjs';
-import { startWith, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { startWith, catchError, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { of } from 'rxjs';
+
+import { SubscriptionBaseComponent } from '../../../core/components';
 
 import { AdminApiService, AnalyticsData } from '../../services/admin-api.service';
 import { AdminLoggerService } from '../../services/admin-logger.service';
@@ -19,7 +21,7 @@ import {
   templateUrl: './analytics.component.html',
   styleUrls: ['./analytics.component.scss']
 })
-export class AnalyticsComponent implements OnInit, OnDestroy {
+export class AnalyticsComponent extends SubscriptionBaseComponent implements OnInit {
   loading = true;
   error: string | null = null;
   lastUpdated: Date = new Date();
@@ -77,7 +79,9 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   constructor(
     private adminApi: AdminApiService,
     private logger: AdminLoggerService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.setupFilterSubscriptions();
@@ -88,11 +92,10 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     this.stopAutoRefresh();
-    if (this.filterSubscription) {
-      this.filterSubscription.unsubscribe();
-    }
+    // filterSubscription will be automatically unsubscribed via takeUntil(destroy$)
+    super.ngOnDestroy();
   }
 
   private setupFilterSubscriptions(): void {
@@ -102,9 +105,12 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
       this.userSegmentControl.valueChanges.pipe(startWith('all'))
     ]).pipe(
       debounceTime(500),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(() => {
-      this.loadAnalyticsData();
+      if (this.isComponentActive()) {
+        this.loadAnalyticsData();
+      }
     });
   }
 
@@ -115,6 +121,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
     const timeRange = this.timeRangeControl.value as '7d' | '30d' | '90d' | '1y';
 
     this.adminApi.getAnalytics(timeRange).pipe(
+      takeUntil(this.destroy$),
       catchError(err => {
         console.error('Failed to load analytics:', err);
         this.error = 'Failed to load analytics data';
@@ -123,6 +130,8 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (data) => {
+        if (!this.isComponentActive()) return;
+        
         if (data) {
           this.analyticsData = data;
           this.processAnalyticsData(data);
@@ -201,9 +210,12 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   private startAutoRefresh(): void {
     if (this.autoRefreshEnabled) {
       this.refreshSubscription = interval(this.refreshInterval)
-        .pipe(startWith(0))
+        .pipe(
+          startWith(0),
+          takeUntil(this.destroy$)
+        )
         .subscribe(() => {
-          if (!this.loading) {
+          if (!this.loading && this.isComponentActive()) {
             this.loadAnalyticsData();
           }
         });
@@ -213,6 +225,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   private stopAutoRefresh(): void {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
+      this.refreshSubscription = undefined;
     }
   }
 

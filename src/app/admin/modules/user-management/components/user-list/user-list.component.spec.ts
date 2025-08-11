@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -17,6 +17,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
+import { 
+  asyncTest, 
+  testSearchDebounce, 
+  waitForDebounce, 
+  resetAsyncTestCleanupManager, 
+  setupIntegrationTest 
+} from '../../../../../testing/async-testing-utils';
 
 import { UserListComponent } from './user-list.component';
 import { AdminApiService, AdminUser } from '../../../../services/admin-api.service';
@@ -54,7 +61,10 @@ describe('UserListComponent', () => {
   beforeEach(async () => {
     const adminApiSpy = jasmine.createSpyObj('AdminApiService', [
       'getUsers',
-      'moderateUser'
+      'moderateUser',
+      'bulkUserOperation',
+      'bulkAssignRoles',
+      'exportData'
     ]);
     const loggerSpy = jasmine.createSpyObj('AdminLoggerService', [
       'logAdminAction',
@@ -92,6 +102,21 @@ describe('UserListComponent', () => {
     component = fixture.componentInstance;
     mockAdminApiService = TestBed.inject(AdminApiService) as jasmine.SpyObj<AdminApiService>;
     mockLoggerService = TestBed.inject(AdminLoggerService) as jasmine.SpyObj<AdminLoggerService>;
+  });
+
+  afterEach(() => {
+    // Essential cleanup to prevent periodic timer issues and memory leaks
+    resetAsyncTestCleanupManager();
+    
+    // Ensure component cleanup
+    if (component && typeof component.ngOnDestroy === 'function') {
+      component.ngOnDestroy();
+    }
+    
+    // Clean up fixture
+    if (fixture) {
+      fixture.destroy();
+    }
   });
 
   beforeEach(() => {
@@ -141,17 +166,20 @@ describe('UserListComponent', () => {
   });
 
   describe('Search functionality', () => {
-    it('should call getUsers with search parameters', () => {
+    it('should call getUsers with search parameters', asyncTest(() => {
       component.ngOnInit();
-      component.searchControl.setValue('testuser');
+      fixture.detectChanges();
       
-      // Wait for debounce
-      setTimeout(() => {
-        expect(mockAdminApiService.getUsers).toHaveBeenCalledWith(
-          jasmine.objectContaining({ search: 'testuser' })
-        );
-      }, 350);
-    });
+      // Test search debounce with proper async handling
+      testSearchDebounce(
+        component.searchControl,
+        'testuser',
+        mockAdminApiService,
+        'getUsers',
+        jasmine.objectContaining({ search: 'testuser' }),
+        400 // Component uses 400ms debounce in setupEnhancedSearch
+      );
+    }));
 
     it('should clear search when clear button is clicked', () => {
       component.searchControl.setValue('test');
@@ -159,6 +187,36 @@ describe('UserListComponent', () => {
       
       expect(component.searchControl.value).toBe('');
     });
+    
+    it('should not call getUsers for search terms shorter than 2 characters', asyncTest(() => {
+      component.ngOnInit();
+      fixture.detectChanges();
+      
+      // Clear previous calls
+      mockAdminApiService.getUsers.calls.reset();
+      
+      // Set single character search
+      component.searchControl.setValue('a');
+      
+      // Wait for debounce
+      waitForDebounce(400);
+      
+      // Should not have been called due to filter
+      expect(mockAdminApiService.getUsers).not.toHaveBeenCalled();
+    }));
+    
+    it('should handle search errors gracefully', asyncTest(() => {
+      mockAdminApiService.getUsers.and.returnValue(throwError('Search failed'));
+      
+      component.ngOnInit();
+      fixture.detectChanges();
+      
+      component.searchControl.setValue('testuser');
+      waitForDebounce(400);
+      
+      expect(component.error).toBe('Search failed. Please try again.');
+      expect(component.loading).toBeFalse();
+    }));
   });
 
   describe('Filtering', () => {
@@ -166,9 +224,13 @@ describe('UserListComponent', () => {
       spyOn(component, 'loadUsers');
       component.filters.status = 'active';
       
+      // Mock paginator
+      component.paginator = { firstPage: jasmine.createSpy('firstPage') } as any;
+      
       component.onFilterChange();
       
       expect(component.loadUsers).toHaveBeenCalled();
+      expect(component.paginator.firstPage).toHaveBeenCalled();
       expect(mockLoggerService.logAdminAction).toHaveBeenCalledWith(
         'user_list_filtered',
         jasmine.objectContaining({ filters: component.filters })
@@ -262,20 +324,23 @@ describe('UserListComponent', () => {
       component.selection.select(mockUsers[0]);
     });
 
-    it('should perform bulk activation', () => {
+    it('should perform bulk activation', (done) => {
       const mockResult = { success: true, message: 'Success' };
-      mockAdminApiService.moderateUser.and.returnValue(of(mockResult));
+      mockAdminApiService.bulkUserOperation.and.returnValue(of(mockResult));
       spyOn(component, 'loadUsers');
       
       component.onBulkOperation('activate');
       
-      // Wait for Promise.all to complete
+      // Wait for observable to complete
       setTimeout(() => {
-        expect(mockAdminApiService.moderateUser).toHaveBeenCalledWith(
-          mockUsers[0].id, 'activate', 'Bulk activation'
+        expect(mockAdminApiService.bulkUserOperation).toHaveBeenCalledWith(
+          'activate', 
+          [mockUsers[0].id], 
+          'Bulk activation'
         );
         expect(component.loadUsers).toHaveBeenCalled();
         expect(component.selection.selected.length).toBe(0);
+        done();
       }, 100);
     });
 
@@ -284,7 +349,7 @@ describe('UserListComponent', () => {
       
       component.onBulkOperation('activate');
       
-      expect(mockAdminApiService.moderateUser).not.toHaveBeenCalled();
+      expect(mockAdminApiService.bulkUserOperation).not.toHaveBeenCalled();
     });
   });
 
@@ -330,12 +395,21 @@ describe('UserListComponent', () => {
     it('should reload users when page changes', () => {
       spyOn(component, 'loadUsers');
       
+      // Mock paginator with required properties
+      component.paginator = {
+        pageIndex: 1,
+        pageSize: 25
+      } as any;
+      
       component.onPageChange();
       
       expect(component.loadUsers).toHaveBeenCalled();
       expect(mockLoggerService.logAdminAction).toHaveBeenCalledWith(
         'user_list_paged',
-        jasmine.any(Object)
+        jasmine.objectContaining({
+          page: 1,
+          pageSize: 25
+        })
       );
     });
 

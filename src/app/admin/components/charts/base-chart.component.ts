@@ -69,8 +69,12 @@ export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected chart: Chart | null = null;
   
-  get ariaDescribedby(): string {
-    return `chart-desc-${Math.random().toString(36).substr(2, 9)}`;
+  // Stable, unique ID for accessibility - generated once during component initialization
+  readonly ariaDescribedby: string;
+
+  constructor() {
+    // Generate a stable, unique ID for accessibility that won't change during component lifecycle
+    this.ariaDescribedby = `chart-desc-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   ngOnInit(): void {
