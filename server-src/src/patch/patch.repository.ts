@@ -187,31 +187,38 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
-   * Get latest patches
+   * Get latest patches with proper pagination support
    */
   async findLatestPatches(
+    offset: number = 0,
     limit?: number,
-    exclusiveStartKey?: any,
   ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
     try {
-      // Use scan with sorting by created_at
+      // Get all patches from database (scan without limit for proper sorting)
+      // With 611 patches, this is acceptable performance-wise
       const result = await this.dynamoService.scanItems<Patch>(
         this.getTableConfig(),
         {
-          limit,
-          exclusiveStartKey,
-          // Note: DynamoDB scan doesn't support sorting, so we'll need to sort client-side
-          // In production, consider using a GSI with a static partition key for this
+          // No limit - get all patches for proper sorting and pagination
         },
       );
 
       // Sort by created_at descending (newest first)
-      result.items.sort(
+      const sortedPatches = result.items.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
-      return result;
+      // Apply offset and limit for pagination
+      const startIndex = offset;
+      const endIndex = limit ? startIndex + limit : sortedPatches.length;
+      const paginatedPatches = sortedPatches.slice(startIndex, endIndex);
+
+      return {
+        items: paginatedPatches,
+        count: paginatedPatches.length,
+        lastEvaluatedKey: undefined // Not applicable for in-memory pagination
+      };
     } catch (error) {
       this.logger.error('Failed to find latest patches:', error);
       throw error;

@@ -103,15 +103,14 @@ export class PatchService {
 
   public async getLatestPatches(offset: number, limit: number, requestingUser?: string): Promise<Patch[]> {
     try {
-      // Try to get latest patches from database first
-      const result = await this.patchRepository.findLatestPatches(limit + offset);
+      // Get latest patches from database with proper pagination
+      const result = await this.patchRepository.findLatestPatches(offset, limit);
       if (result.items && result.items.length > 0) {
         // Filter private patches unless requested by owner
         const filteredPatches = result.items.filter(patch => 
           patch.isPublic !== false || patch.username === requestingUser
         );
-        // Apply offset and limit after filtering
-        return filteredPatches.slice(offset, offset + limit);
+        return filteredPatches;
       }
     } catch (error) {
       console.warn('Failed to get latest patches from database, using mock data:', error);
