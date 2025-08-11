@@ -32,6 +32,19 @@ export class PatchService {
     );
   }
 
+  getLatestPatchesCursor(limit: number = 25, cursor?: string): Observable<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    let params = `limit=${limit}`;
+    if (cursor) {
+      params += `&cursor=${encodeURIComponent(cursor)}`;
+    }
+    
+    return this.http.get<{patches: Patch[], nextCursor?: string, hasMore: boolean}>(`${PATCH_API}/latest?${params}`).pipe(
+      catchError(err => {
+        return throwError(err);
+      })
+    );
+  }
+
   getPatch(id: number): Observable<any|Patch> {
     return this.http.get(`${PATCH_API}/${id}`).pipe(
       catchError(err => {

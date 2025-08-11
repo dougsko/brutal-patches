@@ -1,8 +1,8 @@
-<div class="patch-list-container row section">
+<div class="patch-list-container row section infinite-scroll">
     <div class="title"><span>Latest Patches</span></div>
 
     <div class="patches-grid">
-        <mat-card *ngFor="let patch of visiblePatches" class="patch-card" routerLink="/patch/{{patch.id}}">
+        <mat-card *ngFor="let patch of patches" class="patch-card" routerLink="/patch/{{patch.id}}">
             <mat-card-header>
                 <mat-card-title class="patch-title">{{patch.title}}</mat-card-title>
                 <mat-card-subtitle class="patch-id">#{{patch.id}}</mat-card-subtitle>
@@ -22,7 +22,12 @@
         </mat-card>
     </div>
     
-    <mat-paginator [length]="totalPatches" pageSize=25 (page)="getPaginatorData($event)"
-        showFirstLastButtons="true" class="patch-paginator">
-    </mat-paginator>
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading patches...</p>
+    </div>
+    
+    <div class="end-message" *ngIf="!hasMore && patches.length > 0">
+        <p>You've reached the end of the patches!</p>
+    </div>
 </div>

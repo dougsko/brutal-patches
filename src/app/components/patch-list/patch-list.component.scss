@@ -95,29 +95,42 @@
   border: 1px solid rgba(253, 153, 1, 0.3) !important;
 }
 
-.patch-paginator {
-  margin-top: 24px;
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
   
-  ::ng-deep .mat-paginator {
-    background: transparent;
+  mat-spinner {
+    margin-bottom: 16px;
     
-    .mat-paginator-container {
-      justify-content: center;
-    }
-    
-    .mat-paginator-page-size,
-    .mat-paginator-range-label {
-      color: #aaa;
-    }
-    
-    .mat-icon-button {
-      color: #fd9901;
-      
-      &:disabled {
-        color: #ccc;
-      }
+    ::ng-deep circle {
+      stroke: #fd9901;
     }
   }
+  
+  p {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.end-message {
+  text-align: center;
+  padding: 40px 20px;
+  
+  p {
+    color: #aaa;
+    font-size: 14px;
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.infinite-scroll {
+  min-height: 100vh;
 }
 
 // Responsive adjustments

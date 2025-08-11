@@ -7,6 +7,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -76,6 +77,7 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
         MatIconModule,
         MatToolbarModule,
         MatPaginatorModule,
+        MatProgressSpinnerModule,
         MatButtonModule], providers: [
         {
             provide: HTTP_INTERCEPTORS,
