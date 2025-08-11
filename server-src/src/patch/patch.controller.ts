@@ -125,72 +125,38 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get user public patches with pagination',
-    description: 'Get public patches for a specific user with cursor or offset pagination',
+    description: 'Get public patches for a specific user with pagination',
   })
   @ApiParam({ name: 'username', description: 'Username to get public patches for' })
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination (legacy)', required: false })
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
   @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
-  @ApiQuery({ name: 'cursor', description: 'Cursor for pagination', required: false })
   @ApiResponse({
     status: 200,
     description: 'User public patches retrieved successfully',
-    schema: {
-      oneOf: [
-        { type: 'array', items: { type: 'object' } },
-        {
-          type: 'object',
-          properties: {
-            patches: { type: 'array', items: { type: 'object' } },
-            nextCursor: { type: 'string' },
-            hasMore: { type: 'boolean' }
-          }
-        }
-      ]
-    },
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @Get('users/:username')
   getUserPatches(
     @Param('username') username: string,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
-    @Query('cursor') cursor?: string,
-  ): Promise<Patch[] | {patches: Patch[], nextCursor?: string, hasMore: boolean}> {
-    const limit = parseInt(limitParam || '25', 10);
-    
-    if (cursor !== undefined || offsetParam === undefined) {
-      // Use cursor-based pagination
-      return this.patchService.getUserPatchesCursor(username, limit, cursor);
-    } else {
-      // Legacy offset-based pagination
-      const offset = parseInt(offsetParam || '0', 10);
-      return this.patchService.getPatchesByUser(username, offset, limit);
-    }
+  ): Promise<Patch[]> {
+    const offset = parseInt(offsetParam || '0', 10);
+    const limit = parseInt(limitParam || '100', 10);
+    return this.patchService.getPatchesByUser(username, offset, limit);
   }
 
   @ApiOperation({
     summary: 'Get my patches with pagination',
-    description: 'Get all patches (including private) for the authenticated user with cursor or offset pagination',
+    description: 'Get all patches (including private) for the authenticated user',
   })
   @ApiBearerAuth('JWT-auth')
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination (legacy)', required: false })
+  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
   @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
-  @ApiQuery({ name: 'cursor', description: 'Cursor for pagination', required: false })
   @ApiResponse({
     status: 200,
     description: 'My patches retrieved successfully',
-    schema: {
-      oneOf: [
-        { type: 'array', items: { type: 'object' } },
-        {
-          type: 'object',
-          properties: {
-            patches: { type: 'array', items: { type: 'object' } },
-            nextCursor: { type: 'string' },
-            hasMore: { type: 'boolean' }
-          }
-        }
-      ]
-    },
+    schema: { type: 'array', items: { type: 'object' } },
   })
   @ApiUnauthorizedResponse({
     status: 401,
