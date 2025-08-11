@@ -187,12 +187,13 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
-   * Get latest patches with proper pagination support
+   * Get latest patches with proper pagination support  
+   * Note: Privacy filtering should be done at service layer
    */
   async findLatestPatches(
     offset: number = 0,
     limit?: number,
-  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number }> {
+  ): Promise<{ items: Patch[]; lastEvaluatedKey?: any; count: number; totalCount: number }> {
     try {
       // Get all patches from database (scan without limit for proper sorting)
       // With 611 patches, this is acceptable performance-wise
@@ -217,6 +218,7 @@ export class PatchRepository extends BaseRepository<Patch> {
       return {
         items: paginatedPatches,
         count: paginatedPatches.length,
+        totalCount: sortedPatches.length,
         lastEvaluatedKey: undefined // Not applicable for in-memory pagination
       };
     } catch (error) {
