@@ -164,7 +164,7 @@ export class PatchController {
     type: ErrorResponse,
   })
   @UseGuards(JwtAuthGuard)
-  @Get('my')
+  @Get('user/patches')
   getMyPatches(
     @Request() req,
     @Query('offset') offsetParam?: string,
