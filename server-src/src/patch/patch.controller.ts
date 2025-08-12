@@ -165,7 +165,7 @@ export class PatchController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('user/patches')
-  getMyPatches(
+  async getMyPatches(
     @Request() req,
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
@@ -192,7 +192,7 @@ export class PatchController {
   })
   @UseGuards(JwtAuthGuard)
   @Get('my/total')
-  getMyTotal(@Request() req): Promise<number> {
+  async getMyTotal(@Request() req): Promise<number> {
     return this.patchService.getUserPatchTotal(req.user.username, req.user.username);
   }
 
