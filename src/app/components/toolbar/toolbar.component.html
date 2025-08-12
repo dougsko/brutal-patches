@@ -4,7 +4,7 @@
                 <h1>BRUTAL<br /><span class="grey">Patches</span></h1>
             </a>
             <span class="toolbar-spacer"></span>
-            <a *ngIf="isLoggedIn" routerLink="/patches/{{username}}" class="grey nav-item">My Patches</a>
+            <a *ngIf="isLoggedIn" routerLink="/my-patches" class="grey nav-item">My Patches</a>
             <a *ngIf="isLoggedIn" routerLink="/patch/new" class="grey nav-item">New Patch</a>
             <a *ngIf="isLoggedIn" routerLink="/profile" class="grey nav-item">Profile</a>
             <a *ngIf="isLoggedIn" href="javascript:void(0);" (click)="logout()" class="grey nav-item">Logout</a>

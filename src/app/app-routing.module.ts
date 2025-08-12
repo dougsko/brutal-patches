@@ -6,9 +6,11 @@ import { PatchListComponent } from './components/patch-list/patch-list.component
 import { PatchComponent } from './components/patch/patch.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: 'patches', component: PatchListComponent },
+  { path: 'my-patches', component: MyPatchListComponent, canActivate: [AuthGuard] },
   { path: 'patches/:username', component: MyPatchListComponent },
   { path: 'patch/new', component: PatchComponent },
   { path: 'patch/:id',  component: PatchComponent },
