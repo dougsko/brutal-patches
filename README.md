@@ -174,7 +174,6 @@ This project is open source. Please contact the maintainer for licensing informa
 
 - 🐛 **Bug Reports**: [Open an issue](https://github.com/dougsko/brutal-patches/issues)
 - 💡 **Feature Requests**: [Start a discussion](https://github.com/dougsko/brutal-patches/discussions)
-- 📧 **Contact**: [dougsko@gmail.com](mailto:dougsko@gmail.com)
 
 ## Acknowledgments
 
