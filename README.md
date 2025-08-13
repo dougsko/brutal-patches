@@ -29,11 +29,15 @@ Brutal Patches provides an intuitive interface for synthesizer enthusiasts to:
 - Node.js 16+ 
 - npm or yarn package manager
 
+### Important Compatibility Note
+
+⚠️ **Angular Compatibility**: This project requires specific Node.js settings for Angular compatibility. The development commands are pre-configured with the necessary `NODE_OPTIONS=--openssl-legacy-provider` setting.
+
 ### Development Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/brutal-patches.git
+   git clone https://github.com/dougsko/brutal-patches.git
    cd brutal-patches
    ```
 
@@ -59,12 +63,14 @@ Brutal Patches provides an intuitive interface for synthesizer enthusiasts to:
    # Backend only: cd server-src && npm run start:dev
    ```
 
+   **Note**: The frontend uses a proxy configuration (`src/proxy.conf.json`) to route API calls to the backend during local development.
+
 5. **Open your browser**
    Navigate to `http://localhost:4200`
 
 ## Architecture
 
-### Frontend (Angular 14)
+### Frontend (Angular)
 - **Framework**: Angular with TypeScript
 - **UI Components**: Angular Material + custom synthesizer controls
 - **Interactive Elements**: jqWidgets knobs/sliders, jsPlumb connections
@@ -151,7 +157,7 @@ We welcome contributions! Please follow these steps:
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| Frontend Framework | Angular 14 | SPA with TypeScript |
+| Frontend Framework | Angular | SPA with TypeScript |
 | UI Components | Angular Material | Consistent design system |
 | Interactive Controls | jqWidgets | Synthesizer-style knobs/sliders |
 | Backend Framework | NestJS | Scalable Node.js API |
@@ -162,13 +168,13 @@ We welcome contributions! Please follow these steps:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source. Please contact the maintainer for licensing information.
 
 ## Support
 
-- 🐛 **Bug Reports**: [Open an issue](https://github.com/your-username/brutal-patches/issues)
-- 💡 **Feature Requests**: [Start a discussion](https://github.com/your-username/brutal-patches/discussions)
-- 📧 **Contact**: [your-email@domain.com](mailto:your-email@domain.com)
+- 🐛 **Bug Reports**: [Open an issue](https://github.com/dougsko/brutal-patches/issues)
+- 💡 **Feature Requests**: [Start a discussion](https://github.com/dougsko/brutal-patches/discussions)
+- 📧 **Contact**: [dougsko@gmail.com](mailto:dougsko@gmail.com)
 
 ## Acknowledgments
 
