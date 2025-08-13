@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   Get,
   Param,
   Post,
@@ -49,13 +48,14 @@ class PatchSearchResponse {
   total: number;
 }
 
-class PatchVersionResponse {
-  @ApiProperty({ description: 'Updated patch', type: 'object' })
-  patch: Patch;
-
-  @ApiProperty({ description: 'Version information', type: 'object' })
-  version: PatchVersion;
-}
+// Commented out unused class
+// class PatchVersionResponse {
+//   @ApiProperty({ description: 'Updated patch', type: 'object' })
+//   patch: Patch;
+//
+//   @ApiProperty({ description: 'Version information', type: 'object' })
+//   version: PatchVersion;
+// }
 
 class ErrorResponse {
   @ApiProperty({ description: 'HTTP status code' })

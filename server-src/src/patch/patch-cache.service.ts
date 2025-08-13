@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CacheService } from '../common/cache/cache.service';
 import { PatchRepository } from './patch.repository';
-import { Patch, PatchHistory } from '../interfaces/patch.interface';
+import { Patch } from '../interfaces/patch.interface';
 
 @Injectable()
 export class PatchCacheService {

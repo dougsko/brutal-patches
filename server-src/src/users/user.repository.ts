@@ -103,7 +103,8 @@ export class UserRepository extends BaseRepository<User> {
     updates: Partial<User>,
   ): Promise<User | null> {
     // Remove fields that shouldn't be updated directly
-    const { username: _, createdAt, ...allowedUpdates } = updates;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { username: _username, createdAt: _createdAt, ...allowedUpdates } = updates;
 
     return this.update(username, allowedUpdates);
   }

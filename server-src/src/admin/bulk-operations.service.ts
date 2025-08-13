@@ -61,12 +61,9 @@ export class BulkOperationsService {
             return patch;
           } else {
             // Remove system metadata for cleaner export
-            const {
-              created_at: _created_at,
-              updated_at: _updated_at,
-              average_rating: _average_rating,
-              ...cleanPatch
-            } = patch;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { created_at, updated_at, average_rating, ...cleanPatch } =
+              patch;
             return cleanPatch;
           }
         }),
@@ -327,16 +324,13 @@ export class BulkOperationsService {
           }
 
           // Create collection
-          const _newCollection = await this.patchService.createCollection(
-            username,
-            {
-              name: collectionData.name,
-              description: collectionData.description,
-              patchIds,
-              isPublic: collectionData.isPublic || false,
-              tags: collectionData.tags || [],
-            },
-          );
+          await this.patchService.createCollection(username, {
+            name: collectionData.name,
+            description: collectionData.description,
+            patchIds,
+            isPublic: collectionData.isPublic || false,
+            tags: collectionData.tags || [],
+          });
 
           result.successful++;
         } catch (error: any) {

@@ -386,7 +386,9 @@ export class AdminController {
   async getAdminLogs(
     @Request() req,
     @Query('type') _type?: 'action' | 'system' | 'error',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Query('limit') _limit = 100,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Query('offset') _offset = 0,
   ): Promise<{
     logs: Array<{
@@ -415,7 +417,7 @@ export class AdminController {
   @Put('settings')
   async updateSystemSettings(
     @Request() req,
-    @Body()
+    @Body() // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _settings: {
       maintenanceMode?: boolean;
       registrationEnabled?: boolean;

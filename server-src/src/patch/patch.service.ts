@@ -8,7 +8,7 @@ import {
   PatchComparison,
   PatchCategory,
 } from '../interfaces/patch.interface';
-import { User } from '../interfaces/user.interface';
+// import { User } from '../interfaces/user.interface';
 import { PATCHES } from '../mock-patches';
 import { UsersService } from '../users/users.service';
 import { PatchRepository } from './patch.repository';
@@ -171,7 +171,7 @@ export class PatchService {
           exclusiveStartKey = JSON.parse(
             Buffer.from(cursor, 'base64').toString(),
           );
-        } catch (e) {
+        } catch {
           console.warn('Invalid cursor provided, starting from beginning');
         }
       }
@@ -241,7 +241,7 @@ export class PatchService {
     try {
       const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString());
       return decoded.index || 0;
-    } catch (e) {
+    } catch {
       return 0;
     }
   }
@@ -259,7 +259,7 @@ export class PatchService {
           exclusiveStartKey = JSON.parse(
             Buffer.from(cursor, 'base64').toString(),
           );
-        } catch (e) {
+        } catch {
           console.warn('Invalid cursor provided, starting from beginning');
         }
       }
@@ -916,7 +916,7 @@ export class PatchService {
       const patches = filteredPatches.slice(offset, offset + limit);
 
       return { patches, total };
-    } catch (error) {
+    } catch {
       throw new HttpException(
         'Search failed',
         HttpStatus.INTERNAL_SERVER_ERROR,

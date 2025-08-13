@@ -3,8 +3,8 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { Context, Handler } from 'aws-lambda';
 import serverlessExpress from '@codegenie/serverless-express';
 import { AppModule } from './app.module';
-import express = require('express');
-import cors = require('cors');
+import * as express from 'express';
+import * as cors from 'cors';
 
 let cachedHandler: any;
 

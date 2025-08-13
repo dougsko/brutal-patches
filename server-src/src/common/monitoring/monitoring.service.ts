@@ -271,9 +271,7 @@ export class MonitoringService implements OnModuleInit {
 
   // Custom dashboard metrics
   async getDashboardMetrics(): Promise<any> {
-    const metrics = await register.getSingleMetricAsString(
-      'http_requests_total',
-    );
+    await register.getSingleMetricAsString('http_requests_total');
 
     return {
       httpRequests: await register.getSingleMetricAsString(

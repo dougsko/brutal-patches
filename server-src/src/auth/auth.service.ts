@@ -49,6 +49,7 @@ export class AuthService {
       this.logger.logAuth('user_validated', username, true);
 
       // Return user without password
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = user;
       return [userWithoutPassword];
     } catch (error) {

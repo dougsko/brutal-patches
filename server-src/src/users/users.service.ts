@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 import { User } from '../interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user-dto';
@@ -140,6 +139,7 @@ export class UsersService {
       });
 
       // Return user without password for security
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...userWithoutPassword } = newUser;
       return { ok: true, data: userWithoutPassword };
     } catch (error) {
@@ -189,6 +189,7 @@ export class UsersService {
 
     this.fallbackUsers.push(newUser);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = newUser;
     return { ok: true, data: userWithoutPassword };
   }

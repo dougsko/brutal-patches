@@ -117,7 +117,8 @@ export class PatchRepository extends BaseRepository<Patch> {
     updates: Partial<Patch>,
   ): Promise<Patch | null> {
     // Remove fields that shouldn't be updated directly
-    const { id: _, created_at, ...allowedUpdates } = updates;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, created_at: _created_at, ...allowedUpdates } = updates;
 
     return this.update(id, allowedUpdates);
   }
