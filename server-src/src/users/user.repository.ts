@@ -104,7 +104,13 @@ export class UserRepository extends BaseRepository<User> {
   ): Promise<User | null> {
     // Remove fields that shouldn't be updated directly
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { username: _username, createdAt: _createdAt, ...allowedUpdates } = updates;
+    const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      username: _unused_username,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      createdAt: _unused_createdAt,
+      ...allowedUpdates
+    } = updates;
 
     return this.update(username, allowedUpdates);
   }
