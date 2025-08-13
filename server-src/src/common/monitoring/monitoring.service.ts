@@ -12,7 +12,7 @@ import {
 } from '@aws-sdk/client-cloudwatch';
 // X-Ray SDK with type assertions for compatibility
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const AWSXRay = require('aws-xray-sdk');
+const AWSXRay = require('aws-xray-sdk-core');
 import { LoggerService } from '../logger.service';
 
 @Injectable()
