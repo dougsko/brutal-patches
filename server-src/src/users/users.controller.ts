@@ -48,16 +48,17 @@ class UserResponse {
   patches?: any[];
 }
 
-class PublicUserResponse {
-  @ApiProperty({ description: 'Username' })
-  username: string;
-
-  @ApiProperty({ description: 'User patches', type: [Object] })
-  patches: any[];
-
-  @ApiProperty({ description: 'Creation timestamp' })
-  createdAt: string;
-}
+// Commented out unused class
+// class PublicUserResponse {
+//   @ApiProperty({ description: 'Username' })
+//   username: string;
+//
+//   @ApiProperty({ description: 'User patches', type: [Object] })
+//   patches: any[];
+//
+//   @ApiProperty({ description: 'Creation timestamp' })
+//   createdAt: string;
+// }
 
 class CreateUserResponse {
   @ApiProperty({ description: 'Success status' })
@@ -204,6 +205,7 @@ export class UsersController {
       );
       if (user.ok && user.data.length > 0) {
         // Return user's own profile with all details
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userWithoutPassword } = user.data[0];
         return res.status(HttpStatus.OK).send({
           ok: true,

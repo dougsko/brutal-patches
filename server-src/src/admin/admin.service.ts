@@ -117,7 +117,8 @@ export class AdminService {
         collections,
         activity,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new HttpException(
         'Failed to get admin statistics',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -130,8 +131,6 @@ export class AdminService {
    */
   async getSystemHealth(): Promise<SystemHealth> {
     try {
-      const startTime = Date.now();
-
       // Test database connectivity
       let dbStatus: 'connected' | 'disconnected' | 'slow' = 'connected';
       let responseTime = 0;
@@ -144,7 +143,8 @@ export class AdminService {
         if (responseTime > 1000) {
           dbStatus = 'slow';
         }
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_error) {
         dbStatus = 'disconnected';
         responseTime = -1;
       }
@@ -184,7 +184,8 @@ export class AdminService {
         uptime,
         errors,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       return {
         status: 'critical',
         database: { status: 'disconnected', responseTime: -1 },
@@ -220,7 +221,8 @@ export class AdminService {
     itemId: string,
     action: 'approve' | 'reject',
     moderatorUsername: string,
-    notes?: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _notes?: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
       // Placeholder implementation
@@ -229,7 +231,8 @@ export class AdminService {
         success: true,
         message: `Content ${itemId} has been ${action}ed by ${moderatorUsername}`,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new HttpException(
         'Failed to moderate content',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -240,7 +243,8 @@ export class AdminService {
   /**
    * Get user management data
    */
-  async getUserManagement(options?: {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async getUserManagement(_options?: {
     search?: string;
     sortBy?: 'username' | 'created_at' | 'patch_count';
     sortOrder?: 'asc' | 'desc';
@@ -268,7 +272,8 @@ export class AdminService {
         users,
         total: users.length,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new HttpException(
         'Failed to get user management data',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -283,7 +288,8 @@ export class AdminService {
     userId: number,
     action: 'suspend' | 'activate',
     moderatorUsername: string,
-    reason?: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _reason?: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
       // Placeholder implementation
@@ -292,7 +298,8 @@ export class AdminService {
         success: true,
         message: `User ${userId} has been ${action}d by ${moderatorUsername}`,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new HttpException(
         'Failed to moderate user',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -317,10 +324,10 @@ export class AdminService {
         timeRange === '7d'
           ? 7
           : timeRange === '30d'
-          ? 30
-          : timeRange === '90d'
-          ? 90
-          : 365;
+            ? 30
+            : timeRange === '90d'
+              ? 90
+              : 365;
 
       const userGrowth = Array.from({ length: days }, (_, i) => ({
         date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000)
@@ -354,7 +361,8 @@ export class AdminService {
         categoryDistribution,
         ratingDistribution,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new HttpException(
         'Failed to get analytics data',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -416,10 +424,11 @@ export class AdminService {
         data: format === 'json' ? data : this.convertToCSV(data),
         contentType,
       };
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       // Re-throw HttpExceptions to preserve specific error messages
-      if (error instanceof HttpException) {
-        throw error;
+      if (_error instanceof HttpException) {
+        throw _error;
       }
       throw new HttpException(
         'Failed to export data',

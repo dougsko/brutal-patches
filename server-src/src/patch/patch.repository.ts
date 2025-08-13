@@ -117,7 +117,8 @@ export class PatchRepository extends BaseRepository<Patch> {
     updates: Partial<Patch>,
   ): Promise<Patch | null> {
     // Remove fields that shouldn't be updated directly
-    const { id: _, created_at, ...allowedUpdates } = updates;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, created_at: _created_at, ...allowedUpdates } = updates;
 
     return this.update(id, allowedUpdates);
   }
@@ -187,7 +188,7 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
-   * Get latest patches with proper pagination support  
+   * Get latest patches with proper pagination support
    * Note: Privacy filtering should be done at service layer
    */
   async findLatestPatches(
@@ -218,7 +219,7 @@ export class PatchRepository extends BaseRepository<Patch> {
       return {
         items: paginatedPatches,
         count: paginatedPatches.length,
-        lastEvaluatedKey: undefined // Not applicable for in-memory pagination
+        lastEvaluatedKey: undefined, // Not applicable for in-memory pagination
       };
     } catch (error) {
       this.logger.error('Failed to find latest patches:', error);

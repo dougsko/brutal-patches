@@ -1,40 +1,31 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Context, Handler } from 'aws-lambda';
-import { createServer, proxy } from 'aws-serverless-express';
-import { eventContext } from 'aws-serverless-express/middleware';
-import { Server } from 'http';
+import serverlessExpress from '@codegenie/serverless-express';
 import { AppModule } from './app.module';
-import express = require('express');
-import cors = require('cors');
+import * as express from 'express';
+import * as cors from 'cors';
 
-// NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
-// due to a compressed response (e.g. gzip) which has not been handled correctly
-// by aws-serverless-express and/or API Gateway. Add the necessary MIME types to
-// binaryMimeTypes below
-const binaryMimeTypes: string[] = [];
+let cachedHandler: any;
 
-let cachedServer: Server;
-
-async function bootstrapServer(): Promise<Server> {
-  if (!cachedServer) {
+async function bootstrapServer() {
+  if (!cachedHandler) {
     const expressApp = express();
     const nestApp = await NestFactory.create(
       AppModule,
       new ExpressAdapter(expressApp),
     );
-    nestApp.use(eventContext());
     nestApp.use(cors());
     nestApp.enableCors({
       origin: 'https://brutalpatches.com',
     });
     await nestApp.init();
-    cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
+    cachedHandler = serverlessExpress({ app: expressApp });
   }
-  return cachedServer;
+  return cachedHandler;
 }
 
 export const handler: Handler = async (event: any, context: Context) => {
-  cachedServer = await bootstrapServer();
-  return proxy(cachedServer, event, context, 'PROMISE').promise;
+  const serverlessHandler = await bootstrapServer();
+  return serverlessHandler(event, context);
 };

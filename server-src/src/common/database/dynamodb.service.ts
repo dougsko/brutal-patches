@@ -128,7 +128,7 @@ export class DynamoDBService implements OnModuleInit {
   /**
    * Put (create or replace) an item
    */
-  async put<T = any>(params: PutCommandInput): Promise<void> {
+  async put(params: PutCommandInput): Promise<void> {
     try {
       const command = new PutCommand(params);
       await this.dynamoClient.send(command);
@@ -443,7 +443,8 @@ export class DynamoDBService implements OnModuleInit {
   /**
    * Transaction write - for complex operations
    */
-  async transactionWrite(items: any[]): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async transactionWrite(_items: any[]): Promise<void> {
     // Implementation would go here for transactional writes
     // This is a placeholder for future enhancement
     throw new Error('Transaction write not implemented yet');

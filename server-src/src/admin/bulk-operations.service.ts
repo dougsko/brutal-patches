@@ -61,6 +61,7 @@ export class BulkOperationsService {
             return patch;
           } else {
             // Remove system metadata for cleaner export
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { created_at, updated_at, average_rating, ...cleanPatch } =
               patch;
             return cleanPatch;
@@ -80,7 +81,7 @@ export class BulkOperationsService {
             : this.convertToCSV(validPatches),
         contentType,
       };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Export failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -132,7 +133,7 @@ export class BulkOperationsService {
           // Create or update patch
           await this.patchService.createPatch(username, patchData);
           result.successful++;
-        } catch (error) {
+        } catch (error: any) {
           result.failed++;
           result.errors.push({
             item: patchData,
@@ -142,7 +143,7 @@ export class BulkOperationsService {
       }
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Import failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -168,7 +169,7 @@ export class BulkOperationsService {
       try {
         await this.patchRepository.delete(patchId);
         result.successful++;
-      } catch (error) {
+      } catch (error: any) {
         result.failed++;
         result.errors.push(
           `Failed to delete patch ${patchId}: ${error.message}`,
@@ -200,7 +201,7 @@ export class BulkOperationsService {
       try {
         await this.patchRepository.updatePatch(patchId, { category } as any);
         result.successful++;
-      } catch (error) {
+      } catch (error: any) {
         result.failed++;
         result.errors.push(
           `Failed to update patch ${patchId}: ${error.message}`,
@@ -273,7 +274,7 @@ export class BulkOperationsService {
             : this.convertToCSV(collectionsWithPatches),
         contentType,
       };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Collection export failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -311,7 +312,7 @@ export class BulkOperationsService {
                   patch,
                 );
                 patchIds.push(createdPatch.id);
-              } catch (error) {
+              } catch (error: any) {
                 // Log patch import error but continue with collection
                 console.warn(
                   `Failed to import patch in collection: ${error.message}`,
@@ -323,19 +324,16 @@ export class BulkOperationsService {
           }
 
           // Create collection
-          const newCollection = await this.patchService.createCollection(
-            username,
-            {
-              name: collectionData.name,
-              description: collectionData.description,
-              patchIds,
-              isPublic: collectionData.isPublic || false,
-              tags: collectionData.tags || [],
-            },
-          );
+          await this.patchService.createCollection(username, {
+            name: collectionData.name,
+            description: collectionData.description,
+            patchIds,
+            isPublic: collectionData.isPublic || false,
+            tags: collectionData.tags || [],
+          });
 
           result.successful++;
-        } catch (error) {
+        } catch (error: any) {
           result.failed++;
           result.errors.push({
             item: collectionData,
@@ -345,7 +343,7 @@ export class BulkOperationsService {
       }
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Collection import failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -381,7 +379,7 @@ export class BulkOperationsService {
           randomPatch,
         );
         generatedPatches.push(createdPatch);
-      } catch (error) {
+      } catch (error: any) {
         console.warn(
           `Failed to generate random patch ${i + 1}: ${error.message}`,
         );

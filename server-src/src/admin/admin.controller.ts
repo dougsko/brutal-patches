@@ -371,7 +371,7 @@ export class AdminController {
             HttpStatus.BAD_REQUEST,
           );
       }
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Bulk operation failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -385,8 +385,10 @@ export class AdminController {
   @Get('logs')
   async getAdminLogs(
     @Request() req,
-    @Query('type') type?: 'action' | 'system' | 'error',
+    @Query('type') _type?: 'action' | 'system' | 'error',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Query('limit') _limit = 100,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Query('offset') _offset = 0,
   ): Promise<{
     logs: Array<{
@@ -415,7 +417,7 @@ export class AdminController {
   @Put('settings')
   async updateSystemSettings(
     @Request() req,
-    @Body()
+    @Body() // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _settings: {
       maintenanceMode?: boolean;
       registrationEnabled?: boolean;
@@ -436,7 +438,7 @@ export class AdminController {
         success: true,
         message: 'System settings updated successfully',
       };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Failed to update settings: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -494,7 +496,7 @@ export class AdminController {
         success: true,
         message: `Cache cleared successfully for: ${cacheType}`,
       };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Failed to clear cache: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -537,7 +539,7 @@ export class AdminController {
         message: 'Maintenance tasks completed successfully',
         results,
       };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         `Maintenance failed: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,

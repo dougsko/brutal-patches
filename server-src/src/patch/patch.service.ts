@@ -8,7 +8,7 @@ import {
   PatchComparison,
   PatchCategory,
 } from '../interfaces/patch.interface';
-import { User } from '../interfaces/user.interface';
+// import { User } from '../interfaces/user.interface';
 import { PATCHES } from '../mock-patches';
 import { UsersService } from '../users/users.service';
 import { PatchRepository } from './patch.repository';
@@ -33,19 +33,25 @@ export class PatchService {
       const dbPatches = result.items;
       if (dbPatches && dbPatches.length > 0) {
         // Filter private patches unless requested by owner
-        return dbPatches.filter(patch => 
-          patch.isPublic !== false || patch.username === requestingUser
+        return dbPatches.filter(
+          (patch) =>
+            patch.isPublic !== false || patch.username === requestingUser,
         );
       }
       // Fallback to mock data if database is empty - also filtered
-      return this.patches.filter(patch => 
-        patch.isPublic !== false || patch.username === requestingUser
+      return this.patches.filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
       );
     } catch (error) {
-      console.warn('Failed to get patches from database, using mock data:', error);
+      console.warn(
+        'Failed to get patches from database, using mock data:',
+        error,
+      );
       // Filter private patches from mock data as well
-      return this.patches.filter(patch => 
-        patch.isPublic !== false || patch.username === requestingUser
+      return this.patches.filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
       );
     }
   }
@@ -62,9 +68,12 @@ export class PatchService {
         return dbPatch;
       }
     } catch (error) {
-      console.warn('Failed to get patch from database, trying mock data:', error);
+      console.warn(
+        'Failed to get patch from database, trying mock data:',
+        error,
+      );
     }
-    
+
     // Fallback to mock data
     const patch: Patch = this.patches.find(
       (patch) => patch.id === parseInt(id),
@@ -72,12 +81,12 @@ export class PatchService {
     if (!patch) {
       throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
     }
-    
+
     // Check if patch is private and user is not the owner
     if (patch.isPublic === false && patch.username !== requestingUser) {
       throw new HttpException('Patch not found', HttpStatus.NOT_FOUND);
     }
-    
+
     return patch;
   }
 
@@ -88,109 +97,143 @@ export class PatchService {
       const dbPatches = result.items;
       if (dbPatches && dbPatches.length > 0) {
         // Count only public patches unless user is specified
-        return dbPatches.filter(patch => 
-          patch.isPublic !== false || patch.username === requestingUser
+        return dbPatches.filter(
+          (patch) =>
+            patch.isPublic !== false || patch.username === requestingUser,
         ).length;
       }
     } catch (error) {
-      console.warn('Failed to get patch count from database, using mock data:', error.message);
+      console.warn(
+        'Failed to get patch count from database, using mock data:',
+        error.message,
+      );
     }
     // Count only public patches from mock data
-    return this.patches.filter(patch => 
-      patch.isPublic !== false || patch.username === requestingUser
+    return this.patches.filter(
+      (patch) => patch.isPublic !== false || patch.username === requestingUser,
     ).length;
   }
 
-  public async getLatestPatches(offset: number, limit: number, requestingUser?: string): Promise<Patch[]> {
+  public async getLatestPatches(
+    offset: number,
+    limit: number,
+    requestingUser?: string,
+  ): Promise<Patch[]> {
     try {
       // Use the base repository list method which we know works
       const result = await this.patchRepository.list({
         limit: undefined, // Get all patches for proper sorting
       });
-      
+
       if (result.items && result.items.length > 0) {
         // Sort by created_at descending (newest first)
         const sortedPatches = result.items.sort(
-          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
-        
+
         // Filter private patches unless requested by owner
-        const filteredPatches = sortedPatches.filter(patch => 
-          patch.isPublic !== false || patch.username === requestingUser
+        const filteredPatches = sortedPatches.filter(
+          (patch) =>
+            patch.isPublic !== false || patch.username === requestingUser,
         );
-        
+
         // Apply pagination after filtering and sorting
         return filteredPatches.slice(offset, offset + limit);
       }
     } catch (error) {
-      console.warn('Failed to get latest patches from database, using mock data:', error);
+      console.warn(
+        'Failed to get latest patches from database, using mock data:',
+        error,
+      );
     }
-    
+
     // Fallback to mock data - Filter private patches and then apply sorting and pagination
     return this.patches
-      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
+      .filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
+      )
       .sort((a, b) => b.created_at.localeCompare(a.created_at)) // Most recent first
       .slice(offset, offset + limit);
   }
 
   public async getLatestPatchesCursor(
-    limit: number, 
-    requestingUser?: string, 
-    cursor?: string
-  ): Promise<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    limit: number,
+    requestingUser?: string,
+    cursor?: string,
+  ): Promise<{ patches: Patch[]; nextCursor?: string; hasMore: boolean }> {
     try {
       // Decode cursor if provided
       let exclusiveStartKey: any;
       if (cursor) {
         try {
-          exclusiveStartKey = JSON.parse(Buffer.from(cursor, 'base64').toString());
-        } catch (e) {
+          exclusiveStartKey = JSON.parse(
+            Buffer.from(cursor, 'base64').toString(),
+          );
+        } catch {
           console.warn('Invalid cursor provided, starting from beginning');
         }
       }
 
       // Request one extra to check if there are more results
-      const result = await this.patchRepository.findLatestPatchesCursor(limit + 1, exclusiveStartKey);
-      
+      const result = await this.patchRepository.findLatestPatchesCursor(
+        limit + 1,
+        exclusiveStartKey,
+      );
+
       if (result.items && result.items.length > 0) {
         // Filter private patches unless requested by owner
-        const filteredPatches = result.items.filter(patch => 
-          patch.isPublic !== false || patch.username === requestingUser
+        const filteredPatches = result.items.filter(
+          (patch) =>
+            patch.isPublic !== false || patch.username === requestingUser,
         );
-        
+
         // Check if there are more results
         const hasMore = filteredPatches.length > limit;
-        const patches = hasMore ? filteredPatches.slice(0, limit) : filteredPatches;
-        
+        const patches = hasMore
+          ? filteredPatches.slice(0, limit)
+          : filteredPatches;
+
         // Create next cursor from the last item's key
         let nextCursor: string | undefined;
         if (hasMore && patches.length > 0) {
           const lastPatch = patches[patches.length - 1];
           const cursorData = { id: lastPatch.id };
-          nextCursor = Buffer.from(JSON.stringify(cursorData)).toString('base64');
+          nextCursor = Buffer.from(JSON.stringify(cursorData)).toString(
+            'base64',
+          );
         }
-        
+
         return { patches, nextCursor, hasMore };
       }
     } catch (error) {
-      console.warn('Failed to get latest patches from database with cursor, using fallback:', error);
+      console.warn(
+        'Failed to get latest patches from database with cursor, using fallback:',
+        error,
+      );
     }
-    
+
     // Fallback to mock data with cursor simulation
     const startIndex = cursor ? this.decodeCursorToIndex(cursor) : 0;
     const filteredPatches = this.patches
-      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
+      .filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
+      )
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
-    
+
     const endIndex = Math.min(startIndex + limit, filteredPatches.length);
     const patches = filteredPatches.slice(startIndex, endIndex);
     const hasMore = endIndex < filteredPatches.length;
-    
+
     let nextCursor: string | undefined;
     if (hasMore) {
-      nextCursor = Buffer.from(JSON.stringify({ index: endIndex })).toString('base64');
+      nextCursor = Buffer.from(JSON.stringify({ index: endIndex })).toString(
+        'base64',
+      );
     }
-    
+
     return { patches, nextCursor, hasMore };
   }
 
@@ -198,7 +241,7 @@ export class PatchService {
     try {
       const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString());
       return decoded.index || 0;
-    } catch (e) {
+    } catch {
       return 0;
     }
   }
@@ -207,59 +250,78 @@ export class PatchService {
     username: string,
     limit: number,
     cursor?: string,
-    requestingUser?: string
-  ): Promise<{patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+    requestingUser?: string,
+  ): Promise<{ patches: Patch[]; nextCursor?: string; hasMore: boolean }> {
     try {
       let exclusiveStartKey: any;
       if (cursor) {
         try {
-          exclusiveStartKey = JSON.parse(Buffer.from(cursor, 'base64').toString());
-        } catch (e) {
+          exclusiveStartKey = JSON.parse(
+            Buffer.from(cursor, 'base64').toString(),
+          );
+        } catch {
           console.warn('Invalid cursor provided, starting from beginning');
         }
       }
 
-      const result = await this.patchRepository.findUserPatchesCursor(username, limit + 1, exclusiveStartKey);
-      
+      const result = await this.patchRepository.findUserPatchesCursor(
+        username,
+        limit + 1,
+        exclusiveStartKey,
+      );
+
       if (result.items && result.items.length > 0) {
         const includePrivate = requestingUser === username;
-        const filteredPatches = result.items.filter(patch => 
-          includePrivate || patch.isPublic !== false
+        const filteredPatches = result.items.filter(
+          (patch) => includePrivate || patch.isPublic !== false,
         );
-        
+
         const hasMore = filteredPatches.length > limit;
-        const patches = hasMore ? filteredPatches.slice(0, limit) : filteredPatches;
-        
+        const patches = hasMore
+          ? filteredPatches.slice(0, limit)
+          : filteredPatches;
+
         let nextCursor: string | undefined;
         if (hasMore && patches.length > 0) {
           const lastPatch = patches[patches.length - 1];
           const cursorData = { id: lastPatch.id };
-          nextCursor = Buffer.from(JSON.stringify(cursorData)).toString('base64');
+          nextCursor = Buffer.from(JSON.stringify(cursorData)).toString(
+            'base64',
+          );
         }
-        
+
         return { patches, nextCursor, hasMore };
       }
     } catch (error) {
-      console.warn('Failed to get user patches from database with cursor, using fallback:', error);
+      console.warn(
+        'Failed to get user patches from database with cursor, using fallback:',
+        error,
+      );
     }
 
     // Fallback to mock data with cursor simulation
     const includePrivate = requestingUser === username;
     const startIndex = cursor ? this.decodeCursorToIndex(cursor) : 0;
-    
-    const userPatches = this.patches.filter(patch => 
-      patch.username === username && (includePrivate || patch.isPublic !== false)
-    ).sort((a, b) => b.created_at.localeCompare(a.created_at));
-    
+
+    const userPatches = this.patches
+      .filter(
+        (patch) =>
+          patch.username === username &&
+          (includePrivate || patch.isPublic !== false),
+      )
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+
     const endIndex = Math.min(startIndex + limit, userPatches.length);
     const patches = userPatches.slice(startIndex, endIndex);
     const hasMore = endIndex < userPatches.length;
-    
+
     let nextCursor: string | undefined;
     if (hasMore) {
-      nextCursor = Buffer.from(JSON.stringify({ index: endIndex })).toString('base64');
+      nextCursor = Buffer.from(JSON.stringify({ index: endIndex })).toString(
+        'base64',
+      );
     }
-    
+
     return { patches, nextCursor, hasMore };
   }
 
@@ -271,34 +333,45 @@ export class PatchService {
   ): Promise<Patch[]> {
     // Validate input parameters
     if (offset < 0) {
-      throw new HttpException('Offset cannot be negative', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Offset cannot be negative',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     if (limit < 1 || limit > 1000) {
-      throw new HttpException('Limit must be between 1 and 1000', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Limit must be between 1 and 1000',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const includePrivate = requestingUser === username;
-    
+
     try {
       // Try to get from database first with proper pagination
       const result = await this.patchRepository.findPatchesByUser(username, {
         limit: limit,
         sortOrder: 'desc', // Most recent first
       });
-      
+
       if (result.items && result.items.length > 0) {
         // Filter private patches if not requested by owner
         let filteredItems = result.items;
         if (!includePrivate) {
           // Filter to public patches only (default to public for backward compatibility)
-          filteredItems = result.items.filter(patch => patch.isPublic !== false);
+          filteredItems = result.items.filter(
+            (patch) => patch.isPublic !== false,
+          );
         }
-        
+
         // Apply pagination on the filtered results
         return filteredItems.slice(offset, offset + limit);
       }
     } catch (error) {
-      console.warn('Failed to get user patches from database, trying fallback:', error);
+      console.warn(
+        'Failed to get user patches from database, trying fallback:',
+        error,
+      );
     }
 
     // Fallback to in-memory approach for backward compatibility
@@ -322,9 +395,12 @@ export class PatchService {
     });
   }
 
-  public async getUserPatchTotal(username: string, requestingUser?: string): Promise<number> {
+  public async getUserPatchTotal(
+    username: string,
+    requestingUser?: string,
+  ): Promise<number> {
     const includePrivate = requestingUser === username;
-    
+
     try {
       // Try to get count from database first
       const result = await this.patchRepository.findPatchesByUser(username);
@@ -333,12 +409,17 @@ export class PatchService {
         let filteredItems = result.items;
         if (!includePrivate) {
           // Filter to public patches only (default to public for backward compatibility)
-          filteredItems = result.items.filter(patch => patch.isPublic !== false);
+          filteredItems = result.items.filter(
+            (patch) => patch.isPublic !== false,
+          );
         }
         return filteredItems.length;
       }
     } catch (error) {
-      console.warn('Failed to get user patch count from database, trying fallback:', error);
+      console.warn(
+        'Failed to get user patch count from database, trying fallback:',
+        error,
+      );
     }
 
     // Fallback to in-memory approach for backward compatibility
@@ -391,7 +472,7 @@ export class PatchService {
       return newPatch;
     } catch (error) {
       console.error('Failed to create patch in database:', error);
-      
+
       // Fallback to in-memory creation for backward compatibility
       const newId = Math.max(...this.patches.map((p) => p.id), 0) + 1;
       const now = new Date().toISOString();
@@ -497,9 +578,8 @@ export class PatchService {
     }
 
     // Get next version number
-    const latestVersion = await this.versionRepository.getLatestVersionNumber(
-      patchId,
-    );
+    const latestVersion =
+      await this.versionRepository.getLatestVersionNumber(patchId);
     const newVersionNumber = latestVersion + 1;
 
     // Create version entry for the current state before updating
@@ -534,10 +614,13 @@ export class PatchService {
   /**
    * Get patch history
    */
-  public async getPatchHistory(id: string, requestingUser?: string): Promise<PatchHistory> {
+  public async getPatchHistory(
+    id: string,
+    requestingUser?: string,
+  ): Promise<PatchHistory> {
     // First verify user has access to the patch
     await this.getPatch(id, requestingUser);
-    
+
     const patchId = parseInt(id);
     return this.versionRepository.getPatchHistory(patchId);
   }
@@ -552,7 +635,7 @@ export class PatchService {
   ): Promise<PatchVersion | null> {
     // First verify user has access to the patch
     await this.getPatch(id, requestingUser);
-    
+
     const patchId = parseInt(id);
     return this.versionRepository.getPatchVersion(patchId, version);
   }
@@ -592,7 +675,7 @@ export class PatchService {
   ): Promise<any> {
     // First verify user has access to the patch
     await this.getPatch(patchId, requestingUser);
-    
+
     const patchIdNum = parseInt(patchId);
     return this.versionRepository.compareVersions(
       patchIdNum,
@@ -718,10 +801,11 @@ export class PatchService {
       // For now, implement basic search on in-memory patches
       // In production, this would use proper database queries
       let filteredPatches = [...this.patches];
-      
+
       // First filter private patches unless requested by owner
-      filteredPatches = filteredPatches.filter(patch => 
-        patch.isPublic !== false || patch.username === requestingUser
+      filteredPatches = filteredPatches.filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
       );
 
       // Text search
@@ -832,7 +916,7 @@ export class PatchService {
       const patches = filteredPatches.slice(offset, offset + limit);
 
       return { patches, total };
-    } catch (error) {
+    } catch {
       throw new HttpException(
         'Search failed',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -900,11 +984,17 @@ export class PatchService {
   /**
    * Get trending patches (most viewed/rated recently)
    */
-  public async getTrendingPatches(limit = 10, requestingUser?: string): Promise<Patch[]> {
+  public async getTrendingPatches(
+    limit = 10,
+    requestingUser?: string,
+  ): Promise<Patch[]> {
     // For now, return highest rated patches
     // In production, this would consider views, ratings, and time
     return this.patches
-      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
+      .filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
+      )
       .sort(
         (a, b) => parseFloat(b.average_rating) - parseFloat(a.average_rating),
       )
@@ -914,10 +1004,16 @@ export class PatchService {
   /**
    * Get featured patches
    */
-  public async getFeaturedPatches(limit = 5, requestingUser?: string): Promise<Patch[]> {
+  public async getFeaturedPatches(
+    limit = 5,
+    requestingUser?: string,
+  ): Promise<Patch[]> {
     // For now, return patches with ratings > 4.0
     return this.patches
-      .filter(patch => patch.isPublic !== false || patch.username === requestingUser)
+      .filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
+      )
       .filter((patch) => parseFloat(patch.average_rating) >= 4.0)
       .sort(
         (a, b) => parseFloat(b.average_rating) - parseFloat(a.average_rating),
@@ -928,13 +1024,20 @@ export class PatchService {
   /**
    * Get related patches based on similarity
    */
-  public async getRelatedPatches(patchId: string, limit = 5, requestingUser?: string): Promise<Patch[]> {
+  public async getRelatedPatches(
+    patchId: string,
+    limit = 5,
+    requestingUser?: string,
+  ): Promise<Patch[]> {
     const targetPatch = await this.getPatch(patchId, requestingUser);
 
     // Calculate similarity based on synthesis parameters
     const similarities = this.patches
       .filter((p) => p.id !== targetPatch.id)
-      .filter(patch => patch.isPublic !== false || patch.username === requestingUser) // Privacy filtering
+      .filter(
+        (patch) =>
+          patch.isPublic !== false || patch.username === requestingUser,
+      ) // Privacy filtering
       .map((patch) => ({
         patch,
         similarity: this.calculateSimilarity(targetPatch, patch),

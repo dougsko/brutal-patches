@@ -15,7 +15,7 @@ const mockDynamoService = {
 
 describe('PatchCollectionRepository', () => {
   let repository: PatchCollectionRepository;
-  let dynamoService: jest.Mocked<DynamoDBService>;
+  // let _dynamoService: jest.Mocked<DynamoDBService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,9 +31,9 @@ describe('PatchCollectionRepository', () => {
     repository = module.get<PatchCollectionRepository>(
       PatchCollectionRepository,
     );
-    dynamoService = module.get<DynamoDBService>(
-      DynamoDBService,
-    ) as jest.Mocked<DynamoDBService>;
+    // _dynamoService = module.get<DynamoDBService>(
+    //   DynamoDBService,
+    // ) as jest.Mocked<DynamoDBService>;
 
     // Reset mocks before each test
     Object.values(mockDynamoService).forEach((mock) => mock.mockReset());
@@ -144,7 +144,7 @@ describe('PatchCollectionRepository', () => {
         lastEvaluatedKey: undefined,
       });
 
-      const result = await repository.getUserCollections(userId, {
+      await repository.getUserCollections(userId, {
         includePrivate: false,
       });
 

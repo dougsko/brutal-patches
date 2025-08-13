@@ -11,10 +11,11 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 
 // Response DTOs
-class MetricsResponse {
-  @ApiProperty({ description: 'Prometheus format metrics' })
-  metrics: string;
-}
+// Commented out unused class
+// class MetricsResponse {
+//   @ApiProperty({ description: 'Prometheus format metrics' })
+//   metrics: string;
+// }
 
 class DashboardMetricsResponse {
   @ApiProperty({ description: 'HTTP request metrics' })
@@ -109,7 +110,7 @@ export class MonitoringController {
   @Get('health-metrics')
   async getHealthWithMetrics() {
     const startTime = process.uptime();
-    const metrics = await this.monitoringService.getDashboardMetrics();
+    await this.monitoringService.getDashboardMetrics();
 
     return {
       status: 'healthy',
