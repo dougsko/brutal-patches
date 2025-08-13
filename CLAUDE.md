@@ -175,6 +175,56 @@ For critical production issues:
 2. Follow abbreviated workflow: fix → test → PR → review → merge
 3. Ensure hotfix is also merged back to development branches
 
+## The Workflow
+
+**CRITICAL**: This is the mandatory workflow for all coding requests. Follow this process exactly for any development work.
+
+### 1. Ultra-Think and Plan
+- **Extended thinking**: Use extended thinking time for complex planning
+- **Thorough analysis**: Think deeply about the request and approach
+- **Ask clarifying questions**: Present initial thoughts and ask any needed clarifications
+- **Detailed planning**: Write a comprehensive, detailed plan that's easy to understand and implement
+- **Best practices**: Ensure solutions are DRY, simple, easy to understand, and follow best practices
+
+### 2. Implementation Process
+- **Feature branch**: Create a new feature branch for the work
+- **Task agent**: Use Task tool to create a specialized code-writing agent to implement the solution
+- **Local testing**: Agent must ensure all tests pass locally before committing
+- **Commit and push**: Agent commits work with descriptive commit messages and pushes to branch
+
+### 3. CI/CD Monitoring
+- **Monitoring agent**: Use Task tool to create a monitoring agent to watch GitHub Actions CI tests
+- **Error handling**: If CI tests fail, monitoring agent passes errors back to code-writing agent
+- **Fix and retry**: Code-writing agent fixes issues and repeats until all tests pass
+
+### 4. Pull Request Creation
+- **PR creation**: After all tests pass, code-writing agent creates PR against main branch
+- **Descriptive content**: PR includes detailed description of changes and test results
+
+### 5. Code Review Process
+- **Review agent**: Use Task tool to create a specialized code-reviewing agent
+- **Ultra-think review**: Reviewer ultra-thinks hard about the PR and provides comprehensive feedback
+- **Feedback loop**: Code-writer implements ALL reviewer suggestions and updates PR
+- **Iterative process**: Continue review → fix → update cycle until reviewer has no more suggestions
+- **Clean approval**: Only proceed when reviewer fully approves with no outstanding issues
+
+### 6. Final Integration
+- **Merge PR**: Merge to main only after clean review approval and passing tests
+- **Post-merge monitoring**: Use Task tool to create monitoring agent for post-merge tests
+- **Error resolution**: If any errors occur, pass back to code-writer to fix and repeat process
+
+### 7. Change Management Principles
+- **Small incremental changes**: Keep changes small within single feature implementations
+- **Multiple PRs when beneficial**: Use separate PRs/branches when it makes development easier
+- **Local and remote testing**: Ensure tests pass both locally and in GitHub Actions
+- **Continuous monitoring**: Monitor each stage until immediate action completes successfully
+
+### Agent Specialization Guidelines
+- **Code-writing agents**: Focus on implementation, testing, and fixes
+- **Monitoring agents**: Watch CI/CD processes and report status/errors
+- **Code-reviewing agents**: Provide thorough, critical analysis and feedback
+- **Best judgment**: Use discretion on whether to separate or combine agent roles for simpler tasks
+
 ## Testing
 
 Run tests from respective directories:
