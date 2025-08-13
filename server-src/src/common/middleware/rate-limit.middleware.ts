@@ -21,9 +21,12 @@ export class RateLimitMiddleware implements NestMiddleware {
 
   constructor(private readonly logger: LoggerService) {
     // Clean up expired entries every 5 minutes
-    setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000,
+    );
   }
 
   use(req: Request, res: Response, next: NextFunction): void {

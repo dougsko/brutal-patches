@@ -118,7 +118,10 @@ export class PatchController {
     schema: { type: 'number' },
   })
   @Get('users/:username/total')
-  getUserTotal(@Request() req, @Param('username') username: string): Promise<number> {
+  getUserTotal(
+    @Request() req,
+    @Param('username') username: string,
+  ): Promise<number> {
     const requestingUser = req?.user?.username;
     return this.patchService.getUserPatchTotal(username, requestingUser);
   }
@@ -127,9 +130,20 @@ export class PatchController {
     summary: 'Get user public patches with pagination',
     description: 'Get public patches for a specific user with pagination',
   })
-  @ApiParam({ name: 'username', description: 'Username to get public patches for' })
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
-  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
+  @ApiParam({
+    name: 'username',
+    description: 'Username to get public patches for',
+  })
+  @ApiQuery({
+    name: 'offset',
+    description: 'First item index for pagination',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items to return',
+    required: false,
+  })
   @ApiResponse({
     status: 200,
     description: 'User public patches retrieved successfully',
@@ -148,11 +162,20 @@ export class PatchController {
 
   @ApiOperation({
     summary: 'Get my patches with pagination',
-    description: 'Get all patches (including private) for the authenticated user',
+    description:
+      'Get all patches (including private) for the authenticated user',
   })
   @ApiBearerAuth('JWT-auth')
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination', required: false })
-  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
+  @ApiQuery({
+    name: 'offset',
+    description: 'First item index for pagination',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items to return',
+    required: false,
+  })
   @ApiResponse({
     status: 200,
     description: 'My patches retrieved successfully',
@@ -172,12 +195,18 @@ export class PatchController {
   ): Promise<Patch[]> {
     const offset = parseInt(offsetParam || '0', 10);
     const limit = parseInt(limitParam || '100', 10);
-    return this.patchService.getPatchesByUser(req.user.username, offset, limit, req.user.username);
+    return this.patchService.getPatchesByUser(
+      req.user.username,
+      offset,
+      limit,
+      req.user.username,
+    );
   }
 
   @ApiOperation({
     summary: 'Get my total patch count',
-    description: 'Get total patch count (including private) for the authenticated user',
+    description:
+      'Get total patch count (including private) for the authenticated user',
   })
   @ApiBearerAuth('JWT-auth')
   @ApiResponse({
@@ -193,7 +222,10 @@ export class PatchController {
   @UseGuards(JwtAuthGuard)
   @Get('my/total')
   async getMyTotal(@Request() req): Promise<number> {
-    return this.patchService.getUserPatchTotal(req.user.username, req.user.username);
+    return this.patchService.getUserPatchTotal(
+      req.user.username,
+      req.user.username,
+    );
   }
 
   @ApiOperation({
@@ -285,7 +317,12 @@ export class PatchController {
     };
 
     const requestingUser = req?.user?.username;
-    return this.patchService.searchPatches(searchTerm, filters, options, requestingUser);
+    return this.patchService.searchPatches(
+      searchTerm,
+      filters,
+      options,
+      requestingUser,
+    );
   }
 
   @Get('categories')
@@ -294,13 +331,19 @@ export class PatchController {
   }
 
   @Get('trending')
-  async getTrendingPatches(@Request() req, @Query('limit') limit?: number): Promise<Patch[]> {
+  async getTrendingPatches(
+    @Request() req,
+    @Query('limit') limit?: number,
+  ): Promise<Patch[]> {
     const requestingUser = req?.user?.username;
     return this.patchService.getTrendingPatches(limit || 10, requestingUser);
   }
 
   @Get('featured')
-  async getFeaturedPatches(@Request() req, @Query('limit') limit?: number): Promise<Patch[]> {
+  async getFeaturedPatches(
+    @Request() req,
+    @Query('limit') limit?: number,
+  ): Promise<Patch[]> {
     const requestingUser = req?.user?.username;
     return this.patchService.getFeaturedPatches(limit || 5, requestingUser);
   }
@@ -309,24 +352,36 @@ export class PatchController {
     summary: 'Get latest patches with pagination',
     description: 'Get the most recent patches with cursor or offset pagination',
   })
-  @ApiQuery({ name: 'offset', description: 'First item index for pagination (legacy)', required: false })
-  @ApiQuery({ name: 'limit', description: 'Number of items to return', required: false })
-  @ApiQuery({ name: 'cursor', description: 'Cursor for pagination', required: false })
+  @ApiQuery({
+    name: 'offset',
+    description: 'First item index for pagination (legacy)',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items to return',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'cursor',
+    description: 'Cursor for pagination',
+    required: false,
+  })
   @ApiResponse({
     status: 200,
     description: 'Latest patches retrieved successfully',
-    schema: { 
+    schema: {
       oneOf: [
         { type: 'array', items: { type: 'object' } },
-        { 
+        {
           type: 'object',
           properties: {
             patches: { type: 'array', items: { type: 'object' } },
             nextCursor: { type: 'string' },
-            hasMore: { type: 'boolean' }
-          }
-        }
-      ]
+            hasMore: { type: 'boolean' },
+          },
+        },
+      ],
     },
   })
   @Get('latest')
@@ -335,19 +390,32 @@ export class PatchController {
     @Query('offset') offsetParam?: string,
     @Query('limit') limitParam?: string,
     @Query('cursor') cursor?: string,
-  ): Promise<Patch[] | {patches: Patch[], nextCursor?: string, hasMore: boolean}> {
+  ): Promise<
+    Patch[] | { patches: Patch[]; nextCursor?: string; hasMore: boolean }
+  > {
     const limit = parseInt(limitParam || '25', 10);
     const requestingUser = req?.user?.username;
-    
+
     if (cursor !== undefined || offsetParam === undefined) {
       // Use cursor-based pagination
       console.log('🔥 Latest patches (cursor) route hit!', { limit, cursor });
-      return await this.patchService.getLatestPatchesCursor(limit, requestingUser, cursor);
+      return await this.patchService.getLatestPatchesCursor(
+        limit,
+        requestingUser,
+        cursor,
+      );
     } else {
       // Legacy offset-based pagination
-      console.log('🔥 Latest patches (legacy) route hit!', { offsetParam, limitParam });
+      console.log('🔥 Latest patches (legacy) route hit!', {
+        offsetParam,
+        limitParam,
+      });
       const offset = parseInt(offsetParam || '0', 10);
-      const patches = await this.patchService.getLatestPatches(offset, limit, requestingUser);
+      const patches = await this.patchService.getLatestPatches(
+        offset,
+        limit,
+        requestingUser,
+      );
       return patches;
     }
   }
@@ -462,7 +530,10 @@ export class PatchController {
   }
 
   @Get(':id/history')
-  async getPatchHistory(@Request() req, @Param('id') id: string): Promise<PatchHistory> {
+  async getPatchHistory(
+    @Request() req,
+    @Param('id') id: string,
+  ): Promise<PatchHistory> {
     const requestingUser = req?.user?.username;
     return this.patchService.getPatchHistory(id, requestingUser);
   }
@@ -495,7 +566,12 @@ export class PatchController {
     @Param('version2') version2: number,
   ): Promise<any> {
     const requestingUser = req?.user?.username;
-    return this.patchService.comparePatchVersions(id, version1, version2, requestingUser);
+    return this.patchService.comparePatchVersions(
+      id,
+      version1,
+      version2,
+      requestingUser,
+    );
   }
 
   @Get(':id/related')

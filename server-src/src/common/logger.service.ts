@@ -76,8 +76,10 @@ export class LoggerService {
       defaultMeta: { service: 'brutal-patches-api' },
       transports,
       // Handle exceptions and rejections only in non-Lambda environments
-      exceptionHandlers: exceptionHandlers.length > 0 ? exceptionHandlers : undefined,
-      rejectionHandlers: rejectionHandlers.length > 0 ? rejectionHandlers : undefined,
+      exceptionHandlers:
+        exceptionHandlers.length > 0 ? exceptionHandlers : undefined,
+      rejectionHandlers:
+        rejectionHandlers.length > 0 ? rejectionHandlers : undefined,
     });
 
     // Always add console transport for Lambda or development

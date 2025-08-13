@@ -18,18 +18,20 @@ async function bootstrap() {
     const logger = app.get(LoggerService);
 
     // Security middleware
-    app.use(helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'", 'https://api.brutalpatches.com'],
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'"],
+            imgSrc: ["'self'", 'data:', 'https:'],
+            connectSrc: ["'self'", 'https://api.brutalpatches.com'],
+          },
+          reportOnly: process.env.NODE_ENV !== 'production',
         },
-        reportOnly: process.env.NODE_ENV !== 'production',
-      },
-    }));
+      }),
+    );
 
     // CORS configuration
     app.enableCors(corsConfig);

@@ -317,10 +317,10 @@ export class AdminService {
         timeRange === '7d'
           ? 7
           : timeRange === '30d'
-          ? 30
-          : timeRange === '90d'
-          ? 90
-          : 365;
+            ? 30
+            : timeRange === '90d'
+              ? 90
+              : 365;
 
       const userGrowth = Array.from({ length: days }, (_, i) => ({
         date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000)

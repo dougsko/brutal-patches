@@ -187,7 +187,7 @@ export class PatchRepository extends BaseRepository<Patch> {
   }
 
   /**
-   * Get latest patches with proper pagination support  
+   * Get latest patches with proper pagination support
    * Note: Privacy filtering should be done at service layer
    */
   async findLatestPatches(
@@ -218,7 +218,7 @@ export class PatchRepository extends BaseRepository<Patch> {
       return {
         items: paginatedPatches,
         count: paginatedPatches.length,
-        lastEvaluatedKey: undefined // Not applicable for in-memory pagination
+        lastEvaluatedKey: undefined, // Not applicable for in-memory pagination
       };
     } catch (error) {
       this.logger.error('Failed to find latest patches:', error);
