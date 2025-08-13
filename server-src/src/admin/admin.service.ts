@@ -117,7 +117,7 @@ export class AdminService {
         collections,
         activity,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         'Failed to get admin statistics',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -130,8 +130,6 @@ export class AdminService {
    */
   async getSystemHealth(): Promise<SystemHealth> {
     try {
-      const startTime = Date.now();
-
       // Test database connectivity
       let dbStatus: 'connected' | 'disconnected' | 'slow' = 'connected';
       let responseTime = 0;
@@ -144,7 +142,7 @@ export class AdminService {
         if (responseTime > 1000) {
           dbStatus = 'slow';
         }
-      } catch (error) {
+      } catch (_error) {
         dbStatus = 'disconnected';
         responseTime = -1;
       }
@@ -184,7 +182,7 @@ export class AdminService {
         uptime,
         errors,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: 'critical',
         database: { status: 'disconnected', responseTime: -1 },
@@ -220,7 +218,7 @@ export class AdminService {
     itemId: string,
     action: 'approve' | 'reject',
     moderatorUsername: string,
-    notes?: string,
+    _notes?: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
       // Placeholder implementation
@@ -229,7 +227,7 @@ export class AdminService {
         success: true,
         message: `Content ${itemId} has been ${action}ed by ${moderatorUsername}`,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         'Failed to moderate content',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -268,7 +266,7 @@ export class AdminService {
         users,
         total: users.length,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         'Failed to get user management data',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -283,7 +281,7 @@ export class AdminService {
     userId: number,
     action: 'suspend' | 'activate',
     moderatorUsername: string,
-    reason?: string,
+    _reason?: string,
   ): Promise<{ success: boolean; message: string }> {
     try {
       // Placeholder implementation
@@ -292,7 +290,7 @@ export class AdminService {
         success: true,
         message: `User ${userId} has been ${action}d by ${moderatorUsername}`,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         'Failed to moderate user',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -354,7 +352,7 @@ export class AdminService {
         categoryDistribution,
         ratingDistribution,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HttpException(
         'Failed to get analytics data',
         HttpStatus.INTERNAL_SERVER_ERROR,
