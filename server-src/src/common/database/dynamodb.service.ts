@@ -65,11 +65,18 @@ export class DynamoDBService implements OnModuleInit {
   private config: DynamoDBConfig;
 
   constructor() {
+    // Configure DynamoDB client based on environment
     this.config = {
       region: process.env.AWS_REGION || 'us-east-1',
       endpoint: process.env.DYNAMODB_ENDPOINT, // For local development
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      // Only specify credentials explicitly if not in Lambda environment
+      // Lambda will use IAM role automatically
+      ...(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+        ? {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          }
+        : {}),
     };
   }
 

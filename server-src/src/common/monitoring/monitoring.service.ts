@@ -114,12 +114,8 @@ export class MonitoringService implements OnModuleInit {
     // Collect default metrics (CPU, memory, etc.)
     collectDefaultMetrics({ register });
 
-    // Setup AWS X-Ray if in production
-    if (process.env.NODE_ENV === 'production') {
-      AWSXRay.config([AWSXRay.plugins.ECSPlugin]);
-      AWSXRay.middleware.enableDynamicNaming('*.brutalpatches.com');
-    }
-
+    // Skip X-Ray configuration in MonitoringService since it's handled in lambda.ts
+    // This avoids conflicts during module initialization
     this.logger.log('Monitoring service initialized', 'MonitoringService');
   }
 
@@ -245,23 +241,34 @@ export class MonitoringService implements OnModuleInit {
     name: string,
     callback: (segment: any) => Promise<any>,
   ): Promise<any> {
-    if (process.env.NODE_ENV !== 'production') {
+    // Only use X-Ray in production Lambda environment
+    if (process.env.NODE_ENV !== 'production' || !process.env._X_AMZN_TRACE_ID) {
       return callback(null);
     }
 
-    return new Promise((resolve, reject) => {
-      AWSXRay.captureAsyncFunc(name, async (subsegment) => {
-        try {
-          const result = await callback(subsegment);
-          subsegment.close();
-          resolve(result);
-        } catch (error) {
-          subsegment.addError(error);
-          subsegment.close(error);
-          reject(error);
-        }
+    try {
+      return new Promise((resolve, reject) => {
+        AWSXRay.captureAsyncFunc(name, async (subsegment) => {
+          try {
+            const result = await callback(subsegment);
+            if (subsegment) {
+              subsegment.close();
+            }
+            resolve(result);
+          } catch (error) {
+            if (subsegment) {
+              subsegment.addError(error);
+              subsegment.close(error);
+            }
+            reject(error);
+          }
+        });
       });
-    });
+    } catch (error) {
+      // Fallback if X-Ray is not available
+      this.logger.warn('X-Ray not available, falling back to direct execution');
+      return callback(null);
+    }
   }
 
   // Get current metrics for health checks
