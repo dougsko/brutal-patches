@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Context, Handler } from 'aws-lambda';
-import serverlessExpress from '@codegenie/serverless-express';
+import { configure } from '@codegenie/serverless-express';
 import { AppModule } from './app.module';
 import * as express from 'express';
 import * as AWSXRay from 'aws-xray-sdk-core';
@@ -50,7 +50,7 @@ async function bootstrapServer() {
       await nestApp.init();
 
       // Create serverless express handler with proper configuration
-      cachedHandler = serverlessExpress({ 
+      cachedHandler = configure({ 
         app: expressApp,
         logSettings: {
           level: process.env.NODE_ENV === 'production' ? 'warn' : 'info'

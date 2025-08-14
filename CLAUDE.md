@@ -189,17 +189,19 @@ For critical production issues:
 ### 2. Implementation Process
 - **Feature branch**: Create a new feature branch for the work
 - **Task agent**: Use Task tool to create a specialized code-writing agent to implement the solution
-- **Local testing**: Agent must ensure all tests pass locally before committing
+- **MANDATORY 100% test pass**: Agent must ensure ALL tests pass locally before committing - NO EXCEPTIONS
 - **Commit and push**: Agent commits work with descriptive commit messages and pushes to branch
 
 ### 3. CI/CD Monitoring
 - **Monitoring agent**: Use Task tool to create a monitoring agent to watch GitHub Actions CI tests
-- **Error handling**: If CI tests fail, monitoring agent passes errors back to code-writing agent
-- **Fix and retry**: Code-writing agent fixes issues and repeats until all tests pass
+- **MANDATORY 100% CI success**: ALL GitHub Actions must pass - NO EXCEPTIONS
+- **Error handling**: If ANY CI tests fail, monitoring agent passes errors back to code-writing agent
+- **Fix and retry**: Code-writing agent fixes issues and repeats until 100% CI success achieved
 
 ### 4. Pull Request Creation
-- **PR creation**: After all tests pass, code-writing agent creates PR against main branch
+- **PR creation**: After 100% test success (local + CI), code-writing agent creates PR against main branch
 - **Descriptive content**: PR includes detailed description of changes and test results
+- **Test verification**: PR description must confirm 100% test pass rate achieved
 
 ### 5. Code Review Process
 - **Review agent**: Use Task tool to create a specialized code-reviewing agent
@@ -209,25 +211,66 @@ For critical production issues:
 - **Clean approval**: Only proceed when reviewer fully approves with no outstanding issues
 
 ### 6. Final Integration
-- **Merge PR**: Merge to main only after clean review approval and passing tests
+- **Merge PR**: Merge to main only after clean review approval and 100% test success
 - **Post-merge monitoring**: Use Task tool to create monitoring agent for post-merge tests
-- **Error resolution**: If any errors occur, pass back to code-writer to fix and repeat process
+- **MANDATORY verification**: Post-merge tests must achieve 100% success rate
+- **Error resolution**: If ANY errors occur, pass back to code-writer to fix and repeat process
 
 ### 7. Change Management Principles
 - **Small incremental changes**: Keep changes small within single feature implementations
 - **Multiple PRs when beneficial**: Use separate PRs/branches when it makes development easier
-- **Local and remote testing**: Ensure tests pass both locally and in GitHub Actions
+- **MANDATORY test success**: 100% test pass rate required locally AND in GitHub Actions - NO EXCEPTIONS
 - **Continuous monitoring**: Monitor each stage until immediate action completes successfully
 
 ### Agent Specialization Guidelines
-- **Code-writing agents**: Focus on implementation, testing, and fixes
-- **Monitoring agents**: Watch CI/CD processes and report status/errors
-- **Code-reviewing agents**: Provide thorough, critical analysis and feedback
+- **Code-writing agents**: Focus on implementation, testing, and fixes - NEVER consider work complete with failing tests
+- **Monitoring agents**: Watch CI/CD processes and report status/errors - NEVER approve with failing tests
+- **Code-reviewing agents**: Provide thorough, critical analysis and feedback - NEVER approve with failing tests
 - **Best judgment**: Use discretion on whether to separate or combine agent roles for simpler tasks
 
-## Testing
+## Testing Requirements
 
+**CRITICAL MANDATE**: 100% test pass rate is MANDATORY for all coding work. NO EXCEPTIONS.
+
+### Test Commands
 Run tests from respective directories:
 - Frontend: `npm run test` (uses Karma + Jasmine)  
 - Backend: `cd server-src && npm run test` (uses Jest)
 - Backend E2E: `cd server-src && npm run test:e2e`
+
+### Strict Testing Rules
+
+**MANDATORY REQUIREMENTS**:
+1. **100% Local Test Success**: ALL tests must pass locally before any commit
+2. **100% CI Test Success**: ALL GitHub Actions must pass before any merge
+3. **Zero Tolerance**: Even 1 failing test blocks the entire process
+4. **Agent Responsibility**: Code-writing agents cannot consider work complete with any failing tests
+5. **No Bypass**: No overrides, exceptions, or workarounds for failing tests
+
+**VERIFICATION PROCESS**:
+1. **Local verification**: Run full test suite and confirm 100% pass rate
+2. **CI verification**: Monitor GitHub Actions until 100% success achieved
+3. **Documentation**: PR descriptions must confirm 100% test success
+4. **Post-merge verification**: Monitor post-merge tests for continued 100% success
+
+**FAILURE PROTOCOL**:
+- If ANY test fails: STOP all other work and fix immediately
+- Code-writers must fix ALL failing tests before proceeding
+- Monitoring agents must report ALL test failures for immediate resolution
+- Reviewers must verify 100% test success before approval
+
+**EXAMPLES OF ACCEPTABLE TEST RESULTS**:
+```
+✅ Tests: 88 passed, 88 total (100% pass rate)
+✅ Test Suites: 12 passed, 12 total
+✅ All GitHub Actions: PASSED
+```
+
+**EXAMPLES OF UNACCEPTABLE TEST RESULTS** (BLOCKS PROGRESS):
+```
+❌ Tests: 1 failed, 87 passed, 88 total
+❌ Test Suites: 1 failed, 11 passed, 12 total  
+❌ Any GitHub Action: FAILED
+```
+
+This mandate ensures code quality, stability, and reliability across the entire development process.
