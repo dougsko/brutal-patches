@@ -229,9 +229,8 @@ describe('AdminService', () => {
       let callCount = 0;
       jest.spyOn(Date, 'now').mockImplementation(() => {
         callCount++;
-        if (callCount === 1) return 1000; // startTime
-        if (callCount === 2) return 1000; // testStart
-        if (callCount === 3) return 2500; // testEnd (1500ms later, > 1000ms threshold)
+        if (callCount === 1) return 1000; // testStart
+        if (callCount === 2) return 2500; // testEnd (1500ms later, > 1000ms threshold)
         return 1000; // fallback
       });
 
