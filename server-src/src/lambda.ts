@@ -4,18 +4,17 @@ import { Context, Handler } from 'aws-lambda';
 import serverlessExpress from '@codegenie/serverless-express';
 import { AppModule } from './app.module';
 import * as express from 'express';
+import * as AWSXRay from 'aws-xray-sdk-core';
 
 // Initialize AWS X-Ray tracing for production
 if (process.env.NODE_ENV === 'production' && process.env._X_AMZN_TRACE_ID) {
-  // Import X-Ray SDK only in production Lambda environment
-  const AWSXRay = require('aws-xray-sdk-core');
-  
-  // Capture AWS SDK v3 calls
-  const { captureAWSv3Client } = require('aws-xray-sdk-core');
-  
-  // Enable subsegment streaming for better performance
-  AWSXRay.config([AWSXRay.plugins.ECSPlugin]);
-  AWSXRay.middleware.enableDynamicNaming('*.brutalpatches.com');
+  try {
+    // Enable subsegment streaming for better performance
+    AWSXRay.config([AWSXRay.plugins.ECSPlugin]);
+    AWSXRay.middleware.enableDynamicNaming('*.brutalpatches.com');
+  } catch (err) {
+    console.warn('Failed to initialize AWS X-Ray:', err);
+  }
 }
 
 let cachedHandler: any;
@@ -81,11 +80,13 @@ export const handler: Handler = async (event: any, context: Context) => {
       statusCode: 502,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production' 
+          ? 'https://brutalpatches.com' 
+          : '*',
       },
       body: JSON.stringify({
         message: 'Internal server error',
-        error: process.env.NODE_ENV === 'production' ? 'Server error' : error.message,
+        error: process.env.NODE_ENV === 'production' ? 'Server error' : (error?.message || 'Unknown error'),
       }),
     };
   }
