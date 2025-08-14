@@ -37,6 +37,9 @@ export class MonitoringService implements OnModuleInit {
       region: process.env.AWS_REGION || 'us-east-1',
     });
 
+    // Clear any existing metrics to prevent Lambda cache conflicts
+    register.clear();
+
     // Initialize Prometheus metrics
     this.httpRequestsTotal = new Counter({
       name: 'http_requests_total',
