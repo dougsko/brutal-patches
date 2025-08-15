@@ -34,6 +34,10 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError(error => {
         if (error instanceof HttpErrorResponse) {
           if (error.status === 401 && !this.isRefreshRequest(req)) {
+            // Don't auto-logout for My Patches endpoint - let component handle gracefully
+            if (this.isMyPatchesRequest(req)) {
+              return throwError(() => error);
+            }
             return this.handle401Error(authReq, next);
           }
         }
@@ -50,6 +54,10 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private isRefreshRequest(request: HttpRequest<any>): boolean {
     return request.url.includes('/api/auth/refresh');
+  }
+
+  private isMyPatchesRequest(request: HttpRequest<any>): boolean {
+    return request.url.includes('/api/patches/my');
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
