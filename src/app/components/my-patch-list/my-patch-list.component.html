@@ -31,8 +31,13 @@
         <p>You've reached the end of your patches!</p>
     </div>
     
-    <div class="empty-state" *ngIf="!isLoading && patches.length === 0">
+    <div class="empty-state" *ngIf="!isLoading && patches.length === 0 && isLoggedIn">
         <p>You haven't created any patches yet.</p>
         <p><a routerLink="/patch/new">Create your first patch!</a></p>
+    </div>
+    
+    <div class="login-required" *ngIf="!isLoggedIn">
+        <p>Please log in to view your patches.</p>
+        <p><a routerLink="/login">Log in here</a> or <a routerLink="/register">create an account</a></p>
     </div>
 </div>
