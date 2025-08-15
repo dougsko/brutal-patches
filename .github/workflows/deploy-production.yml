@@ -56,8 +56,6 @@ jobs:
 
       - name: Test frontend build
         run: npm run build:prod
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Test backend build
         run: |
@@ -141,8 +139,6 @@ jobs:
 
       - name: Build Angular app for production
         run: npm run build:prod
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Deploy to S3
         run: |
@@ -153,6 +149,45 @@ jobs:
           aws s3 website s3://brutal-patches-ui \
             --index-document index.html \
             --error-document index.html
+
+      - name: Configure CloudFront for SPA routing
+        run: |
+          # Get current CloudFront distribution config
+          aws cloudfront get-distribution-config \
+            --id E3ABLSDKEX6QYF \
+            --query 'DistributionConfig' > dist-config.json
+          
+          # Get current ETag for update
+          ETAG=$(aws cloudfront get-distribution-config \
+            --id E3ABLSDKEX6QYF \
+            --query 'ETag' --output text)
+          
+          # Update config to handle SPA routing (404 -> 200 with index.html)
+          cat dist-config.json | jq '
+            .CustomErrorResponses.Items = [
+              {
+                "ErrorCode": 404,
+                "ResponsePagePath": "/index.html",
+                "ResponseCode": "200",
+                "ErrorCachingMinTTL": 300
+              },
+              {
+                "ErrorCode": 403,
+                "ResponsePagePath": "/index.html", 
+                "ResponseCode": "200",
+                "ErrorCachingMinTTL": 300
+              }
+            ] |
+            .CustomErrorResponses.Quantity = 2
+          ' > updated-dist-config.json
+          
+          # Update the CloudFront distribution
+          aws cloudfront update-distribution \
+            --id E3ABLSDKEX6QYF \
+            --distribution-config file://updated-dist-config.json \
+            --if-match "$ETAG"
+          
+          echo "✅ CloudFront configured for SPA routing"
 
       - name: Invalidate frontend CloudFront cache
         run: |
@@ -188,6 +223,15 @@ jobs:
           echo "Testing frontend at brutalpatches.com..."
           curl -f "https://brutalpatches.com" || (echo "Frontend health check failed" && exit 1)
           echo "✅ Frontend is accessible"
+
+      - name: Test SPA routing
+        run: |
+          echo "Testing SPA routing..."
+          # Test that deep links return 200 and serve index.html
+          curl -s "https://brutalpatches.com/my-patches" | grep -q "<app-root>" || (echo "SPA routing failed for /my-patches" && exit 1)
+          curl -s "https://brutalpatches.com/login" | grep -q "<app-root>" || (echo "SPA routing failed for /login" && exit 1)
+          curl -s "https://brutalpatches.com/patches" | grep -q "<app-root>" || (echo "SPA routing failed for /patches" && exit 1)
+          echo "✅ SPA routing is working"
 
   # Deployment notification
   notify:
