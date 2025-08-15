@@ -229,6 +229,55 @@ export class PatchController {
   }
 
   @ApiOperation({
+    summary: 'Get my patches with cursor pagination',
+    description: 'Get all patches (including private) for the authenticated user with cursor-based pagination',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiQuery({
+    name: 'limit',
+    description: 'Number of items to return',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'cursor',
+    description: 'Cursor for pagination',
+    required: false,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'My patches retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        patches: { type: 'array', items: { type: 'object' } },
+        nextCursor: { type: 'string' },
+        hasMore: { type: 'boolean' },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Authentication required',
+    type: ErrorResponse,
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  async getMyPatchesCursor(
+    @Request() req,
+    @Query('limit') limitParam?: string,
+    @Query('cursor') cursor?: string,
+  ): Promise<{ patches: Patch[]; nextCursor?: string; hasMore: boolean }> {
+    const limit = parseInt(limitParam || '25', 10);
+    console.log('🔥 My patches (cursor) route hit!', { limit, cursor, user: req.user.username });
+    return await this.patchService.getUserPatchesCursor(
+      req.user.username,
+      limit,
+      cursor,
+      req.user.username, // include private patches
+    );
+  }
+
+  @ApiOperation({
     summary: 'Search patches',
     description: 'Search for patches with various filters and sorting options',
   })
