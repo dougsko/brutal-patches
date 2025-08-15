@@ -10,7 +10,7 @@ import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: 'patches', component: PatchListComponent },
-  { path: 'my-patches', component: MyPatchListComponent, canActivate: [AuthGuard] },
+  { path: 'my-patches', component: MyPatchListComponent },
   { path: 'patches/:username', component: MyPatchListComponent },
   { path: 'patch/new', component: PatchComponent },
   { path: 'patch/:id',  component: PatchComponent },
