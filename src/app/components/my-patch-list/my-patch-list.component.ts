@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Patch } from 'src/app/interfaces/patch';
 import { PatchService } from 'src/app/services/patch.service';
@@ -9,9 +7,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 @Component({
   selector: 'my-patch-list',
   templateUrl: './my-patch-list.component.html',
-  styleUrls: ['./my-patch-list.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./my-patch-list.component.scss']
 })
 export class MyPatchListComponent implements OnInit, OnDestroy {
   patches: Patch[] = [];
@@ -76,7 +72,7 @@ export class MyPatchListComponent implements OnInit, OnDestroy {
     this.subs.push(patchSub);
   }
 
-  @HostListener('window:scroll')
+  @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     const scrollPosition = window.pageYOffset;
     const windowSize = window.innerHeight;

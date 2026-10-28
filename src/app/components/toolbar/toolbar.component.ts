@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, OnDestroy, OnInit } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -10,8 +9,8 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 @Component({
   selector: 'toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss'],
-  imports: [CommonModule],
+  styleUrls: ['./toolbar.component.scss']
+  imports: [MatToolbarModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ToolbarComponent implements OnInit, OnDestroy {

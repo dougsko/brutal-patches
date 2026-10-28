@@ -1,15 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Defaults, EndpointOptions, jsPlumb, jsPlumbInstance } from 'jsplumb';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'mod-matrix',
   templateUrl: './mod-matrix.component.html',
-  styleUrls: ['./mod-matrix.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./mod-matrix.component.scss']
 })
 export class ModMatrixComponent implements OnInit, OnDestroy {
   @Input() patch!: Patch;

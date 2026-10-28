@@ -1,6 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
@@ -9,9 +7,7 @@ import { TokenStorageService } from '../../services/token-storage.service';
 @Component({
   selector: 'app-session-timeout-warning',
   templateUrl: './session-timeout-warning.component.html',
-  styleUrls: ['./session-timeout-warning.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./session-timeout-warning.component.scss']
 })
 export class SessionTimeoutWarningComponent implements OnInit, OnDestroy {
   showWarning = false;

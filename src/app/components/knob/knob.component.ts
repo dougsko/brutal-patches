@@ -1,14 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'knob',
   templateUrl: './knob.component.html',
-  styleUrls: ['./knob.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./knob.component.scss']
 })
 export class KnobComponent implements OnInit {
   @Input() name!: string;

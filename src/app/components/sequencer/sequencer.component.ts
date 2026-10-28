@@ -1,13 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, NO_ERRORS_SCHEMA, OnDestroy, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { KnobComponent } from '../knob/knob.component';
+import { ToggleComponent } from '../toggle/toggle.component';
+import { jqxSliderModule } from 'jqwidgets-ng/jqxslider';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'sequencer',
   templateUrl: './sequencer.component.html',
-  styleUrls: ['./sequencer.component.scss'],
-  imports: [CommonModule],
+  styleUrls: ['./sequencer.component.scss']
+  imports: [CommonModule, KnobComponent, ToggleComponent, jqxSliderModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SequencerComponent implements OnInit {

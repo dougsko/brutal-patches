@@ -1,6 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-error-boundary',
@@ -128,8 +126,6 @@ import { CommonModule } from '@angular/common';
       }
     }
   `]
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ErrorBoundaryComponent implements OnInit {
   @Input() hasError: boolean = false;

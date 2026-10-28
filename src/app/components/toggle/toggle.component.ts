@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, NO_ERRORS_SCHEMA, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { jqxSliderModule } from 'jqwidgets-ng/jqxslider';
 import { Patch } from '../../interfaces/patch';
 
 @Component({
   selector: 'toggle',
   templateUrl: './toggle.component.html',
-  styleUrls: ['./toggle.component.scss'],
-  imports: [CommonModule],
+  styleUrls: ['./toggle.component.scss']
+  imports: [jqxSliderModule, CommonModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ToggleComponent implements OnInit {

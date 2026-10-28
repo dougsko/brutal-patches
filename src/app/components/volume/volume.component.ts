@@ -1,13 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, NO_ERRORS_SCHEMA, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { KnobComponent } from '../knob/knob.component';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'volume',
   templateUrl: './volume.component.html',
-  styleUrls: ['./volume.component.scss'],
-  imports: [CommonModule],
+  styleUrls: ['./volume.component.scss']
+  imports: [KnobComponent, CommonModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class VolumeComponent implements OnInit {

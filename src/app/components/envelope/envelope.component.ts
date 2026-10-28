@@ -1,14 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'envelope',
   templateUrl: './envelope.component.html',
-  styleUrls: ['./envelope.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./envelope.component.scss']
 })
 export class EnvelopeComponent implements OnInit {
   @Input() patch!: Patch;
