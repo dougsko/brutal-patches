@@ -1,56 +1,5 @@
 <div class="login-container">
-  <div class="login-content section">
-    <div class="title"><span>Login</span></div>
-    
-    <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="onSubmit(f)" #f="ngForm" novalidate class="login-form">
-      <div class="form-field">
-        <label class="field-label" for="username">Username</label>
-        <input type="text" 
-               class="field-input" 
-               name="username" 
-               [(ngModel)]="form.username" 
-               required
-               #username="ngModel" 
-               placeholder="Enter your username" />
-        <div class="error-message" *ngIf="username.errors && f.submitted">
-          Username is required
-        </div>
-      </div>
-      
-      <div class="form-field">
-        <label class="field-label" for="password">Password</label>
-        <input type="password" 
-               class="field-input" 
-               name="password" 
-               [(ngModel)]="form.password" 
-               required 
-               minlength="6"
-               #password="ngModel" 
-               placeholder="Enter your password" />
-        <div class="error-message" *ngIf="password.errors && f.submitted">
-          <div *ngIf="password.errors.required">Password is required</div>
-          <div *ngIf="password.errors.minlength">
-            Password must be at least 6 characters
-          </div>
-        </div>
-      </div>
-      
-      <div class="form-actions">
-        <button type="submit" class="login-button">
-          Login
-        </button>
-        <div class="signup-link">
-          Don't have an account? <a routerLink="/register">Sign up here</a>
-        </div>
-      </div>
-      
-      <div class="error-message global-error" *ngIf="f.submitted && isLoginFailed">
-        {{ errorMessage }}
-      </div>
-    </form>
-
-    <div class="success-message" *ngIf="isLoggedIn">
-      Successfully logged in as {{ roles }}.
-    </div>
-  </div>
+  <h2>Sign in with Google</h2>
+  <a href="http://localhost:4000/auth/google" class="google-btn">Login with Google</a>
+  <p>Public view: <a routerLink="/patch-list">Browse patches</a></p>
 </div>
