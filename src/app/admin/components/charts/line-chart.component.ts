@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ChartConfiguration, ChartType, ChartEvent, ActiveElement } from 'chart.js';
 import { TimeSeriesData } from '../../interfaces/admin.interfaces';
 
@@ -17,6 +19,8 @@ import { TimeSeriesData } from '../../interfaces/admin.interfaces';
       (chartHover)="onChartHover($event)">
     </app-base-chart>
   `
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LineChartComponent implements OnInit {
   @Input() data: TimeSeriesData[] = [];

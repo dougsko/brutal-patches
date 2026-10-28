@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -26,7 +28,9 @@ interface ModerationFilters {
 @Component({
   selector: 'app-moderation-queue',
   templateUrl: './moderation-queue.component.html',
-  styleUrls: ['./moderation-queue.component.scss']
+  styleUrls: ['./moderation-queue.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ModerationQueueComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;

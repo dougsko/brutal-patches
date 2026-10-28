@@ -1,4 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType, registerables, ChartEvent, ActiveElement } from 'chart.js';
 // import zoomPlugin from 'chartjs-plugin-zoom'; // Temporarily disabled
 
@@ -51,6 +53,8 @@ Chart.register(...registerables); // zoomPlugin disabled temporarily
       }
     }
   `]
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BaseChartComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;

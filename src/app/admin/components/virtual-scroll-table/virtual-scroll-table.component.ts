@@ -1,4 +1,6 @@
 import { 
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
   Component, 
   Input, 
   Output, 
@@ -307,6 +309,8 @@ interface ColumnConfig {
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class VirtualScrollTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild('viewport', { static: false }) viewport!: ElementRef<HTMLDivElement>;

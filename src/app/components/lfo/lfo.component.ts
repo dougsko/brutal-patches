@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'lfo',
   templateUrl: './lfo.component.html',
-  styleUrls: ['./lfo.component.scss']
+  styleUrls: ['./lfo.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LfoComponent implements OnInit {
   @Input() patch!: Patch;

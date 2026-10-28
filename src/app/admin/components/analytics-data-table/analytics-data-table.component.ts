@@ -1,4 +1,6 @@
 import { 
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
   Component, 
   Input, 
   Output, 
@@ -217,6 +219,8 @@ interface TableColumn {
       }
     }
   `]
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AnalyticsDataTableComponent implements OnInit, OnChanges {
   @Input() title: string = 'Data Table';

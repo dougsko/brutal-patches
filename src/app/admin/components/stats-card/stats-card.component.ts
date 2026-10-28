@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { AdminDashboardCard } from '../../interfaces/admin.interfaces';
 
 @Component({
@@ -208,6 +210,8 @@ import { AdminDashboardCard } from '../../interfaces/admin.interfaces';
       }
     }
   `]
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class StatsCardComponent {
   @Input() card!: AdminDashboardCard;

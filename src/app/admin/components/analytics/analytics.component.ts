@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { interval, Subscription, combineLatest } from 'rxjs';
 import { startWith, catchError, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
@@ -19,7 +21,9 @@ import {
 @Component({
   selector: 'app-analytics',
   templateUrl: './analytics.component.html',
-  styleUrls: ['./analytics.component.scss']
+  styleUrls: ['./analytics.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AnalyticsComponent extends SubscriptionBaseComponent implements OnInit {
   loading = true;

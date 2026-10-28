@@ -187,12 +187,14 @@ export class UsersController {
     },
   })
   @ApiNotFoundResponse({
+    // @ts-ignore
     status: 404,
     description: 'User profile not found',
     type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
+    // @ts-ignore
     description: 'Authentication required',
     type: ErrorResponse,
   })
@@ -246,6 +248,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     status: 404,
     description: 'User not found',
+    // @ts-ignore
     type: ErrorResponse,
   })
   @Get('/getUserByUsername/:username')

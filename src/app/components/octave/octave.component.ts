@@ -1,10 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Patch } from '../../interfaces/patch';
 
 @Component({
   selector: 'octave',
   templateUrl: './octave.component.html',
-  styleUrls: ['./octave.component.scss']
+  styleUrls: ['./octave.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class OctaveComponent implements OnInit {
   @Input() patch!: Patch;

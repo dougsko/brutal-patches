@@ -1,5 +1,5 @@
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -40,45 +40,50 @@ import { HttpErrorInterceptorService } from './services/http-error-interceptor.s
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 import { SessionTimeoutWarningComponent } from './components/session-timeout-warning/session-timeout-warning.component';
 
-@NgModule({ declarations: [
+@NgModule({
+    schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
+    declarations: [],
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
         AppComponent,
-        PatchListComponent,
-        PatchDetailComponent,
-        KnobComponent,
-        PatchInfoComponent,
-        ToggleComponent,
-        SliderComponent,
-        OctaveComponent,
-        OscillatorComponent,
-        FilterComponent,
-        ModMatrixComponent,
-        VolumeComponent,
-        ControlsComponent,
-        LfoComponent,
-        EnvelopeComponent,
-        SequencerComponent,
-        PatchComponent,
-        ToolbarComponent,
-        LoginComponent,
-        RegisterComponent,
-        ProfileComponent,
-        MyPatchListComponent,
-        SessionTimeoutWarningComponent,
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         FormsModule,
-        jqxKnobModule,
-        jqxSliderModule,
         BrowserAnimationsModule,
+        MatButtonModule,
         MatCardModule,
         MatChipsModule,
         MatFormFieldModule,
         MatIconModule,
-        MatToolbarModule,
         MatPaginatorModule,
         MatProgressSpinnerModule,
-        MatButtonModule], providers: [
+        MatToolbarModule,
+        jqxKnobModule,
+        jqxSliderModule,
+        ControlsComponent,
+        EnvelopeComponent,
+        FilterComponent,
+        KnobComponent,
+        LfoComponent,
+        LoginComponent,
+        ModMatrixComponent,
+        OctaveComponent,
+        OscillatorComponent,
+        PatchDetailComponent,
+        PatchInfoComponent,
+        PatchListComponent,
+        PatchComponent,
+        ProfileComponent,
+        RegisterComponent,
+        SequencerComponent,
+        SliderComponent,
+        ToggleComponent,
+        ToolbarComponent,
+        VolumeComponent,
+        MyPatchListComponent,
+        SessionTimeoutWarningComponent
+    ],
+    providers: [
         {
             provide: HTTP_INTERCEPTORS,
             useClass: HttpErrorInterceptorService,
@@ -86,5 +91,6 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
         },
         authInterceptorProviders,
         provideHttpClient(withInterceptorsFromDi())
-    ] })
+    ]
+})
 export class AppModule { }

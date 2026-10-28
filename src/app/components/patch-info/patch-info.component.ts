@@ -1,4 +1,6 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { Patch } from '../../interfaces/patch';
@@ -6,7 +8,9 @@ import { Patch } from '../../interfaces/patch';
 @Component({
   selector: 'patch-info',
   templateUrl: './patch-info.component.html',
-  styleUrls: ['./patch-info.component.scss']
+  styleUrls: ['./patch-info.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PatchInfoComponent implements OnInit {
   @Input() patch!: Patch;

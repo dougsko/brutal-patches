@@ -1,4 +1,6 @@
 import { Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -10,7 +12,9 @@ import { PatchDetailComponent } from '../patch-detail/patch-detail.component';
 @Component({
   selector: 'patch',
   templateUrl: './patch.component.html',
-  styleUrls: ['./patch.component.scss']
+  styleUrls: ['./patch.component.scss'],
+  imports: [CommonModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PatchComponent implements OnInit {
   patch!: Patch;
