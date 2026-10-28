@@ -1,6 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 
 /**
@@ -9,8 +7,6 @@ import { Subject } from 'rxjs';
  */
 @Component({
   template: ''
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export abstract class SubscriptionBaseComponent implements OnDestroy {
   /**

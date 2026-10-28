@@ -6,7 +6,7 @@ import { Patch } from '../../interfaces/patch';
 @Component({
   selector: 'toggle',
   templateUrl: './toggle.component.html',
-  styleUrls: ['./toggle.component.scss']
+  styleUrls: ['./toggle.component.scss'],
   imports: [jqxSliderModule, CommonModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })

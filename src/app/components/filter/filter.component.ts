@@ -4,7 +4,7 @@ import { Patch } from 'src/app/interfaces/patch';
 @Component({
   selector: 'filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss']
+  styleUrls: ['./filter.component.scss'],
 })
 export class FilterComponent implements OnInit {
   @Input() patch!: Patch;

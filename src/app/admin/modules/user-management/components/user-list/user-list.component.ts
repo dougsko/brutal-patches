@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -27,9 +25,7 @@ interface UserListFilters {
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -1268,7 +1264,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     // Limit cache size to prevent memory issues
     if (this.searchCache.size > 20) {
       const oldestKey = this.searchCache.keys().next().value;
-      this.searchCache.delete(oldestKey);
+      this.searchCache.delete(oldestKey as string);
     }
     
     this.searchCache.set(cacheKey, {

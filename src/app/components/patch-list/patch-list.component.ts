@@ -7,7 +7,7 @@ import { PatchService } from '../../services/patch.service';
 @Component({
   selector: 'patch-list',
   templateUrl: './patch-list.component.html',
-  styleUrls: ['./patch-list.component.scss']
+  styleUrls: ['./patch-list.component.scss'],
 })
 export class PatchListComponent implements OnInit, OnDestroy {
   patches: Patch[] = [];

@@ -1,6 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { CategoryData } from '../../interfaces/admin.interfaces';
 
@@ -13,8 +11,6 @@ import { CategoryData } from '../../interfaces/admin.interfaces';
       [responsive]="responsive">
     </app-base-chart>
   `
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BarChartComponent implements OnInit {
   @Input() data: CategoryData[] = [];

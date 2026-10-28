@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { interval, Subscription } from 'rxjs';
 import { startWith, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -20,9 +18,7 @@ export interface HealthMetric {
 @Component({
   selector: 'app-system-health',
   templateUrl: './system-health.component.html',
-  styleUrls: ['./system-health.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./system-health.component.scss']
 })
 export class SystemHealthComponent implements OnInit, OnDestroy {
   loading = true;

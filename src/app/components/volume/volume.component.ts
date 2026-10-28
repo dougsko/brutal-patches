@@ -6,7 +6,7 @@ import { Patch } from 'src/app/interfaces/patch';
 @Component({
   selector: 'volume',
   templateUrl: './volume.component.html',
-  styleUrls: ['./volume.component.scss']
+  styleUrls: ['./volume.component.scss'],
   imports: [KnobComponent, CommonModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })

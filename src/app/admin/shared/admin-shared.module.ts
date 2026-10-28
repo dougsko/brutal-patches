@@ -15,7 +15,10 @@ import { MultiFactorConfirmationComponent } from './components/multi-factor-conf
 import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    MultiFactorConfirmationComponent,
+    ConfirmationDialogComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -27,9 +30,7 @@ import { ConfirmationDialogComponent } from './components/confirmation-dialog/co
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
-    MultiFactorConfirmationComponent,
-    ConfirmationDialogComponent
+    MatChipsModule
   ],
   exports: [
     MultiFactorConfirmationComponent,

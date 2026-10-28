@@ -8,7 +8,7 @@ import { Patch } from 'src/app/interfaces/patch';
 @Component({
   selector: 'sequencer',
   templateUrl: './sequencer.component.html',
-  styleUrls: ['./sequencer.component.scss']
+  styleUrls: ['./sequencer.component.scss'],
   imports: [CommonModule, KnobComponent, ToggleComponent, jqxSliderModule],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })

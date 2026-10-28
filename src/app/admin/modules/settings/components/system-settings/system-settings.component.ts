@@ -1,6 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,9 +21,7 @@ interface SettingsSection {
 @Component({
   selector: 'app-system-settings',
   templateUrl: './system-settings.component.html',
-  styleUrls: ['./system-settings.component.scss'],
-  imports: [CommonModule],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  styleUrls: ['./system-settings.component.scss']
 })
 export class SystemSettingsComponent implements OnInit, OnDestroy {
   settingsForm: FormGroup;

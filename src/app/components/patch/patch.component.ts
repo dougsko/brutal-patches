@@ -10,7 +10,7 @@ import { PatchDetailComponent } from '../patch-detail/patch-detail.component';
 @Component({
   selector: 'patch',
   templateUrl: './patch.component.html',
-  styleUrls: ['./patch.component.scss']
+  styleUrls: ['./patch.component.scss'],
 })
 export class PatchComponent implements OnInit {
   patch!: Patch;

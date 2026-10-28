@@ -4,7 +4,7 @@ import { Patch } from 'src/app/interfaces/patch';
 @Component({
   selector: 'knob',
   templateUrl: './knob.component.html',
-  styleUrls: ['./knob.component.scss']
+  styleUrls: ['./knob.component.scss'],
 })
 export class KnobComponent implements OnInit {
   @Input() name!: string;

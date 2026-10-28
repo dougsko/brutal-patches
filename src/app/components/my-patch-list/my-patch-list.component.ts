@@ -7,7 +7,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 @Component({
   selector: 'my-patch-list',
   templateUrl: './my-patch-list.component.html',
-  styleUrls: ['./my-patch-list.component.scss']
+  styleUrls: ['./my-patch-list.component.scss'],
 })
 export class MyPatchListComponent implements OnInit, OnDestroy {
   patches: Patch[] = [];

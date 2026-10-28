@@ -5,7 +5,7 @@ import { Patch } from 'src/app/interfaces/patch';
 @Component({
   selector: 'mod-matrix',
   templateUrl: './mod-matrix.component.html',
-  styleUrls: ['./mod-matrix.component.scss']
+  styleUrls: ['./mod-matrix.component.scss'],
 })
 export class ModMatrixComponent implements OnInit, OnDestroy {
   @Input() patch!: Patch;

@@ -6,7 +6,7 @@ import { Patch } from '../../interfaces/patch';
 @Component({
   selector: 'patch-info',
   templateUrl: './patch-info.component.html',
-  styleUrls: ['./patch-info.component.scss']
+  styleUrls: ['./patch-info.component.scss'],
 })
 export class PatchInfoComponent implements OnInit {
   @Input() patch!: Patch;

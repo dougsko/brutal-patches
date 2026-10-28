@@ -41,7 +41,6 @@ import { UserListComponent } from './components/user-list/user-list.component';
     MatBadgeModule,
     MatDividerModule,
     
-    UserListComponent,
     RouterModule.forChild([
       { path: '', redirectTo: 'list', pathMatch: 'full' },
       { path: 'list', component: UserListComponent },

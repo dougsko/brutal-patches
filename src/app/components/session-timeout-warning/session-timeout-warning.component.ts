@@ -7,7 +7,7 @@ import { TokenStorageService } from '../../services/token-storage.service';
 @Component({
   selector: 'app-session-timeout-warning',
   templateUrl: './session-timeout-warning.component.html',
-  styleUrls: ['./session-timeout-warning.component.scss']
+  styleUrls: ['./session-timeout-warning.component.scss'],
 })
 export class SessionTimeoutWarningComponent implements OnInit, OnDestroy {
   showWarning = false;
