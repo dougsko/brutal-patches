@@ -305,4 +305,4 @@ echo -e "\n${YELLOW}Next steps:${NC}"
 echo "1. Review all reports in $AUDIT_DIR"
 echo "2. Address high/critical vulnerabilities"
 echo "3. Implement recommended security improvements"
-echo "4. Integrate security checks into CI/CD pipeline"
+echo "4. Integrate security checks into CI/CD pipeline"exit 0
