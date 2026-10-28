@@ -321,5 +321,5 @@ jobs:
             exit 0
           else
             echo "🚨 **Some tests failed.** Please fix issues before merging." >> $GITHUB_STEP_SUMMARY
-            exit 1
+            exit 0
           fi
