@@ -68,7 +68,7 @@ export class PatchListComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:scroll', ['$event'])
-  onScroll(): void {
+  onScroll(event: Event): void {
     const scrollPosition = window.pageYOffset;
     const windowSize = window.innerHeight;
     const bodyHeight = document.body.offsetHeight;

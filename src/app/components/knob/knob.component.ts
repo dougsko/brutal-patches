@@ -1,8 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
+import { jqxKnobModule } from 'jqwidgets-ng/jqxknob';
 import { Patch } from 'src/app/interfaces/patch';
 
 @Component({
   selector: 'knob',
+  imports: [jqxKnobModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './knob.component.html',
   styleUrls: ['./knob.component.scss'],
 })

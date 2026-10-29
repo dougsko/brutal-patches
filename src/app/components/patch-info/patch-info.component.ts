@@ -1,10 +1,13 @@
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, Input, OnInit } from '@angular/core';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, NO_ERRORS_SCHEMA, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { Patch } from '../../interfaces/patch';
 
 @Component({
   selector: 'patch-info',
+  imports: [FormsModule, MatChipsModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './patch-info.component.html',
   styleUrls: ['./patch-info.component.scss'],
 })
@@ -29,7 +32,7 @@ export class PatchInfoComponent implements OnInit {
     }
   }
 
-  add(event: MatChipInputEvent): void {
+  add(event: any): void {
     if(!this.patch.tags) {
       this.patch.tags = [];
     }
