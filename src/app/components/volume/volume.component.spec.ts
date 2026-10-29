@@ -9,7 +9,7 @@ describe('VolumeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VolumeComponent ],
+      imports: [ VolumeComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

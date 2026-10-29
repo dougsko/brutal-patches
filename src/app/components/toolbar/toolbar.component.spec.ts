@@ -27,9 +27,8 @@ describe('ToolbarComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [ToolbarComponent],
+    imports: [ToolbarComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
     providers: [
         { provide: Router, useValue: mockRouter },
         { provide: TokenStorageService, useValue: mockTokenStorage },

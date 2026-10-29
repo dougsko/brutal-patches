@@ -17,9 +17,8 @@ xdescribe('MyPatchListComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [MyPatchListComponent],
+    imports: [MyPatchListComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
     providers: [
         PatchService,
         { provide: TokenStorageService, useValue: mockTokenStorage },

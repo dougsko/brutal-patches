@@ -9,7 +9,7 @@ describe('ControlsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ControlsComponent ],
+      imports: [ ControlsComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

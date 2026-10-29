@@ -9,7 +9,7 @@ describe('ToggleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ToggleComponent ],
+      imports: [ ToggleComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

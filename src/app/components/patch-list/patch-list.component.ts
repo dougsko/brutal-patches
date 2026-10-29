@@ -1,4 +1,9 @@
-import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, OnDestroy, OnInit, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription } from 'rxjs';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { Patch } from '../../interfaces/patch';
@@ -6,6 +11,8 @@ import { PatchService } from '../../services/patch.service';
 
 @Component({
   selector: 'patch-list',
+  imports: [CommonModule, RouterModule, MatCardModule, MatChipsModule, MatProgressSpinnerModule],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './patch-list.component.html',
   styleUrls: ['./patch-list.component.scss'],
 })

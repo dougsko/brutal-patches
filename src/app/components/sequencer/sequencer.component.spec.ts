@@ -9,7 +9,7 @@ describe('SequencerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SequencerComponent ],
+      imports: [ SequencerComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

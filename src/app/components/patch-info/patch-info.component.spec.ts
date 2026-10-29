@@ -9,7 +9,7 @@ describe('PatchInfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PatchInfoComponent ],
+      imports: [ PatchInfoComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

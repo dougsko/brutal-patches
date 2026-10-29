@@ -9,7 +9,7 @@ xdescribe('PatchDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PatchDetailComponent ],
+      imports: [ PatchDetailComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

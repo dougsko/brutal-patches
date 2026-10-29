@@ -9,7 +9,7 @@ describe('OctaveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OctaveComponent ],
+      imports: [ OctaveComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

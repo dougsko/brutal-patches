@@ -267,7 +267,7 @@ export class MonitoringService implements OnModuleInit {
           }
         });
       });
-    } catch (error) {
+    } catch (_error) {
       // Fallback if X-Ray is not available
       this.logger.warn('X-Ray not available, falling back to direct execution');
       return callback(null);

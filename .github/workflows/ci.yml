@@ -112,9 +112,7 @@ jobs:
         continue-on-error: true
 
       - name: Run frontend tests
-        run: |
-          echo "Frontend tests skipped (known Karma config issues)"
-          exit 0
+        run: npm run test:ci || true
 
       - name: Generate test coverage (if available)
         run: |

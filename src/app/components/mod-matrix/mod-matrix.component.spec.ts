@@ -9,7 +9,7 @@ xdescribe('ModMatrixComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ModMatrixComponent ],
+      imports: [ ModMatrixComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

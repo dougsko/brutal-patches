@@ -17,9 +17,8 @@ describe('PatchListComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [PatchListComponent],
+    imports: [PatchListComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
     providers: [
         PatchService,
         { provide: TokenStorageService, useValue: mockTokenStorage },

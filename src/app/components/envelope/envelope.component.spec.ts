@@ -9,7 +9,7 @@ describe('EnvelopeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EnvelopeComponent ],
+      imports: [ EnvelopeComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

@@ -34,9 +34,8 @@ describe('PatchComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [PatchComponent],
+    imports: [PatchComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
     providers: [
         { provide: PatchService, useValue: mockPatchService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },

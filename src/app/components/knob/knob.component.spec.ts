@@ -9,7 +9,7 @@ describe('KnobComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KnobComponent ],
+      imports: [ KnobComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

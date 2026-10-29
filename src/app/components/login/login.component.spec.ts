@@ -24,9 +24,8 @@ describe('LoginComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [LoginComponent],
+    imports: [LoginComponent, FormsModule],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [FormsModule],
     providers: [
         AuthService,
         { provide: Router, useValue: mockRouter },

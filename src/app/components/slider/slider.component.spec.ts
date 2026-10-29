@@ -9,7 +9,7 @@ describe('SliderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SliderComponent ],
+      imports: [ SliderComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

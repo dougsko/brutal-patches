@@ -188,14 +188,14 @@ export class UsersController {
     },
   })
   @ApiNotFoundResponse({
-    // @ts-ignore
+    // @ts-expect-error
     status: 404,
     description: 'User profile not found',
     type: ErrorResponse,
   })
   @ApiUnauthorizedResponse({
     status: 401,
-    // @ts-ignore
+    // @ts-expect-error
     description: 'Authentication required',
     type: ErrorResponse,
   })
@@ -249,7 +249,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     status: 404,
     description: 'User not found',
-    // @ts-ignore
+    // @ts-expect-error
     type: ErrorResponse,
   })
   @Get('/getUserByUsername/:username')

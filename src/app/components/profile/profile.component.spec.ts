@@ -18,9 +18,8 @@ describe('ProfileComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-    declarations: [ProfileComponent],
+    imports: [ProfileComponent],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [],
     providers: [
         { provide: TokenStorageService, useValue: mockTokenStorage },
         provideHttpClient(withInterceptorsFromDi()),

@@ -9,7 +9,7 @@ describe('OscillatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OscillatorComponent ],
+      imports: [ OscillatorComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

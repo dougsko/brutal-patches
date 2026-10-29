@@ -9,7 +9,7 @@ describe('LfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LfoComponent ],
+      imports: [ LfoComponent ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();

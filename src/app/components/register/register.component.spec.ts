@@ -12,9 +12,8 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [RegisterComponent],
+    imports: [RegisterComponent, FormsModule],
     schemas: [NO_ERRORS_SCHEMA],
-    imports: [FormsModule],
     providers: [UserService, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
 })
     .compileComponents();
