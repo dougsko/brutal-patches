@@ -81,7 +81,7 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: HttpErrorInterceptorService,
+            useClass: HttpErrorInterceptor,
             multi: true
         },
         provideHttpClient(withInterceptorsFromDi())
