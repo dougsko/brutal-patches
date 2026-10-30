@@ -56,6 +56,7 @@
     "@babel/core": "^8.0.10",
     "@babel/preset-env": "^8.0.7",
     "@jefiozie/ngx-aws-deploy": "^4.1.0",
+    "@playwright/test": "^1.64.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jasmine": "~4.3.0",
     "@types/node": "^6.0.0",

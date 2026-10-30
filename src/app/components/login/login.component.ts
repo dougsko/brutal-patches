@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   template: `<button (click)="login()">Login with Google</button>`,
+  standalone: true,
+  imports: []
 })
 export class LoginComponent {
-  constructor(private authService: AuthService) {}
-  login() { this.authService.login(); }
+  login(): void {
+    window.location.href = '/auth/google';
+  }
 }
