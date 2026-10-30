@@ -1,53 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { Router } from '@angular/router';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ToolbarComponent } from './toolbar.component';
-import { AuthService } from '../../services/auth.service';
-import { TokenStorageService } from '../../services/token-storage.service';
-import { EventBusService } from '../../services/event-bus.service';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('ToolbarComponent', () => {
-  let component: ToolbarComponent;
   let fixture: ComponentFixture<ToolbarComponent>;
-
   beforeEach(async () => {
-    const mockRouter = {
-      navigate: jasmine.createSpy('navigate')
-    };
-    const mockTokenStorage = {
-      getToken: jasmine.createSpy('getToken').and.returnValue(null),
-      getUser: jasmine.createSpy('getUser').and.returnValue({}),
-      signOut: jasmine.createSpy('signOut')
-    };
-    const mockEventBus = {
-      on: jasmine.createSpy('on'),
-      emit: jasmine.createSpy('emit')
-    };
-
-    await TestBed.configureTestingModule({
-    imports: [ToolbarComponent],
-    schemas: [NO_ERRORS_SCHEMA],
-    providers: [
-        { provide: Router, useValue: mockRouter },
-        { provide: TokenStorageService, useValue: mockTokenStorage },
-        { provide: EventBusService, useValue: mockEventBus },
-        AuthService,
-        provideHttpClient(withInterceptorsFromDi()),
-        provideHttpClientTesting()
-    ]
-})
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await TestBed.configureTestingModule({ imports: [ToolbarComponent] }).compileComponents();
     fixture = TestBed.createComponent(ToolbarComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });
