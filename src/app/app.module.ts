@@ -36,6 +36,7 @@ import { VolumeComponent } from './components/volume/volume.component';
 import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 import { SessionTimeoutWarningComponent } from './components/session-timeout-warning/session-timeout-warning.component';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
     schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
@@ -76,7 +77,8 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
         ToolbarComponent,
         VolumeComponent,
         MyPatchListComponent,
-        SessionTimeoutWarningComponent
+        SessionTimeoutWarningComponent,
+        LoginComponent
     ],
     providers: [
         {

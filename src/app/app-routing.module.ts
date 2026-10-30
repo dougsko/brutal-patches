@@ -3,9 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 import { PatchListComponent } from './components/patch-list/patch-list.component';
 import { PatchComponent } from './components/patch/patch.component';
+import { LoginComponent } from './components/login/login.component';
 
 const routes: Routes = [
   { path: 'patches', component: PatchListComponent },
+  { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/patches', pathMatch: 'full' },
 ];
 
