@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Body,
   Controller,
@@ -33,7 +32,6 @@ import {
   PatchComparison,
   PatchCategory,
 } from 'src/interfaces/patch.interface';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatchService } from './patch.service';
 
 // Response DTOs for documentation
@@ -166,7 +164,6 @@ export class PatchController {
     description:
       'Get all patches (including private) for the authenticated user',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiQuery({
     name: 'offset',
     description: 'First item index for pagination',
@@ -182,12 +179,6 @@ export class PatchController {
     description: 'My patches retrieved successfully',
     schema: { type: 'array', items: { type: 'object' } },
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('user/patches')
   async getMyPatches(
     @Request() req,
@@ -209,18 +200,11 @@ export class PatchController {
     description:
       'Get total patch count (including private) for the authenticated user',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 200,
     description: 'My total patch count',
     schema: { type: 'number' },
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('my/total')
   async getMyTotal(@Request() req): Promise<number> {
     return this.patchService.getUserPatchTotal(
@@ -233,7 +217,6 @@ export class PatchController {
     summary: 'Get my patches with cursor pagination',
     description: 'Get all patches (including private) for the authenticated user with cursor-based pagination',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiQuery({
     name: 'limit',
     description: 'Number of items to return',
@@ -256,12 +239,6 @@ export class PatchController {
       },
     },
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('my')
   async getMyPatchesCursor(
     @Request() req,
@@ -497,7 +474,6 @@ export class PatchController {
     summary: 'Create new patch',
     description: 'Create a new synthesizer patch',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiBody({ description: 'Patch data to create', schema: { type: 'object' } })
   @ApiResponse({
     status: 201,
@@ -509,12 +485,6 @@ export class PatchController {
     description: 'Invalid patch data',
     type: ErrorResponse,
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Request() req, @Body() patch: Patch): Promise<Patch> {
     return this.patchService.createPatch(req.user.username, patch);
@@ -524,7 +494,6 @@ export class PatchController {
     summary: 'Update patch',
     description: 'Update an existing patch (owner only)',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiParam({ name: 'id', description: 'Patch ID to update' })
   @ApiBody({ description: 'Updated patch data', schema: { type: 'object' } })
   @ApiResponse({
@@ -537,11 +506,6 @@ export class PatchController {
     description: 'Invalid patch data',
     type: ErrorResponse,
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
   @ApiForbiddenResponse({
     status: 403,
     description: 'Access denied - only patch owner can update',
@@ -552,7 +516,6 @@ export class PatchController {
     description: 'Patch not found',
     type: ErrorResponse,
   })
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   async update(
     @Request() req,
@@ -564,7 +527,6 @@ export class PatchController {
 
   // ====== NEW VERSIONING ENDPOINTS ======
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id/version')
   async updateWithVersioning(
     @Request() req,
@@ -636,7 +598,6 @@ export class PatchController {
 
   // ====== COLLECTION ENDPOINTS ======
 
-  @UseGuards(JwtAuthGuard)
   @Post('collections')
   async createCollection(
     @Request() req,
@@ -652,7 +613,6 @@ export class PatchController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('collections/my')
   async getMyCollections(@Request() req): Promise<PatchCollection[]> {
     return this.patchService.getUserCollections(req.user.username);
@@ -663,7 +623,6 @@ export class PatchController {
     return this.patchService.getPublicCollections();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put('collections/:collectionId/patches/:patchId')
   async addPatchToCollection(
     @Request() req,

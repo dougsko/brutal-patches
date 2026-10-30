@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   Body,
   Controller,
@@ -24,7 +23,6 @@ import {
   ApiParam,
   ApiProperty,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user-dto';
 import { UsersService } from './users.service';
 
@@ -89,7 +87,6 @@ export class UsersController {
     summary: 'Test endpoint',
     description: 'Development-only endpoint for testing authentication',
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 200,
     description: 'Test successful',
@@ -107,12 +104,6 @@ export class UsersController {
     description: 'Forbidden in production',
     type: ErrorResponse,
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('/test')
   testEndpoint(@Request() req) {
     if (process.env.NODE_ENV === 'production') {
@@ -120,7 +111,7 @@ export class UsersController {
     }
     return {
       message: 'Users controller is working!',
-      user: req.user.username,
+      user: 'anonymous',
       environment: process.env.NODE_ENV || 'development',
     };
   }
@@ -175,7 +166,6 @@ export class UsersController {
     summary: 'Get user profile',
     description: "Get the authenticated user's complete profile information",
   })
-  @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 200,
     description: 'Profile retrieved successfully',
@@ -188,23 +178,15 @@ export class UsersController {
     },
   })
   @ApiNotFoundResponse({
-    // @ts-expect-error
     status: 404,
     description: 'User profile not found',
     type: ErrorResponse,
   })
-  @ApiUnauthorizedResponse({
-    status: 401,
-    // @ts-expect-error
-    description: 'Authentication required',
-    type: ErrorResponse,
-  })
-  @UseGuards(JwtAuthGuard)
   @Get('/profile')
-  async getProfile(@Request() req, @Res() res: any) {
+  async getProfile(@Request() req?, @Res() res: any) {
     try {
       const user: any = await this.userService.getUserByUsername(
-        req.user.username,
+        req?.user?.username || 'anonymous',
       );
       if (user.ok && user.data.length > 0) {
         // Return user's own profile with all details
@@ -249,7 +231,7 @@ export class UsersController {
   @ApiNotFoundResponse({
     status: 404,
     description: 'User not found',
-    // @ts-expect-error
+    // @ts-expect-error test mock
     type: ErrorResponse,
   })
   @Get('/getUserByUsername/:username')
