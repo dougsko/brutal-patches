@@ -33,7 +33,7 @@ import { SliderComponent } from './components/slider/slider.component';
 import { ToggleComponent } from './components/toggle/toggle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VolumeComponent } from './components/volume/volume.component';
-import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
+import { HttpErrorInterceptor } from './services/http-error-interceptor.service';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 import { SessionTimeoutWarningComponent } from './components/session-timeout-warning/session-timeout-warning.component';
 
