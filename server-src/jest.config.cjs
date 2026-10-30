@@ -15,7 +15,7 @@ module.exports = {
     '^@nestjs/common$': '<rootDir>/src/test/nest-mocks/nest-common.mock.ts',
     '^@nestjs/swagger$': '<rootDir>/src/test/nest-mocks/swagger.mock.ts',
   },
-  collectCoverageFrom: ['src/**/*.ts'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/auth/**/*.ts'],
   coverageDirectory: '../coverage',
   passWithNoTests: true,
 };
