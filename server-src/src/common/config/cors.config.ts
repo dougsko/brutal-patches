@@ -7,6 +7,7 @@ export const corsConfig: CorsOptions = {
 
     const allowedOrigins = [
       'http://localhost:4200',
+      'http://ganon:4200',
       'http://localhost:3000',
       'https://brutalpatches.com',
       'https://www.brutalpatches.com',

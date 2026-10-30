@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { LoggerService } from '../common/logger.service';
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private logger: LoggerService) {}
+  private logger = new Logger(AuthService.name);
 
-  async getProfile(email: string) {
-    this.logger.log(`Google login: ${email}`, 'AuthService');
-    return { email, provider: 'google' };
+  constructor(private jwtService: any) {}
+
+  getProfile(email: string) {
+    const username = email.split('@')[0];
+    return { email, username, provider: 'google' };
+  }
+
+  signToken(payload: object): string {
+    return this.jwtService.sign(payload);
   }
 }

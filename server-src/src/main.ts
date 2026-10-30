@@ -26,7 +26,7 @@ async function bootstrap() {
             styleSrc: ["'self'", "'unsafe-inline'"],
             scriptSrc: ["'self'"],
             imgSrc: ["'self'", 'data:', 'https:'],
-            connectSrc: ["'self'", 'https://api.brutalpatches.com'],
+            connectSrc: ["'self'", 'https://api.brutalpatches.com', 'http://ganon:4001'],
           },
           reportOnly: process.env.NODE_ENV !== 'production',
         },

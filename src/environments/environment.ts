@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000',
+  apiUrl: 'http://ganon:4001',
   jwt: {
     secret: 'development-secret-key', // This should be the same as backend secret
     issuer: 'brutal-patches',

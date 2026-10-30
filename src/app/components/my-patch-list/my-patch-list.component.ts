@@ -22,7 +22,7 @@ export class MyPatchListComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
-    if (this.tokenStorage.getToken()) {
+    if (this.tokenStorage.getUser()) {
       this.isLoggedIn = true;
       this.loadInitialPatches();
     }

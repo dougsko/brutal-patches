@@ -20,7 +20,6 @@ import { EnvelopeComponent } from './components/envelope/envelope.component';
 import { FilterComponent } from './components/filter/filter.component';
 import { KnobComponent } from './components/knob/knob.component';
 import { LfoComponent } from './components/lfo/lfo.component';
-import { LoginComponent } from './components/login/login.component';
 import { ModMatrixComponent } from './components/mod-matrix/mod-matrix.component';
 import { OctaveComponent } from './components/octave/octave.component';
 import { OscillatorComponent } from './components/oscillator/oscillator.component';
@@ -29,13 +28,11 @@ import { PatchInfoComponent } from './components/patch-info/patch-info.component
 import { PatchListComponent } from './components/patch-list/patch-list.component';
 import { PatchComponent } from './components/patch/patch.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { RegisterComponent } from './components/register/register.component';
 import { SequencerComponent } from './components/sequencer/sequencer.component';
 import { SliderComponent } from './components/slider/slider.component';
 import { ToggleComponent } from './components/toggle/toggle.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VolumeComponent } from './components/volume/volume.component';
-import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { HttpErrorInterceptorService } from './services/http-error-interceptor.service';
 import { MyPatchListComponent } from './components/my-patch-list/my-patch-list.component';
 import { SessionTimeoutWarningComponent } from './components/session-timeout-warning/session-timeout-warning.component';
@@ -65,7 +62,6 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
         FilterComponent,
         KnobComponent,
         LfoComponent,
-        LoginComponent,
         ModMatrixComponent,
         OctaveComponent,
         OscillatorComponent,
@@ -74,7 +70,6 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
         PatchListComponent,
         PatchComponent,
         ProfileComponent,
-        RegisterComponent,
         SequencerComponent,
         SliderComponent,
         ToggleComponent,
@@ -89,7 +84,6 @@ import { SessionTimeoutWarningComponent } from './components/session-timeout-war
             useClass: HttpErrorInterceptorService,
             multi: true
         },
-        authInterceptorProviders,
         provideHttpClient(withInterceptorsFromDi())
     ]
 })
